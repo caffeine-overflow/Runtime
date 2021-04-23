@@ -1,0 +1,34 @@
+
+
+###
+// Create Sprint
+POST http://localhost:5000/api/sprints
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTExZmEwYjViMWY4MThlMDc3YjM3ZCIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCREQUR2dHNxdUJsOFlQcGx1TVppaVd1MVkyajFqVlhKSGptVjhMemxXNklQOXhOZnR2ZTBBRyIsImlhdCI6MTYxNTkyOTI4OX0.MpSql7cei26aLTPixj5lQDkFgQZjOU2JJukIpwM9jQA
+Content-Type: application/json
+
+{
+  "name": "Trial",
+  "description": "Trial",
+  "project_id": "605359188c7e743434c68140",
+  "sprint_id": "6077a5eaad05e11e043c716c",
+  "user_stories" :[{"_id": "6077a153516e427cf4bb5471", "estimated_time": "4,0", "moveto_backlog":false}]
+}
+
+
+###
+// Get All Sprints by project
+GET http://localhost:5000/api/sprints/allByProjectId/605359188c7e743434c68140
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE3MDYyMTkwZWRhNWVhODQzODdlMSIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJmaXJzdG5hbWUiOiJEYW5pc2giLCJsYXN0bmFtZSI6IkRhdmlzIiwiaWF0IjoxNjE2MDA2OTQ1fQ.mwt4dAEoYkQsRFsC9eJ4miS9nenGd9Wzy9iEgBr2F9A
+Content-Type: application/json
+
+
+
+###
+// Generate Sprint report
+GET http://localhost:5000/api/sprints/generateReport
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTExZmEwYjViMWY4MThlMDc3YjM3ZCIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCREQUR2dHNxdUJsOFlQcGx1TVppaVd1MVkyajFqVlhKSGptVjhMemxXNklQOXhOZnR2ZTBBRyIsImlhdCI6MTYxNTkyOTI4OX0.MpSql7cei26aLTPixj5lQDkFgQZjOU2JJukIpwM9jQA
+Content-Type: application/json
+
+{
+  "sprint_id": "607b24af850a1f6e9409cc67"
+}

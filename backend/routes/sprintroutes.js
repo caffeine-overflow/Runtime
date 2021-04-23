@@ -3,22 +3,9 @@ const router = express.Router();
 const { Sprint } = require("../models/sprint.js");
 const { UserStory } = require("../models/userstory.js");
 const { UserStoryHistory } = require("../models/userstory_history.js");
-const { Team } = require("../models/team.js");
-const { User } = require("../models/user.js");
 const authroutes = require("./authroutes");
 const mongoose = require("mongoose");
-const userstory_history = require("../models/userstory_history.js");
-const { Project } = require("../models/project.js");
 mongoose.set('useFindAndModify', false);
-
-router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req, res) => {
-	try {
-		let sprint = await Sprint.findOne({ project_id: req.params.project_id }).populate("created_by");
-		res.status(200).send({ sprint });
-	} catch (err) {
-		console.log(err.stack);
-	}
-});
 
 router.get("/allByProjectId/:project_id", authroutes.authenticateToken, async (req, res) => {
 	try {
@@ -93,42 +80,8 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 	}
 });
 
-router.put("/completeSprint", authroutes.authenticateToken, async (req, res) => {
-	try {
-		let body = req.body;
-		const sprint = await Sprint.findOneAndUpdate({ _id: body.sprint_id }, { $set: { is_done: true } });
-
-		sprint
-			.save()
-			.then((data) => {
-				res.json(data);
-			})
-			.catch((err) => {
-				res.json({ message: err });
-			});
-	} catch (err) {
-		console.log(err.stack);
-	}
+router.get("/generateReport", authroutes.authenticateToken, async (req, res) => {
+	//generate report here
 });
 
-router.get("/generateReport", authroutes.authenticateToken, async (req, res) => {
-	try {
-		let sprint_id = req.query.sprint_id;
-		const sprint = await Sprint.findOne({ _id: sprint_id });
-		const project = await Project.findOne({ _id: sprint.project_id})
-		const team = await Team.findOne({ _id: project.team });
-		var teamMembers = [];
-		team.members.forEach(async (user_id) => {
-			var member = await User.findOne({ _id: user_id });
-			teamMembers = [...teamMembers, member.firstname]
-		})
-		const userStoryHistory = await UserStoryHistory.find({ sprint_id: sprint_id });
-		const userStories = await UserStory.find({ sprint_id: sprint_id }).where({parent_task: null});
-		const subTasks =  await UserStory.find({ sprint_id: sprint_id });
-		let reportData = {sprint, userStoryHistory, userStories, subTasks, team, teamMembers};
-		res.json(reportData);
-	}catch (err) {
-		console.log(err.stack);
-	}
-})
 module.exports = router;

@@ -9,25 +9,6 @@ const mongoose = require("mongoose");
 mongoose.set('useFindAndModify', false);
 
 router.get(
-    "/byTaskId/:task_id",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let userstory = await UserStory.findById(req.params.task_id)
-                .populate("created_by")
-                .populate("assigned_to")
-                .populate("parent_task")
-                .populate("sprint_id")
-                .populate("project_id")
-                .populate("history");
-            res.status(200).send({ userstory });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-router.get(
     "/bySprint/:sprint_id",
     authroutes.authenticateToken,
     async (req, res) => {
@@ -97,63 +78,6 @@ router.get(
     }
 );
 
-router.get(
-    "/byState/:state",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let userstories = await UserStory.find({ state: req.params.state })
-                .populate("created_by")
-                .populate("assigned_to")
-                .populate("parent_task")
-                .populate("sprint_id")
-                .populate("project_id")
-                .populate("history");
-            res.status(200).send({ userstories });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-router.get(
-    "/byAssignedTo/:user_id",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let userstories = await UserStory.find({ assigned_to: req.params.user_id })
-                .populate("created_by")
-                //.populate("assigned_to")
-                .populate("parent_task")
-                .populate("sprint_id")
-                .populate("project_id")
-                .populate("history");
-            res.status(200).send({ userstories });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-router.get(
-    "/byParentTask/:task_id",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let userstories = await UserStory.find({ parent_task: req.params.task_id })
-                .populate("created_by")
-                .populate("assigned_to")
-                .populate("parent_task")
-                .populate("sprint_id")
-                .populate("project_id")
-                .populate("history");
-            res.status(200).send({ userstories });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
 router.post("/", authroutes.authenticateToken, async (req, res) => {
     try {
         let body = req.body;
@@ -207,30 +131,6 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
     }
 });
 
-router.put(
-    "/assignTask",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let body = req.body;
-            const userstory = await UserStory.findOneAndUpdate(
-                { _id: body.Id },
-                { $set: { assigned_to: body.assigned_to } }
-            );
-
-            userstory
-                .save()
-                .then((data) => {
-                    res.json(data);
-                })
-                .catch((err) => {
-                    res.json({ message: err });
-                });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
 
 router.put(
     "/",
@@ -293,133 +193,6 @@ router.put(
                 })
                 .catch((err) => {
                     res.status(400).json({ message: err });
-                });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-router.put(
-    "/changeState",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let body = req.body;
-            const userstory = await UserStory.findOneAndUpdate(
-                { _id: body.id },
-                { $set: { state: body.state } }
-            );
-
-            userstory
-                .save()
-                .then((data) => {
-                    res.json(data);
-                })
-                .catch((err) => {
-                    res.json({ message: err });
-                });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-router.put(
-    "/changeEstimatedTime",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let body = req.body;
-            const userstory = await UserStory.findOneAndUpdate(
-                { _id: body.id },
-                { $set: { estimated_time: body.estimated_time } }
-            );
-
-            userstory
-                .save()
-                .then((data) => {
-                    res.json(data);
-                })
-                .catch((err) => {
-                    res.json({ message: err });
-                });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-// Not sure how we want to handle adding time spent
-// for now keep as string.
-router.put(
-    "/addTime",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let body = req.body;
-            const userstory = await UserStory.findOneAndUpdate(
-                { _id: body.id },
-                { $set: { time_spent: body.time_spent } }
-            );
-
-            userstory
-                .save()
-                .then((data) => {
-                    res.json(data);
-                })
-                .catch((err) => {
-                    res.json({ message: err });
-                });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-router.put(
-    "/updateDescription",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let body = req.body;
-            const userstory = await UserStory.findOneAndUpdate(
-                { _id: body.id },
-                { $set: { description: body.description } }
-            );
-
-            userstory
-                .save()
-                .then((data) => {
-                    res.json(data);
-                })
-                .catch((err) => {
-                    res.json({ message: err });
-                });
-        } catch (err) {
-            console.log(err.stack);
-        }
-    }
-);
-
-router.put(
-    "/updateTitle",
-    authroutes.authenticateToken,
-    async (req, res) => {
-        try {
-            let body = req.body;
-            const userstory = await UserStory.findOneAndUpdate(
-                { _id: body.id },
-                { $set: { title: body.title } }
-            );
-
-            userstory
-                .save()
-                .then((data) => {
-                    res.json(data);
-                })
-                .catch((err) => {
-                    res.json({ message: err });
                 });
         } catch (err) {
             console.log(err.stack);

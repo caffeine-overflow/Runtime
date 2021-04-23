@@ -1,0 +1,38 @@
+
+
+###
+//add Team
+POST http://localhost:5000/api/teams
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTExZmEwYjViMWY4MThlMDc3YjM3ZCIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCREQUR2dHNxdUJsOFlQcGx1TVppaVd1MVkyajFqVlhKSGptVjhMemxXNklQOXhOZnR2ZTBBRyIsImlhdCI6MTYxNTkyOTI4OX0.MpSql7cei26aLTPixj5lQDkFgQZjOU2JJukIpwM9jQA
+Content-Type: application/json
+
+{
+  "name": "Team Namastee",
+  "description": "This is a new Team"
+}
+
+
+###
+//get all teams
+GET http://localhost:5000/api/teams
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTExZmEwYjViMWY4MThlMDc3YjM3ZCIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCREQUR2dHNxdUJsOFlQcGx1TVppaVd1MVkyajFqVlhKSGptVjhMemxXNklQOXhOZnR2ZTBBRyIsImlhdCI6MTYxNTkyOTI4OX0.MpSql7cei26aLTPixj5lQDkFgQZjOU2JJukIpwM9jQA
+Content-Type: application/json
+
+
+###
+//get team by id
+GET http://localhost:5000/api/teams/605172848f100c6aa0aa6a35
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE3MDYyMTkwZWRhNWVhODQzODdlMSIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJmaXJzdG5hbWUiOiJEYW5pc2giLCJsYXN0bmFtZSI6IkRhdmlzIiwiaWF0IjoxNjE2MDA2OTQ1fQ.mwt4dAEoYkQsRFsC9eJ4miS9nenGd9Wzy9iEgBr2F9A
+Content-Type: application/json
+
+
+###
+//join a teams
+PUT http://localhost:5000/api/teams/join
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE2NTczZTZjZDI0MjdiNDNkOTc1OCIsImVtYWlsIjoicHJhYmluQGhvdG1haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkLzRPTWJZWUE3dzFabGs1aW16U3hmZTJGSXRsckUyOXZnaGJmeVRaYlFkME4uQVdTR1lpeFMiLCJpYXQiOjE2MTU5NDcxMzR9.7LRb1p3-5d9HDFcX-_lIU1z-kzImH9hhlJjBXZ1RZXA
+Content-Type: application/json
+
+{
+  "teamName": "Team Namastee",
+  "teamId": "605117e72900ec3aecef3ebc"
+}
