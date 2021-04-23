@@ -7,7 +7,6 @@ import {
 import { withRouter } from 'react-router-dom';
 import '../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import UserStoryForm from "./UserStoryForm";
 import SubTaskForm from "./SubTaskForm";
 import NotFound from "./NotFound";
 import NoUserStories from "../assets/noactivesprint.svg";
