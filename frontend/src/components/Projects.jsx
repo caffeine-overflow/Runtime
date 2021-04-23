@@ -105,7 +105,6 @@ function Projects(props) {
         setProjects(data.projects);
         setuserProjects(userProjects);
         setnotUserProjects(notUserProjects);
-        console.log(userProjects)
     }
 
     let close = () => {

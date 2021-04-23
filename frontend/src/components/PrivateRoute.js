@@ -16,7 +16,6 @@ function PrivateRoute({ component: Component, ...rest }) {
             const response = await fetch('http://localhost:5000/auth/validate', requestOptions);
 
             if (response.status === 200) {
-                console.log('authorized');
                 setisAuthenticated(true);
                 setValidated(true);
             }

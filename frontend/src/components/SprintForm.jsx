@@ -64,8 +64,7 @@ export default function SprintForm(props) {
                 "mins": 0,
                 "id": d._id
             });
-        })
-        console.log(tableData)
+        });
         setuserStoriesDone(tableData);
     }
 
@@ -84,58 +83,11 @@ export default function SprintForm(props) {
     const onPrevious = () => onChange(step - 1);
 
     const generateReport = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-        };
-        let reportData = await (await fetch(`http://localhost:5000/api/sprints/generateReport?sprint_id=${props.acitveSprint._id}`, requestOptions)).json();
-        console.log(reportData);
-        let { sprint, userStoryHistory, userStories, subTasks, team, teamMembers } = reportData;
-        let rows = [["Sprint Retrospective Report", "", "", "", "", sprint.name], [], ["", "", "Original", "Actual", "Estimate to Complete"]];
-        rows = [...rows, ["User Story", "Sprint", "Est. Time", "Time Spent", "(Re-Estimate)"]];
-        console.log(userStoriesDone);
-        userStories.forEach(story => {
-            userStoriesDone.forEach(editedStory => {
-                if (editedStory.id === story._id) {
-                    let re_estimated_time = `${editedStory.hours}h ${editedStory.mins}m`
-                    console.log("editedstory: ", editedStory)
-                    let estimated_time = `${editedStory.estimated_hours}h ${editedStory.estimated_mins}m`
-                    rows = [...rows, [story.description, sprint.name, estimated_time, story.time_spent, re_estimated_time]];
-                }
-            });
-            subTasks.forEach(task => {
-                if (task.parent_task === story._id) {
-                    userStoriesDone.forEach(editedStory => {
-                        if (editedStory.id === task._id) {
-                            let re_estimated_time = `${editedStory.hours}h ${editedStory.mins}m`
-                            let estimated_time = `${editedStory.estimated_hours}h ${editedStory.estimated_mins}m`
-                            rows = [...rows, [task.description, "", estimated_time, task.time_spent, re_estimated_time]];
-                        }
-                    })
-
-                }
-            })
-            rows = [...rows, [], []];
-        })
-
-        let csvContent = "data:text/csv;charset=utf-8,"
-            + rows.map(e => e.join(",")).join("\n");
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        var d = new Date();
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `${sprint._id}.csv`);
-        document.body.appendChild(link);
-        link.click();
+        //generate report
+        return;
     }
 
     const createNewSprint = async () => {
-        console.log("wth mang")
-        console.log("active sprint: ", props.acitveSprint)
         let user_stories = [];
         userStoriesDone.forEach(u => {
             user_stories.push({

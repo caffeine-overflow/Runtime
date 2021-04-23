@@ -268,7 +268,7 @@ function Sprint(props) {
 
             else if (history.attribute == "assigned_to") {
                 let assigned_to = users.find(element => element._id == history.new_value);
-                returnContent = `Changed Assiginee to ${assigned_to.firstname} ${assigned_to.lastname}`
+                returnContent = assigned_to ? `Changed Assiginee to ${assigned_to.firstname} ${assigned_to.lastname}` : `Unassigned`;
             }
 
             else if (history.attribute == "estimated_time")

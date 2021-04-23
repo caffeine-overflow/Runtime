@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 
 router.get("/byTeamId/:team_id", authroutes.authenticateToken, async (req, res) => {
 	try {
-		console.log(req.query);
 		let projects = await Project.find({ team: req.params.team_id })
 			.populate("members")
 			.populate({ path: "team", populate: [{ path: "members" }, { path: "team_lead" }] })

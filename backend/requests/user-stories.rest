@@ -1,57 +1,7 @@
 
-### 
-// Create User Story
-POST http://localhost:5000/api/userstories
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE3MDYyMTkwZWRhNWVhODQzODdlMSIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJmaXJzdG5hbWUiOiJEYW5pc2giLCJsYXN0bmFtZSI6IkRhdmlzIiwiaWF0IjoxNjE4MzU0MDAzfQ.QwhtThwtRbK7EEIQnnM145ypeTSeBqGjOF8_wNBUKbA
-Content-Type: application/json
-
-{
-  "title": "April",
-  "description": "take a few cows as well, they seem friendly",
-  "assigned_to": "60517062190eda5ea84387e1",
-  "estimated_time": "1,0",
-  "parent_task": null,
-  "sprint_id": "6060c32f31adb50ae86fead8",
-  "project_id": "6052856377cb3e545caeb3af",
-  "identifier": "MA-1"
-}
-
-
-###
-// Update User Story
-PUT http://localhost:5000/api/userstories
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE3MDYyMTkwZWRhNWVhODQzODdlMSIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJmaXJzdG5hbWUiOiJEYW5pc2giLCJsYXN0bmFtZSI6IkRhdmlzIiwiaWF0IjoxNjE3Mjg4NzE0fQ.TyheHG6p9LAbBdU39s0mKX0bRv0NjjIUoR57zmKA074
-Content-Type: application/json
-
-{
-    "_id": "6062a54d3dd2c61bf46f3128",
-    "title": "Breaking Bad",
-    "desctiption": "Walking Dead",
-    "assigned_to": "60517062190eda5ea84387e1",
-    "estimated_time": "11,30",
-    "time_spent": "1,0",
-    "moveto_backlog": true
-}
-
-
 ###
 // Get backlogs for a specific project
 GET http://localhost:5000/api/userstories/backlogs/6052856377cb3e545caeb3af
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE3MDYyMTkwZWRhNWVhODQzODdlMSIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJmaXJzdG5hbWUiOiJEYW5pc2giLCJsYXN0bmFtZSI6IkRhdmlzIiwiaWF0IjoxNjE3Mjg4NzE0fQ.TyheHG6p9LAbBdU39s0mKX0bRv0NjjIUoR57zmKA074
 Content-Type: application/json
 
-
-
-###
-// Get User Stories by Sprint
-GET http://localhost:5000/api/userstories/bySprint/6077a123516e427cf4bb546f
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE3MDYyMTkwZWRhNWVhODQzODdlMSIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJmaXJzdG5hbWUiOiJEYW5pc2giLCJsYXN0bmFtZSI6IkRhdmlzIiwiaWF0IjoxNjE3Mjg4NzE0fQ.TyheHG6p9LAbBdU39s0mKX0bRv0NjjIUoR57zmKA074
-Content-Type: application/json
-
-
-
-###
-// Get unfinished User Stories by Sprint
-GET http://localhost:5000/api/userstories/unfinishedTask/6060d8e431adb50ae86fead9
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNTE3MDYyMTkwZWRhNWVhODQzODdlMSIsImVtYWlsIjoiZGFuaXNoZGF2aXNAaG90bWFpbC5jb20iLCJmaXJzdG5hbWUiOiJEYW5pc2giLCJsYXN0bmFtZSI6IkRhdmlzIiwiaWF0IjoxNjE4NDUyMjM0fQ.Yso-Ssi998WOZFIKau56F58l0Tq-3v_BePzo1nI9rGw
-Content-Type: application/json
