@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { FlexboxGrid } from 'rsuite';
 
 export default function NotFound(props) {
