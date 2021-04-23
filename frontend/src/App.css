@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+html,
+body,
+div,
+a,
+p,
+ul,
+li {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 100;
+}
+
+.navHeader {
+  padding: 25px 20px;
+}
+
+.navHeader a {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+}
+
+.projectImageContainer {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  align-content: center !important;
+  height: 750px !important;
+  flex-wrap: wrap;
+}
+
+.teamImageContainer {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  align-content: center !important;
+  height: 600px !important;
+  flex-wrap: wrap;
+}
+
+.createProjectButton {
+  width: 50%;
+  max-width: 380px;
+  height: 60px;
+  background: #134069;
+  line-height: 60px;
+  color: #f5f5f5;
+  font-size: 20px;
+  text-align: center;
+  border-radius: 30px;
+  cursor: pointer;
+  margin: 15px auto;
+}
+
+.teamButtons {
+  width: 40%;
+  max-width: 380px;
+  height: 50px;
+  background: #134069;
+  line-height: 50px;
+  color: #f5f5f5;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 30px;
+  cursor: pointer;
+  margin: 15px auto;
+}
+
+.createProjectButton:hover,
+.teamButtons:hover {
+  background: #226697;
+}
+
+.projectHomeHeader {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.drawerBody {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.teamCard {
+  background: #e6e6e6;
+  margin: 20px;
+  cursor: pointer;
+  width: 21%;
+  min-height: 50px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.teamCard:hover {
+  background: #134069;
+  color: #f5f5f5;
+}
+
+.loginForm {
+  max-width: 400px;
+}
+.loginForm .rs-form-control-wrapper {
+  width: 100% !important;
+}
+
+.loginForm .rs-form-control-wrapper > input {
+  width: 100% !important;
+}
+
+.signOptionsLink {
+  margin-top: 25px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.rs-breadcrumb {
+  padding: 0;
+  margin: 30px 0 10px 50px;
+}
+
+.rs-breadcrumb-item {
+  font-size: 17px !important;
+  margin-right: 5px !important;
+}
+
+.dashBoardSectionImg {
+  width: 80%;
+  display: block;
+  margin: auto;
+}
