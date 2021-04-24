@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const { db_connection, port } = require("./config");
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const userroutes = require('./routes/userroutes');
 const authroutes = require('./routes/authroutes');
@@ -22,7 +21,7 @@ app.use(function (req, res, next) {
 
 //middlewares
 app.use(express.static('public'));
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
