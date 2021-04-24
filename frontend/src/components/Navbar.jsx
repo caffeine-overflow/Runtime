@@ -11,7 +11,7 @@ const CustomNav = ({ active, onSelect, ...props }) => {
         window.open('/login', '_self');
     }
     return (
-        <Nav {...props} activeKey={active} onSelect={onSelect} >
+        <Nav {...props} activeKey={active} onSelect={onSelect}>
             <Nav.Item style={{ margin: '0 50px' }}>
                 <img style={{ width: '80px' }} src={Logo} alt="logo" />
             </Nav.Item>
@@ -20,7 +20,7 @@ const CustomNav = ({ active, onSelect, ...props }) => {
             <Nav.Item className="navHeader" eventKey="products">Products</Nav.Item>
             <Nav.Item className="navHeader" eventKey="about">About</Nav.Item>
             <Dropdown
-                style={{ float: 'right', marginRight: '50px' }}
+                style={{ float: 'right', marginRight: '30px' }}
                 className="navHeader"
                 title={sessionStorage.getItem('sprintCompassUserName')}>
                 <Dropdown.Item>Profile</Dropdown.Item>
@@ -39,15 +39,14 @@ class Navbar extends React.Component {
         };
         this.handleSelect = this.handleSelect.bind(this);
     }
+
     handleSelect(activeKey) {
         if (activeKey === "teams") window.open(window.location.origin + '/teams', '_self');
     }
 
     componentDidMount() {
-        if (window.location.pathname === '/') {
-            this.setState({ active: 'home' })
-        }
-        else if (window.location.pathname === '/teams') {
+        let route = window.location.pathname.split('/');
+        if (route[1] === 'team' || route[1] === 'teams') {
             this.setState({ active: 'teams' })
         }
     }

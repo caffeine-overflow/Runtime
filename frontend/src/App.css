@@ -17,6 +17,7 @@ li {
 .navHeader a {
   font-size: 20px !important;
   font-weight: 500 !important;
+  color: #000000 !important;
 }
 
 .projectImageContainer {
@@ -86,12 +87,12 @@ li {
 
 .teamCard {
   background: #e6e6e6;
-  margin: 20px;
+  margin: 15px;
   cursor: pointer;
-  width: 21%;
   min-height: 50px;
   border-radius: 15px;
   text-align: center;
+  width: 450px;
 }
 
 .teamCard:hover {

@@ -210,7 +210,7 @@ function Teams(props) {
                 teams && teams.length > 0 &&
                 <div>
                     <div className="projectHomeHeader">Your Teams</div>
-                    <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', width: '80%', margin: '0 auto 50px auto' }}>
                         {
                             teams.map((t, i) => {
                                 return <div

@@ -13,6 +13,8 @@ import NoUserStories from "../assets/noactivesprint.svg";
 
 //four states of the stories, has to match the db
 const STORY_STATES = ["To Do", "In Progress", "Testing", "Done"];
+const STATE_COLORS = ["#01949A", "#2196F3", "#134069", "#4CAF50"];
+
 
 /*Moves an item from one list to another list.*/
 const move = (source, destination, droppableSource, droppableDestination) => {
@@ -38,29 +40,19 @@ const getItemStyle = (isDragging, draggableStyle, childTask) => ({
     borderRadius: '10px',
     // change background colour if dragging
     background: isDragging ? "#f5f5f5" : "#ffffff",
-
+    border: "1px solid #e6e6e6",
     cursor: 'pointer',
+    boxShadow: "0 2px 5px #e6e6e6",
     // styles we need to apply on draggables
     ...draggableStyle
 });
 
-const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? "#e6e6e6" : "#f1f1f1",
+const getListStyle = (length) => ({
     padding: grid,
     width: 350,
+    minHeight: length === 0 ? "100px" : "75vh",
     margin: "0 10px"
 });
-
-const getTagColor = (index) => {
-    if (index === 0)
-        return "orange"
-    else if (index === 1)
-        return "blue"
-    else if (index === 2)
-        return "violet"
-    else if (index === 3)
-        return "green"
-};
 
 function Sprint(props) {
 
@@ -94,10 +86,6 @@ function Sprint(props) {
         const dInd = +destination.droppableId;
 
         if (sInd === dInd) {
-            // const items = reorder(state[sInd], source.index, destination.index);
-            // const newState = [...state];
-            // newState[sInd] = items;
-            // setState(newState);
             return;
         } else {
             //change the state in the database
@@ -301,101 +289,113 @@ function Sprint(props) {
             {
                 state &&
                 <div>
-                    <div style={{ margin: '40px 30px', fontSize: '23px', fontWeight: '700' }}>
-                        Sprint - {props.sprint.name}
+                    <div style={{ display: "flex", justifyContent: "center", margin: "100px 0 10px 0" }}>
+                        <DragDropContext onDragEnd={onDragEnd}>
+                            {state.map((el, ind) => (
+                                <Droppable key={ind} droppableId={`${ind}`}>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            style={getListStyle(userStories.length)}
+                                            {...provided.droppableProps}
+                                        >
+                                            <div
+                                                style={{
+                                                    padding: '20px',
+                                                    margin: '10px 0',
+                                                    color: '#575757',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '18px',
+                                                    borderTop: `7px solid ${STATE_COLORS[ind]}`,
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                {
+                                                    /*not a best practice, doing this for the looks */
+                                                    ind === 0 &&
+                                                    <div style={{ position: 'absolute', fontSize: '23px', fontWeight: '700', left: 0, top: -80 }}>
+                                                        Sprint - {props.sprint.name}
+                                                    </div>
+                                                }
+                                                {STORY_STATES[ind]}
+                                            </div>
+                                            {el.map((item, index) => (
+                                                <div key={index}>
+                                                    <Draggable
+                                                        key={item._id}
+                                                        draggableId={String(item._id)}
+                                                        index={index}
+                                                    >
+                                                        {(provided, snapshot) => (
+                                                            <div
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={getItemStyle(
+                                                                    snapshot.isDragging,
+                                                                    provided.draggableProps.style,
+                                                                    !!item.parent_task
+                                                                )}
+                                                                onClick={() => {
+                                                                    setshowdrawer(true);
+                                                                    setselectedUserStory(item);
+                                                                    parseHistory(item.history);
+                                                                    settitle(item.title);
+                                                                    setdescription(item.description);
+                                                                    setassignedTo(item.assigned_to?._id);
+                                                                    setestimatedHours(item.estimated_time?.split(',')[0]);
+                                                                    setestimatedMinutes(item.estimated_time?.split(',')[1]);
+                                                                    settimeSpentHours(item.time_spent ? item.time_spent.split(',')[0] : "0");
+                                                                    settimeSpentMinuts(item.time_spent ? item.time_spent.split(',')[1] : "0");
+                                                                    setmoveToBacklog(false);
+                                                                }}
+                                                            >
+                                                                <div>
+                                                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                        <Tag
+                                                                            style={{ color: '#f5f5f5', fontWeight: '600', marginBottom: '10px', background: STATE_COLORS[ind] }}
+                                                                        >
+                                                                            {item.title}
+                                                                        </Tag>
+
+                                                                        <Tag style={{ fontWeight: '600', marginBottom: '10px', background: '#ececec' }}>
+                                                                            {item.identifier}
+                                                                        </Tag>
+                                                                    </div>
+                                                                    <div
+                                                                        style={{ margin: '10px 0' }}
+                                                                    >
+                                                                        {item.description}
+                                                                    </div>
+                                                                    <div style={{ marginTop: "15px" }}>
+                                                                        <Icon
+                                                                            icon="user-circle-o"
+                                                                            style={{ marginRight: '5px' }}
+                                                                        />
+                                                                        {
+                                                                            item.assigned_to ? `${item.assigned_to.firstname} ${item.assigned_to.lastname}` : 'Unassigned'
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </Draggable>
+                                                </div>
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                            ))}
+                        </DragDropContext>
                     </div>
                     {
-                        userStories.length === 0 ?
-                            <NotFound
-                                msg="No User Stories Found"
-                                image={NoUserStories}
-                            /> :
-                            <div style={{ display: "flex", justifyContent: "center", margin: "20px 0" }}>
-                                <DragDropContext onDragEnd={onDragEnd}>
-                                    {state.map((el, ind) => (
-                                        <Droppable key={ind} droppableId={`${ind}`}>
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    style={getListStyle(snapshot.isDraggingOver)}
-                                                    {...provided.droppableProps}
-                                                >
-                                                    <div
-                                                        style={{ margin: '20px', color: '#575757', fontWeight: 'bold', fontSize: '18px' }}
-                                                    >
-                                                        {STORY_STATES[ind]}
-                                                    </div>
-                                                    {el.map((item, index) => (
-                                                        <div key={index} style={{ padding: '0 15px' }}>
-                                                            <Draggable
-                                                                key={item._id}
-                                                                draggableId={String(item._id)}
-                                                                index={index}
-                                                            >
-                                                                {(provided, snapshot) => (
-                                                                    <div
-                                                                        ref={provided.innerRef}
-                                                                        {...provided.draggableProps}
-                                                                        {...provided.dragHandleProps}
-                                                                        style={getItemStyle(
-                                                                            snapshot.isDragging,
-                                                                            provided.draggableProps.style,
-                                                                            !!item.parent_task
-                                                                        )}
-                                                                        onClick={() => {
-                                                                            setshowdrawer(true);
-                                                                            setselectedUserStory(item);
-                                                                            parseHistory(item.history);
-                                                                            settitle(item.title);
-                                                                            setdescription(item.description);
-                                                                            setassignedTo(item.assigned_to?._id);
-                                                                            setestimatedHours(item.estimated_time?.split(',')[0]);
-                                                                            setestimatedMinutes(item.estimated_time?.split(',')[1]);
-                                                                            settimeSpentHours(item.time_spent ? item.time_spent.split(',')[0] : "0");
-                                                                            settimeSpentMinuts(item.time_spent ? item.time_spent.split(',')[1] : "0");
-                                                                            setmoveToBacklog(false);
-                                                                        }}
-                                                                    >
-                                                                        <div>
-                                                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                                                <Tag
-                                                                                    style={{ fontWeight: '600', marginBottom: '10px' }}
-                                                                                    color={getTagColor(ind)}
-                                                                                >
-                                                                                    {item.title}
-                                                                                </Tag>
-
-                                                                                <Tag style={{ fontWeight: '600', marginBottom: '10px', background: '#ececec' }}>
-                                                                                    {item.identifier}
-                                                                                </Tag>
-                                                                            </div>
-                                                                            <div
-                                                                                style={{ margin: '10px 0' }}
-                                                                            >
-                                                                                {item.description}
-                                                                            </div>
-                                                                            <div style={{ marginTop: "15px" }}>
-                                                                                <Icon
-                                                                                    icon="user-circle-o"
-                                                                                    style={{ marginRight: '5px' }}
-                                                                                />
-                                                                                {
-                                                                                    item.assigned_to ? `${item.assigned_to.firstname} ${item.assigned_to.lastname}` : 'Unassigned'
-                                                                                }
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-                                                            </Draggable>
-                                                        </div>
-                                                    ))}
-                                                    {provided.placeholder}
-                                                </div>
-                                            )}
-                                        </Droppable>
-                                    ))}
-                                </DragDropContext>
-                            </div>
+                        userStories.length === 0 &&
+                        <NotFound
+                            msg="No User Stories Found"
+                            image={NoUserStories}
+                            height="300px"
+                        />
                     }
                 </div>
             }
