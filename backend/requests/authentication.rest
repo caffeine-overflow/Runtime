@@ -7,7 +7,10 @@ Content-Type: application/json
     "firstname": "Prabin",
     "lastname": "Gyawali",
     "email": "prabin@hotmail.com",
-    "password": "password"
+    "password": "password",
+    "phone": "226-266-5666",
+    "location": "somewhere",
+    "image": "whatever"
 }
 
 

@@ -57,12 +57,12 @@ router.post("/login", async (req, res) => {
 //register function
 router.post("/register", async (req, res) => {
     try {
-        const { firstname, lastname, email, password } = req.body;
+        const { firstname, lastname, email, password, phone, location, image } = req.body;
         const existingUser = await User.findOne({ email: email });
         if (existingUser) return res.status(400).send({ msg: "User already exists" });
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword });
+        const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword, phone:phone, location:location, image:image });
         newUser.save(function (err, newUser) {
             if (err) return console.error(err);
         });
