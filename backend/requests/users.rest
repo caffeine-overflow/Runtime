@@ -10,6 +10,16 @@ Content-Type: application/json
   "new_password": "password"
 }
 
+### 
+// Update the user
+PUT http://localhost:5000/api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwODRkNGU2MWJiZjQ3Mjk3ODVkMzhhZSIsImVtYWlsIjoicHJhYmluQGhvdG1haWwuY29tIiwiZmlyc3RuYW1lIjoiUHJhYmluIiwibGFzdG5hbWUiOiJHeWF3YWxpIiwiaWF0IjoxNjE5MzE4MDEwfQ.AwT928mT-UUoCLlyHXt-L1klnSQGZNoK_YQO7wOiFmI
+Content-Type: application/json
+
+{
+  "firstname": "Mr Prabin",
+  "email": "p@bin.com"
+}
 
 ###
 //get all users

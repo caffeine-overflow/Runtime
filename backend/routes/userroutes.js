@@ -24,6 +24,30 @@ router.get("/getById/:id", authroutes.authenticateToken, async (req, res) => {
 	}
 });
 
+router.put("/", authroutes.authenticateToken, async (req, res) => {
+	try {
+		let body = req.body;
+		let user = await User.findById(req.user.id);
+		user.firstname = body.firstname ? body.firstname : user.firstname;
+		user.lastname = body.lastname ? body.lastname : user.lastname;
+		user.email = body.email ? body.email : user.email;
+		user.phone = body.phone ? body.phone : user.phone;
+		user.location = body.location ? body.location : user.location;
+		user.image = body.image ? body.image : user.image;
+
+		user.save()
+			.then((data) => {
+				res.status(200).send({ msg: "User Updated Successfully", user });
+			})
+			.catch((err) => {
+				res.status(500).send({ msg: err });
+			});
+	} catch (err) {
+		res.status(500).send({ msg: err.stack });
+	}
+});
+
+
 //Change Password
 router.put("/change_password", authroutes.authenticateToken, async (req, res) => {
 	try {
