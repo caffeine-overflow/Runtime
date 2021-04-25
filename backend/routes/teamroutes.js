@@ -9,16 +9,18 @@ router.get("/", authroutes.authenticateToken, async (req, res) => {
 		let teams = await Team.find({ members: { "$in": [req.user.id] } }).populate('members').populate('team_lead')
 		res.status(200).send({ teams });
 	} catch (err) {
-		console.log(err.stack);
+		console.error(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
 router.get("/:id", authroutes.authenticateToken, async (req, res) => {
 	try {
-		let team = await Team.findById(req.params.id).populate('members').populate('team_lead')
+		let team = await Team.findById(req.params.id).populate('members').populate('team_lead');
 		res.status(200).send({ team });
 	} catch (err) {
-		console.log(err.stack);
+		console.error(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -35,13 +37,15 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 
 		team.save()
 			.then((data) => {
-				res.json(data);
+                res.status(200).send(data);
 			})
 			.catch((err) => {
-				res.json({ message: err });
+				console.error(err.stack);
+                res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
-		console.log(err.stack);
+		console.error(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -59,15 +63,15 @@ router.put("/join", authroutes.authenticateToken, async (req, res) => {
 
 		team.save()
 			.then((data) => {
-				res.json(data);
+                res.status(200).send(data);
 			})
 			.catch((err) => {
-				res.json({ message: err });
+				console.error(err.stack);
+                res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
-
-
 	} catch (err) {
 		console.log(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 module.exports = router;

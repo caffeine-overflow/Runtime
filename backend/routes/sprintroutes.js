@@ -12,7 +12,8 @@ router.get("/allByProjectId/:project_id", authroutes.authenticateToken, async (r
 		let sprints = await Sprint.find({ project_id: req.params.project_id }).populate("created_by");
 		res.status(200).send({ sprints });
 	} catch (err) {
-		console.log(err.stack);
+		console.error(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -70,13 +71,15 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 		sprint
 			.save()
 			.then((data) => {
-				res.status(200).send({ 'msg': 'Sprint Created Succesfully' });
+				res.status(200).send({ msg: 'Sprint Created Succesfully' });
 			})
 			.catch((err) => {
-				res.status(500).send({ 'msg': err });
+				console.error(err.stack);
+                res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
-		console.log(err.stack);
+		console.error(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
