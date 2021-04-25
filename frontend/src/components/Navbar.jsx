@@ -13,7 +13,7 @@ const CustomNav = ({ active, onSelect, ...props }) => {
     return (
         <Nav {...props} activeKey={active} onSelect={onSelect}>
             <Nav.Item style={{ margin: '0 50px' }}>
-                <img style={{ width: '80px' }} src={Logo} alt="logo" />
+                <img style={{ width: '80px' }} src={Logo} alt="logo" onClick={()=>{window.location.reload();}} />
             </Nav.Item>
             <Nav.Item className="navHeader" eventKey="teams">Teams</Nav.Item>
             <Nav.Item className="navHeader" eventKey="solutions">Solutions</Nav.Item>
