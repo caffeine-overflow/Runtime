@@ -250,6 +250,7 @@ function Projects(props) {
                                                 <Avatar
                                                     circle
                                                     style={{ background: '#828282', cursor: 'pointer', margin: '10px' }}
+                                                    onClick={() => { props.history.push(`/profile/${t._id}`) }}
                                                 >
                                                     {t.firstname[0].toUpperCase()}{t.lastname[0].toUpperCase()}
                                                 </Avatar>
@@ -405,7 +406,7 @@ function Projects(props) {
                     </div>
                 </Drawer.Body>
             </Drawer>
-        </div>
+        </div >
     )
 }
 export default withRouter(Projects);
