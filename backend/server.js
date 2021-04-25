@@ -22,7 +22,7 @@ app.use(function (req, res, next) {
 
 //middlewares
 app.use(express.static('public'));
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 

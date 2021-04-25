@@ -1,22 +1,21 @@
-
 ###
 //register
 POST http://localhost:5000/auth/register 
 Content-Type: application/json
 
 {
-    "firstname":"Prabin",
-    "lastname":"Gyawali",
+    "firstname": "Prabin",
+    "lastname": "Gyawali",
     "email": "prabin@hotmail.com",
-    "password":"11111"
+    "password": "password"
 }
 
 
-
+###
 //token validation
 GET http://localhost:5000/auth/validate 
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNDdkYjY1ODI4Yzk4NTRiMGE3MzUzNiIsImVtYWlsIjoicHJhYmluQGd5YXdhbGkuY2EiLCJwYXNzd29yZCI6IiQyYiQxMCRYLnA4RWNoLjkxYk9PTzZFTHhpWXplZVpQZTFHWmtIck5pT282VVc3ejRLNUZyTDhzb2NvZSIsImlhdCI6MTYxNTkyNDM4M30.xDTsVYQtwh0pnFhSovncHROXCpHsS-rQTswjKqVPkhY
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwODRkNGU2MWJiZjQ3Mjk3ODVkMzhhZSIsImVtYWlsIjoicHJhYmluQGhvdG1haWwuY29tIiwiZmlyc3RuYW1lIjoiUHJhYmluIiwibGFzdG5hbWUiOiJHeWF3YWxpIiwiaWF0IjoxNjE5MzE4MDEwfQ.AwT928mT-UUoCLlyHXt-L1klnSQGZNoK_YQO7wOiFmI
+Content-Type: application/json
 
 
 ###
@@ -26,5 +25,5 @@ Content-Type: application/json
 
 {
     "email": "prabin@hotmail.com",
-    "password":"11111"
+    "password":"password"
 }
