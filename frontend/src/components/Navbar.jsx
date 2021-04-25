@@ -23,7 +23,11 @@ const CustomNav = ({ active, onSelect, ...props }) => {
                 style={{ float: 'right', marginRight: '30px' }}
                 className="navHeader"
                 title={sessionStorage.getItem('sprintCompassUserName')}>
-                <Dropdown.Item>Profile</Dropdown.Item>
+                <Dropdown.Item
+                    onClick={() => window.open('/profile', '_self')}
+                >
+                    Profile
+                </Dropdown.Item>
                 <Dropdown.Item>Settings</Dropdown.Item>
                 <Dropdown.Item onClick={() => logout()}>Log Out</Dropdown.Item>
             </Dropdown>

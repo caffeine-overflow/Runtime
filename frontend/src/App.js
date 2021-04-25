@@ -12,6 +12,7 @@ import {
   Route,
   Switch
 } from 'react-router-dom'
+import Profile from "./components/Profile";
 
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
         <PrivateRoute path="/myprojects" component={aaa} />
         <PrivateRoute exact path="/team/:id" component={Projects} />
         <PrivateRoute exact path="/team/project/:id" component={ProjectBoard} />
+        <PrivateRoute path="/profile" component={Profile} />
       </Switch>
     </Router>
   )
