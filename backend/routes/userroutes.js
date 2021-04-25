@@ -9,11 +9,22 @@ router.get("/", authroutes.authenticateToken, async (req, res) => {
 		let users = await User.find({});
 		res.status(200).send({ users });
 	} catch (err) {
-		console.log(err.stack);
+		res.status(500).send({ msg: err.stack });
 	}
 });
 
-//register function
+router.get("/getById/:id", authroutes.authenticateToken, async (req, res) => {
+	try {
+		let user = await User.findById(req.params.id);
+		user.password = undefined;
+		if (!user) res.status(404).send({ msg: "Cannot find the user" });
+		else res.status(200).send({ user });
+	} catch (err) {
+		res.status(500).send({ msg: err.stack });
+	}
+});
+
+//Change Password
 router.put("/change_password", authroutes.authenticateToken, async (req, res) => {
 	try {
 		const { old_password, new_password } = req.body;
