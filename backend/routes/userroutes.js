@@ -34,6 +34,7 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 		user.phone = body.phone ? body.phone : user.phone;
 		user.location = body.location ? body.location : user.location;
 		user.image = body.image ? body.image : user.image;
+		user.position = body.position ? body.position : user.position;
 
 		user.save()
 			.then((data) => {
@@ -52,7 +53,7 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 router.put("/change_password", authroutes.authenticateToken, async (req, res) => {
 	try {
 		const { old_password, new_password } = req.body;
-        const user = await User.findById(req.user.id);
+		const user = await User.findById(req.user.id);
 		if (!(await bcrypt.compare(old_password, user.password))) res.status(500).send({ msg: "Password doesnot match" });
 
 		const salt = await bcrypt.genSalt();

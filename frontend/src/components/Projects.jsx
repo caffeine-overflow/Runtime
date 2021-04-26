@@ -406,7 +406,7 @@ function Projects(props) {
                     </div>
                 </Drawer.Body>
             </Drawer>
-        </div >
+        </div>
     )
 }
 export default withRouter(Projects);

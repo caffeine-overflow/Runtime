@@ -14,15 +14,17 @@ const userstoryroutes = require('./routes/userstoryroutes');
 //mongo db connection
 mongoose.connect(db_connection, { useNewUrlParser: true, useUnifiedTopology: true });
 
-
 app.use(function (req, res, next) {
-    res.setHeader("Content-Security-Policy", "script-src 'self' https://apis.google.com");
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
     return next();
 });
 
 //middlewares
 app.use(express.static('public'));
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
