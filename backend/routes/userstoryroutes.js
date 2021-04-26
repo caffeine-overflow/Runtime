@@ -184,7 +184,7 @@ router.put(
                else don't update it
             */
 
-            userstory.sprint_id = body.moveto_backlog ? null : (body.hasOwnProperty(sprint_id) ? body.sprint_id : userstory.sprint_id);
+            userstory.sprint_id = body.moveto_backlog ? null : (body.hasOwnProperty('sprint_id') ? body.sprint_id : userstory.sprint_id);
 
             //change state to "todo" if moving to backlog
             if (body.moveto_backlog) {
