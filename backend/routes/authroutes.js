@@ -48,9 +48,10 @@ router.post("/login", async (req, res) => {
             const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname };
             const access_token = jwt.sign(userToken, token_secret);
             res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}` });
-        } else res.status(403).send({ "msg": "Invalid Email or password" });
+        } else res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
         console.log(err.stack);
+        res.status(500).send({ msg: "Something went wrong. Please try again" });
     }
 });
 
@@ -64,11 +65,15 @@ router.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword, phone:phone, location:location, image:image });
         newUser.save(function (err, newUser) {
-            if (err) return console.error(err);
+            if (err) {
+                console.error(err);
+                res.status(500).send({ msg: "Something went wrong. Please try again" });
+            }
         });
-        res.status(201).send({ msg: "Account Created" });
+        res.status(200).send({ msg: "Account Created" });
     } catch (err) {
         console.log(err.stack);
+        res.status(500).send({ msg: "Something went wrong. Please try again" });
     }
 });
 

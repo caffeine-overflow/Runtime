@@ -9,7 +9,8 @@ router.get("/", authroutes.authenticateToken, async (req, res) => {
 		let users = await User.find({});
 		res.status(200).send({ users });
 	} catch (err) {
-		res.status(500).send({ msg: err.stack });
+		console.error(err.stack)
+		res.status(500).send({ msg: "Something went wrong. Please try again!" });
 	}
 });
 
@@ -20,7 +21,8 @@ router.get("/getById/:id", authroutes.authenticateToken, async (req, res) => {
 		if (!user) res.status(404).send({ msg: "Cannot find the user" });
 		else res.status(200).send({ user });
 	} catch (err) {
-		res.status(500).send({ msg: err.stack });
+		console.error(err.stack)
+		res.status(500).send({ msg: "Something went wrong. Please try again!" });
 	}
 });
 
@@ -41,7 +43,8 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 				res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				res.status(500).send({ msg: err });
+				console.error(err.stack)
+                res.status(500).send({ msg: "Something went wrong. Please try again!" });
 			});
 	} catch (err) {
 		res.status(500).send({ msg: err.stack });
@@ -61,13 +64,15 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res) =>
 
 		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword } }, function (err, result) {
 			if (err) {
-				res.status(500).send({ msg: err });
+				console.error(err.stack)
+                res.status(500).send({ msg: "Something went wrong. Please try again!" });
 			} else {
 				res.status(200).send({ msg: "Password Updated Successfully" });
 			}
 		});
 	} catch (err) {
-		res.status(500).send({ msg: err.stack });
+		console.error(err.stack)
+		res.status(500).send({ msg: "Something went wrong. Please try again!" });
 	}
 });
 

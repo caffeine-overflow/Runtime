@@ -10,9 +10,11 @@ router.get("/byTeamId/:team_id", authroutes.authenticateToken, async (req, res) 
 			.populate("members")
 			.populate({ path: "team", populate: [{ path: "members" }, { path: "team_lead" }] })
 			.populate("project_lead");
+		
 		res.status(200).send({ projects });
 	} catch (err) {
 		console.log(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -26,6 +28,7 @@ router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req,
 		else return res.status(400).send("Cannot find the project");
 	} catch (err) {
 		console.log(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -46,13 +49,15 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 		project
 			.save()
 			.then((data) => {
-				res.json(data);
+                res.status(200).send(data);
 			})
 			.catch((err) => {
-				res.json({ message: err });
+				console.error(err.stack);
+                res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
 		console.log(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -67,13 +72,15 @@ router.put("/join", authroutes.authenticateToken, async (req, res) => {
 		project
 			.save()
 			.then((data) => {
-				res.json(data);
+                res.status(200).send(data);
 			})
 			.catch((err) => {
-				res.json({ message: err });
+				console.error(err.stack);
+                res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
 		console.log(err.stack);
+		res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 module.exports = router;
