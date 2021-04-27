@@ -44,7 +44,7 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 			})
 			.catch((err) => {
 				console.error(err.stack)
-                res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				res.status(500).send({ msg: "Something went wrong. Please try again!" });
 			});
 	} catch (err) {
 		res.status(500).send({ msg: err.stack });
@@ -57,15 +57,17 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res) =>
 	try {
 		const { old_password, new_password } = req.body;
 		const user = await User.findById(req.user.id);
-		if (!(await bcrypt.compare(old_password, user.password))) res.status(500).send({ msg: "Password doesnot match" });
+		if (!(await bcrypt.compare(old_password, user.password))) {
+			res.status(500).send({ msg: "Current password is incorrect" });
+			return;
+		}
 
 		const salt = await bcrypt.genSalt();
 		const hashedPassword = await bcrypt.hash(new_password, salt);
 
 		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword } }, function (err, result) {
 			if (err) {
-				console.error(err.stack)
-                res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				res.status(500).send({ msg: "Something went wrong. Please try again!" });
 			} else {
 				res.status(200).send({ msg: "Password Updated Successfully" });
 			}

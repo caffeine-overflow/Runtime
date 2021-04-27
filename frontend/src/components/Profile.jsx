@@ -92,7 +92,41 @@ export default function Profile(props) {
 
     const changePassword = async (status) => {
         if (status) {
-            console.log('hrer');
+            let token = sessionStorage.getItem('sprintCompassToken');
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    old_password: currentPassord,
+                    new_password: newpassword
+                })
+            };
+
+            let response = await fetch(`http://localhost:5000/api/users/change_password`, requestOptions);
+            let message = await response.json();
+            console.log(response.status);
+            if (response.status === 200) {
+                Notification.success({
+                    title: `Password Has Been Updated`,
+                    description: <div style={{ width: 220 }} rows={3} />,
+                    placement: 'topEnd'
+                });
+                setopenDrawer(false);
+                setChangeAttribute(null);
+                getUserData(id);
+                setloading(false);
+                setvalidImage(false);
+            }
+            else {
+                Notification.error({
+                    title: message.msg,
+                    description: <div style={{ width: 220 }} rows={3} />,
+                    placement: 'topEnd'
+                });
+            }
         }
     }
 
