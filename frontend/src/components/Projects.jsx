@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import ProjectSvg from "../assets/projectsHome.svg";
+import ProjectSvg from "../assets/teamsHome.svg";
+import Loader from "react-loader-spinner";
 import {
     Grid, Row, Col, Drawer, Icon, Breadcrumb,
     Button, Form, FormGroup, FormControl, ControlLabel,
@@ -204,7 +205,7 @@ function Projects(props) {
                             <span style={{ color: "#515B60" }}>Compass</span>
                         </div>
                         <div style={{ width: '100%' }}>
-                        <div
+                            <div
                                 className="teamButtons"
                                 onClick={() => setcreateProjectDrawer(true)}
                             >
@@ -217,64 +218,71 @@ function Projects(props) {
                                 Join a Project
                             </div>
                         </div>
-                    </Col>                    
+                    </Col>
                 </Row>
             </Grid>
 
             {
-                userProjects && userProjects.length > 0 &&
-                <div>
-                    <div className="projectHomeHeader">Your Projects</div>
-                    <List hover style={{ width: '80%', margin: 'auto' }}>
-                        {userProjects.map((item, index) => (
-                            <List.Item key={item._id} index={index}>
-                                <FlexboxGrid>
-                                    <FlexboxGrid.Item
-                                        colspan={10}
-                                        style={{
-                                            ...styleCenter,
-                                            flexDirection: 'column',
-                                            alignItems: 'flex-start',
-                                            overflow: 'hidden'
-                                        }}
-                                    >
-                                        <div style={titleStyle}>{item.name}</div>
-                                        <div style={slimText}>
-                                            <div>Description</div>
-                                            <div>{item.description}</div>
-                                        </div>
-                                    </FlexboxGrid.Item>
-                                    <FlexboxGrid.Item colspan={6} style={styleCenter}>
-                                        <div>
-                                            <div style={slimText}>Project Lead</div>
-                                            <div>
-                                                <Icon icon="user-circle-o" />
-                                                {`  ${item.project_lead.firstname} ${item.project_lead.lastname}`}
-                                            </div>
-                                        </div>
-                                    </FlexboxGrid.Item>
-                                    <FlexboxGrid.Item colspan={5} style={styleCenter}>
-                                        <div>
-                                            <div style={slimText}>Start Date</div>
-                                            <div style={slimText}>{item.created_at}</div>
-                                        </div>
-                                    </FlexboxGrid.Item>
-                                    <FlexboxGrid.Item
-                                        colspan={3}
-                                        style={{ ...styleCenter, justifyContent: 'center' }}
-                                    >
-                                        <div
-                                            style={{ cursor: 'pointer', color: '#134069' }}
-                                            onClick={() => props.history.push(`project/${item._id}`)}
+                (userProjects && userProjects.length > 0) ?
+                    <div>
+                        <div className="projectHomeHeader">Your Projects</div>
+                        <List hover style={{ width: '80%', margin: 'auto' }}>
+                            {userProjects.map((item, index) => (
+                                <List.Item key={item._id} index={index}>
+                                    <FlexboxGrid>
+                                        <FlexboxGrid.Item
+                                            colspan={10}
+                                            style={{
+                                                ...styleCenter,
+                                                flexDirection: 'column',
+                                                alignItems: 'flex-start',
+                                                overflow: 'hidden'
+                                            }}
                                         >
-                                            View
+                                            <div style={titleStyle}>{item.name}</div>
+                                            <div style={slimText}>
+                                                <div>Description</div>
+                                                <div>{item.description}</div>
+                                            </div>
+                                        </FlexboxGrid.Item>
+                                        <FlexboxGrid.Item colspan={6} style={styleCenter}>
+                                            <div>
+                                                <div style={slimText}>Project Lead</div>
+                                                <div>
+                                                    <Icon icon="user-circle-o" />
+                                                    {`  ${item.project_lead.firstname} ${item.project_lead.lastname}`}
+                                                </div>
+                                            </div>
+                                        </FlexboxGrid.Item>
+                                        <FlexboxGrid.Item colspan={5} style={styleCenter}>
+                                            <div>
+                                                <div style={slimText}>Start Date</div>
+                                                <div style={slimText}>{item.created_at}</div>
+                                            </div>
+                                        </FlexboxGrid.Item>
+                                        <FlexboxGrid.Item
+                                            colspan={3}
+                                            style={{ ...styleCenter, justifyContent: 'center' }}
+                                        >
+                                            <div
+                                                style={{ cursor: 'pointer', color: '#134069' }}
+                                                onClick={() => props.history.push(`project/${item._id}`)}
+                                            >
+                                                View
                                         </div>
-                                    </FlexboxGrid.Item>
-                                </FlexboxGrid>
-                            </List.Item>
-                        ))}
-                    </List>
-                </div>
+                                        </FlexboxGrid.Item>
+                                    </FlexboxGrid>
+                                </List.Item>
+                            ))}
+                        </List>
+                    </div> :
+                    <Loader
+                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
+                        type="ThreeDots"
+                        color="#134069"
+                        height={50}
+                        width={50}
+                    />
             }
             <Drawer
                 show={createProjectDrawer}
@@ -351,7 +359,7 @@ function Projects(props) {
                     </div>
                 </Drawer.Body>
             </Drawer>
-        </div>
+        </div >
     )
 }
 export default withRouter(Projects);
