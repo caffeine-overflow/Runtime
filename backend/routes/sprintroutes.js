@@ -10,10 +10,10 @@ mongoose.set('useFindAndModify', false);
 router.get("/allByProjectId/:project_id", authroutes.authenticateToken, async (req, res) => {
 	try {
 		let sprints = await Sprint.find({ project_id: req.params.project_id }).populate("created_by");
-		res.status(200).send({ sprints });
+		return res.status(200).send({ sprints });
 	} catch (err) {
 		console.error(err.stack);
-		res.status(500).send({ msg: "Something went wrong. Please try again" });
+		return res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -71,15 +71,15 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 		sprint
 			.save()
 			.then((data) => {
-				res.status(200).send({ msg: 'Sprint Created Succesfully' });
+				return res.status(200).send({ msg: 'Sprint Created Succesfully' });
 			})
 			.catch((err) => {
 				console.error(err.stack);
-                res.status(500).send({ msg: "Something went wrong. Please try again" });
+                return res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
 		console.error(err.stack);
-		res.status(500).send({ msg: "Something went wrong. Please try again" });
+		return res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 

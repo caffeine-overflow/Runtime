@@ -55,7 +55,6 @@ function Projects(props) {
     const [user, setuser] = useState(null)
     const [createProjectDrawer, setcreateProjectDrawer] = useState(false);
     const [joinProjectDrawer, setjoinProjectDrawer] = useState(false);
-    const [team, setTeam] = useState(null);
     const [projectName, setprojectName] = useState("");
     const [description, setdescription] = useState("");
     const [projects, setProjects] = useState([]);
@@ -64,19 +63,7 @@ function Projects(props) {
     const [selectedProject, setselectedProject] = useState(null);
 
     let { url } = useRouteMatch();
-    let getTeam = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/teams/${url.split('/')[2]}`, requestOptions);
-        let data = await response.json();
-        setTeam(data.team);
-    }
+
 
     let getProjects = async () => {
         let currentUser = sessionStorage.getItem('sprintCompassUser');
@@ -88,7 +75,7 @@ function Projects(props) {
                 Authorization: `Bearer ${token}`
             }
         };
-        const response = await fetch(`http://localhost:5000/api/projects/byTeamId/${url.split('/')[2]}`, requestOptions);
+        const response = await fetch(`http://localhost:5000/api/projects`, requestOptions);
         let data = await response.json();
 
         let userProjects = [];
@@ -124,7 +111,7 @@ function Projects(props) {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ 'name': projectName, 'description': description, team_id: team._id })
+                body: JSON.stringify({ 'name': projectName, 'description': description })
             };
             const response = await fetch(`http://localhost:5000/api/projects`, requestOptions);
             if (response.status === 200) {
@@ -178,21 +165,12 @@ function Projects(props) {
 
     useEffect(() => {
         setuser(sessionStorage.getItem('sprintCompassUser'));
-        getTeam();
         getProjects();
     }, []);
 
     return (
         <div>
             <Navbar />
-            <Breadcrumb>
-                <Breadcrumb.Item
-                    onClick={() => props.history.push('/')}
-                >
-                    Teams
-                </Breadcrumb.Item>
-                <Breadcrumb.Item active>Projects</Breadcrumb.Item>
-            </Breadcrumb>
             <Grid fluid>
                 <Row className="show-grid" style={{ minHeight: '500px' }}>
                     <Col xs={12} className="teamImageContainer">
@@ -202,64 +180,31 @@ function Projects(props) {
                             alt="ProjectSvg"
                         />
                     </Col>
-                    <Col xs={12} className="teamImageContainer">
+                    <Col xs={12} className="projectImageContainer">
                         <div
                             style={{
                                 fontSize: "45px",
                                 fontWeight: "bold",
                                 lineHeight: "1.2",
+                                marginBottom: "100px",
                                 width: '100%',
                                 textAlign: 'center'
                             }}
                         >
+                            Welcome To
+                            <br />
                             <span
                                 style={{
                                     color: "#2D56B3",
                                     marginRight: "10px",
                                 }}
                             >
-                                {team?.name}
+                                Sprint
                             </span>
+                            <span style={{ color: "#515B60" }}>Compass</span>
                         </div>
-                        {
-                            team &&
-                            <div style={{ fontSize: '18px', margin: '15px 0' }}>{team.description}</div>
-                        }
-                        {
-                            team && team.team_lead._id === user &&
-                            <div style={{ width: '100%', textAlign: 'center', margin: '10px 0' }}>
-                                <Tag style={{ background: '#505050', color: '#f5f5f5', padding: '5px 20px   ' }}>Access Code | {`${team._id}`}</Tag>
-                            </div>
-                        }
                         <div style={{ width: '100%' }}>
-                            <div style={{ textAlign: 'center', fontSize: '16px', margin: '10px 0', fontWeight: '600' }}>Contributors</div>
-                            {
-                                team &&
-                                <div
-                                    className="avatar-group"
-                                    style={{ justifyContent: 'center', display: 'flex', width: '50%', margin: 'auto', flexWrap: 'wrap' }}
-                                >
-                                    {
-                                        team?.members.map((t, i) => {
-                                            return <Whisper
-                                                key={i}
-                                                trigger="hover"
-                                                placement={"top"}
-                                                speaker={<Popover title={`${t.firstname} ${t.lastname}`}></Popover>}
-                                            >
-                                                <Avatar
-                                                    circle
-                                                    style={{ background: '#828282', cursor: 'pointer', margin: '10px' }}
-                                                    onClick={() => { props.history.push(`/profile/${t._id}`) }}
-                                                >
-                                                    {t.firstname[0].toUpperCase()}{t.lastname[0].toUpperCase()}
-                                                </Avatar>
-                                            </Whisper>
-                                        })
-                                    }
-                                </div>
-                            }
-                            <div
+                        <div
                                 className="teamButtons"
                                 onClick={() => setcreateProjectDrawer(true)}
                             >
@@ -272,7 +217,7 @@ function Projects(props) {
                                 Join a Project
                             </div>
                         </div>
-                    </Col>
+                    </Col>                    
                 </Row>
             </Grid>
 

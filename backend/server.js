@@ -7,7 +7,6 @@ const cors = require('cors');
 const userroutes = require('./routes/userroutes');
 const authroutes = require('./routes/authroutes');
 const projectroutes = require('./routes/projectroutes');
-const teamroutes = require('./routes/teamroutes');
 const sprintroutes = require('./routes/sprintroutes');
 const userstoryroutes = require('./routes/userstoryroutes');
 
@@ -33,7 +32,6 @@ app.use(cors());
 app.use('/auth', authroutes.router);
 app.use('/api/users', userroutes);
 app.use('/api/projects', projectroutes);
-app.use('/api/teams', teamroutes);
 app.use('/api/sprints', sprintroutes);
 app.use('/api/userstories', userstoryroutes);
 

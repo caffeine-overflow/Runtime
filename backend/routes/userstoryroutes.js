@@ -26,10 +26,10 @@ router.get(
                 .populate("sprint_id")
                 .populate("project_id")
                 .populate("history");
-            res.status(200).send({ userstories });
+            return res.status(200).send({ userstories });
         } catch (err) {
             console.error(err.stack)
-            res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );
@@ -53,10 +53,10 @@ router.get(
                 .populate("sprint_id")
                 .populate("project_id")
                 .populate("history");
-            res.status(200).send({ userstories });
+            return res.status(200).send({ userstories });
         } catch (err) {
             console.error(err.stack)
-            res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );
@@ -73,10 +73,10 @@ router.get(
                 .populate("parent_task")
                 .populate("history");
 
-            res.status(200).send({ userstories });
+            return res.status(200).send({ userstories });
         } catch (err) {
             console.error(err.stack)
-            res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );
@@ -124,15 +124,15 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
         userstory
             .save()
             .then((data) => {
-                res.status(200).send(data);
+                return res.status(200).send(data);
             })
             .catch((err) => {
 				console.error(err.stack)
-                res.status(500).send({ msg: "Something went wrong. Please try again!" });
+                return res.status(500).send({ msg: "Something went wrong. Please try again!" });
             });
     } catch (err) {
         console.error(err.stack)
-        res.status(500).send({ msg: "Something went wrong. Please try again!" });
+        return res.status(500).send({ msg: "Something went wrong. Please try again!" });
     }
 });
 
@@ -194,15 +194,15 @@ router.put(
             userstory
                 .save()
                 .then((data) => {
-                    res.status(200).send(data);
+                    return res.status(200).send(data);
                 })
                 .catch((err) => {
                     console.error(err.stack)
-                    res.status(500).send({ msg: "Something went wrong. Please try again!" });
+                    return res.status(500).send({ msg: "Something went wrong. Please try again!" });
                 });
         } catch (err) {
             console.error(err.stack)
-            res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );

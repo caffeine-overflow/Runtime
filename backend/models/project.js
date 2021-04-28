@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const project = mongoose.Schema({
     members: [{ type: Schema.Types.ObjectId, ref: 'users' }],
     project_lead: { type: Schema.Types.ObjectId, ref: 'users' , required: true},
-    team: { type: Schema.Types.ObjectId, ref: 'teams' , required: true},
     created_at: { type: String, required: true },
     name: { type: String, required: true},
     description: { type: String },
