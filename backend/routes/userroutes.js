@@ -59,7 +59,6 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res) =>
 		const user = await User.findById(req.user.id);
 		if (!(await bcrypt.compare(old_password, user.password))) {
 			return res.status(500).send({ msg: "Current password is incorrect" });
-			return;
 		}
 
 		const salt = await bcrypt.genSalt();

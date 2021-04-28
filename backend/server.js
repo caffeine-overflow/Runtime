@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const { db_connection, port } = require("./config");
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const userroutes = require('./routes/userroutes');
 const authroutes = require('./routes/authroutes');
