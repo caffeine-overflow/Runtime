@@ -1,4 +1,5 @@
 const express = require("express");
+const request = require("superagent");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { token_secret } = require("../config");
@@ -63,7 +64,7 @@ router.post("/register", async (req, res) => {
         if (existingUser) return res.status(400).send({ msg: "User already exists" });
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword, phone:phone, location:location, image:image });
+        const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword, phone: phone, location: location, image: image });
         newUser.save(function (err, newUser) {
             if (err) {
                 console.error(err);
@@ -75,6 +76,30 @@ router.post("/register", async (req, res) => {
         console.log(err.stack);
         return res.status(500).send({ msg: "Something went wrong. Please try again" });
     }
+});
+
+//route for github callback
+router.get("/git_callback", async (req, res) => {
+    const { query } = req;
+    const { code } = req.query;
+    console.log(query, code);
+
+    request
+        .post('https://github.com/login/oauth/access_token')
+        .send({
+            client_id: 'fe04f90a54e050ce4ff6',
+            client_secret: '23e75396d7bc5d19c19202d0246018fbf7b8489f',
+            code: code
+        })
+        .set('Accept', 'application/json')
+        .then((result) => {
+            console.log("-------------------------");
+            console.log(result.body);
+            res.send({ success: true, data: result.body });
+        });
+
+
+
 });
 
 module.exports = { router, authenticateToken };

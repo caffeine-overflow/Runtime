@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const { db_connection, port } = require("./config");
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const userroutes = require('./routes/userroutes');
 const authroutes = require('./routes/authroutes');
@@ -33,7 +34,6 @@ app.use('/api/users', userroutes);
 app.use('/api/projects', projectroutes);
 app.use('/api/sprints', sprintroutes);
 app.use('/api/userstories', userstoryroutes);
-
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 

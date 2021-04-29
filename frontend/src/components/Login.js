@@ -48,6 +48,7 @@ function Login(props) {
 
     const login = async (status) => {
         if (status) {
+            window.open("https://github.com/login/oauth/authorize?client_id=fe04f90a54e050ce4ff6&scope=repo");
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

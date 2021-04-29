@@ -127,7 +127,7 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
                 return res.status(200).send(data);
             })
             .catch((err) => {
-				console.error(err.stack)
+                console.error(err.stack)
                 return res.status(500).send({ msg: "Something went wrong. Please try again!" });
             });
     } catch (err) {
