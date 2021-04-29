@@ -16,6 +16,28 @@ let authenticateToken = (req, res, next) => {
 
     jwt.verify(token, token_secret, (err, user) => {
         if (err) return res.sendStatus(403);
+        //else if (user.firstLogin || !user.validGitToken)
+        else
+            return res.sendStatus(307);
+        req.user = user;
+
+        //move on from the middleware
+        next();
+    });
+};
+
+let authRenewToken = (req, res, next) => {
+    //get the token
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    //return 403 if no token
+    if (!token) return res.sendStatus(403);
+
+    jwt.verify(token, token_secret, (err, user) => {
+        if (err) return res.sendStatus(403);
+        // else if (!user.firstLogin && user.validGitToken)
+        //     return res.sendStatus(403);
         req.user = user;
 
         //move on from the middleware
@@ -25,6 +47,10 @@ let authenticateToken = (req, res, next) => {
 
 //route for authentication check
 router.get("/validate", authenticateToken, async (req, res) => {
+    return res.status(200).send({ msg: "Token validated." });
+});
+
+router.get("/authrenew_validate", authRenewToken, async (req, res) => {
     return res.status(200).send({ msg: "Token validated." });
 });
 
@@ -47,7 +73,7 @@ router.post("/login", async (req, res) => {
             //create the json web tokens
             const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname };
             const access_token = jwt.sign(userToken, token_secret);
-            return res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}` });
+            return res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}`, firstLogin: true, validGitToken: false });
         } else return res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
         console.log(err.stack);
@@ -63,7 +89,7 @@ router.post("/register", async (req, res) => {
         if (existingUser) return res.status(400).send({ msg: "User already exists" });
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword, phone:phone, location:location, image:image });
+        const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword, phone: phone, location: location, image: image });
         newUser.save(function (err, newUser) {
             if (err) {
                 console.error(err);
