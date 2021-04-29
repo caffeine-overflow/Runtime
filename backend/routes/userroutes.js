@@ -6,7 +6,8 @@ const bcrypt = require("bcrypt");
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
-		let users = await User.find({});
+		let users = await User.find({});		
+		user.password = undefined;
 		return res.status(200).send({ users });
 	} catch (err) {
 		console.error(err.stack)
@@ -64,7 +65,7 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res) =>
 		const salt = await bcrypt.genSalt();
 		const hashedPassword = await bcrypt.hash(new_password, salt);
 
-		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword } }, function (err, result) {
+		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword, first_login: false } }, function (err, result) {
 			if (err) {
 				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 			} else {

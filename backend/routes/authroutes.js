@@ -16,8 +16,7 @@ let authenticateToken = (req, res, next) => {
 
     jwt.verify(token, token_secret, (err, user) => {
         if (err) return res.sendStatus(403);
-        //else if (user.firstLogin || !user.validGitToken)
-        else
+        else if (user.first_login || !!!user.git_token)
             return res.sendStatus(307);
         req.user = user;
 
@@ -73,7 +72,7 @@ router.post("/login", async (req, res) => {
             //create the json web tokens
             const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname };
             const access_token = jwt.sign(userToken, token_secret);
-            return res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}`, firstLogin: true, validGitToken: false });
+            return res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}`, firstLogin: user.first_login, validGitToken: !!user.git_token });
         } else return res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
         console.log(err.stack);
