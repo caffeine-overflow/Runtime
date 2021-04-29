@@ -26,9 +26,10 @@ router.get(
                 .populate("sprint_id")
                 .populate("project_id")
                 .populate("history");
-            res.status(200).send({ userstories });
+            return res.status(200).send({ userstories });
         } catch (err) {
-            console.log(err.stack);
+            console.error(err.stack)
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );
@@ -52,9 +53,10 @@ router.get(
                 .populate("sprint_id")
                 .populate("project_id")
                 .populate("history");
-            res.status(200).send({ userstories });
+            return res.status(200).send({ userstories });
         } catch (err) {
-            console.log(err.stack);
+            console.error(err.stack)
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );
@@ -71,9 +73,10 @@ router.get(
                 .populate("parent_task")
                 .populate("history");
 
-            res.status(200).send({ userstories });
+            return res.status(200).send({ userstories });
         } catch (err) {
-            console.log(err.stack);
+            console.error(err.stack)
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );
@@ -121,13 +124,15 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
         userstory
             .save()
             .then((data) => {
-                res.status(200).send({ data });
+                return res.status(200).send(data);
             })
             .catch((err) => {
-                res.status(500).send({ message: err });
+				console.error(err.stack)
+                return res.status(500).send({ msg: "Something went wrong. Please try again!" });
             });
     } catch (err) {
-        console.log(err.stack);
+        console.error(err.stack)
+        return res.status(500).send({ msg: "Something went wrong. Please try again!" });
     }
 });
 
@@ -166,12 +171,12 @@ router.put(
 
             userstory = await UserStory.findOne({ _id: body._id });
             userstory.history = [...userstory.history, ...history];
-            userstory.title = body.title ? body.title : userstory.title;
-            userstory.description = body.description ? body.description : userstory.description;
-            userstory.assigned_to = body.assigned_to ? body.assigned_to : userstory.assigned_to;
-            userstory.estimated_time = body.estimated_time ? body.estimated_time : userstory.estimated_time;
-            userstory.time_spent = body.time_spent ? body.time_spent : userstory.time_spent;
-            userstory.state = body.state ? body.state : userstory.state;
+            userstory.title = body.hasOwnProperty('title') ? body.title : userstory.title;
+            userstory.description = body.hasOwnProperty('description') ? body.description : userstory.description;
+            userstory.assigned_to = body.hasOwnProperty('assigned_to') ? body.assigned_to : userstory.assigned_to;
+            userstory.estimated_time = body.hasOwnProperty('estimated_time') ? body.estimated_time : userstory.estimated_time;
+            userstory.time_spent = body.hasOwnProperty('time_spent') ? body.time_spent : userstory.time_spent;
+            userstory.state = body.hasOwnProperty('state') ? body.state : userstory.state;
 
             /* 
                If move_to_backlog is true, set sprint id to null,
@@ -179,7 +184,7 @@ router.put(
                else don't update it
             */
 
-            userstory.sprint_id = body.moveto_backlog ? null : (body.sprint_id ? body.sprint_id : userstory.sprint_id);
+            userstory.sprint_id = body.moveto_backlog ? null : (body.hasOwnProperty('sprint_id') ? body.sprint_id : userstory.sprint_id);
 
             //change state to "todo" if moving to backlog
             if (body.moveto_backlog) {
@@ -189,13 +194,15 @@ router.put(
             userstory
                 .save()
                 .then((data) => {
-                    res.json(data);
+                    return res.status(200).send(data);
                 })
                 .catch((err) => {
-                    res.status(400).json({ message: err });
+                    console.error(err.stack)
+                    return res.status(500).send({ msg: "Something went wrong. Please try again!" });
                 });
         } catch (err) {
-            console.log(err.stack);
+            console.error(err.stack)
+            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
         }
     }
 );

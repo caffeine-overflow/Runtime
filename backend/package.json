@@ -11,6 +11,7 @@
   "author": "Danish Davis, Brian Hache, Prabin Gyawali",
   "license": "ISC",
   "dependencies": {
+    "@octokit/rest": "^18.5.3",
     "bcrypt": "^5.0.0",
     "concurrently": "^6.0.2",
     "cors": "^2.8.5",

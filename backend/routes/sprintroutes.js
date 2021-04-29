@@ -10,9 +10,10 @@ mongoose.set('useFindAndModify', false);
 router.get("/allByProjectId/:project_id", authroutes.authenticateToken, async (req, res) => {
 	try {
 		let sprints = await Sprint.find({ project_id: req.params.project_id }).populate("created_by");
-		res.status(200).send({ sprints });
+		return res.status(200).send({ sprints });
 	} catch (err) {
-		console.log(err.stack);
+		console.error(err.stack);
+		return res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
@@ -57,7 +58,7 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 					history.push(userStoryHistory._id);
 				}
 				userstory.history = [...userstory.history, ...history];
-				userstory.estimated_time = body.estimated_time ? body.estimated_time : userstory.estimated_time;
+				userstory.estimated_time = body.hasOwnProperty(estimated_time) ? body.estimated_time : userstory.estimated_time;
 				userstory.sprint_id = task_detail["moveto_backlog"] ? null : sprint._id;
 				//change state to "todo" if moving to backlog
 				if (task_detail["moveto_backlog"]) {
@@ -70,13 +71,15 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 		sprint
 			.save()
 			.then((data) => {
-				res.status(200).send({ 'msg': 'Sprint Created Succesfully' });
+				return res.status(200).send({ msg: 'Sprint Created Succesfully' });
 			})
 			.catch((err) => {
-				res.status(500).send({ 'msg': err });
+				console.error(err.stack);
+                return res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
-		console.log(err.stack);
+		console.error(err.stack);
+		return res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 

@@ -7,9 +7,10 @@ const bcrypt = require("bcrypt");
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
 		let users = await User.find({});
-		res.status(200).send({ users });
+		return res.status(200).send({ users });
 	} catch (err) {
-		res.status(500).send({ msg: err.stack });
+		console.error(err.stack)
+		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 	}
 });
 
@@ -17,10 +18,11 @@ router.get("/getById/:id", authroutes.authenticateToken, async (req, res) => {
 	try {
 		let user = await User.findById(req.params.id);
 		user.password = undefined;
-		if (!user) res.status(404).send({ msg: "Cannot find the user" });
-		else res.status(200).send({ user });
+		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
+		else return res.status(200).send({ user });
 	} catch (err) {
-		res.status(500).send({ msg: err.stack });
+		console.error(err.stack)
+		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 	}
 });
 
@@ -34,16 +36,18 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 		user.phone = body.phone ? body.phone : user.phone;
 		user.location = body.location ? body.location : user.location;
 		user.image = body.image ? body.image : user.image;
+		user.position = body.position ? body.position : user.position;
 
 		user.save()
 			.then((data) => {
-				res.status(200).send({ msg: "User Updated Successfully", user });
+				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				res.status(500).send({ msg: err });
+				console.error(err.stack)
+				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 			});
 	} catch (err) {
-		res.status(500).send({ msg: err.stack });
+		return res.status(500).send({ msg: err.stack });
 	}
 });
 
@@ -52,21 +56,24 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 router.put("/change_password", authroutes.authenticateToken, async (req, res) => {
 	try {
 		const { old_password, new_password } = req.body;
-        const user = await User.findById(req.user.id);
-		if (!(await bcrypt.compare(old_password, user.password))) res.status(500).send({ msg: "Password doesnot match" });
+		const user = await User.findById(req.user.id);
+		if (!(await bcrypt.compare(old_password, user.password))) {
+			return res.status(500).send({ msg: "Current password is incorrect" });
+		}
 
 		const salt = await bcrypt.genSalt();
 		const hashedPassword = await bcrypt.hash(new_password, salt);
 
 		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword } }, function (err, result) {
 			if (err) {
-				res.status(500).send({ msg: err });
+				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 			} else {
-				res.status(200).send({ msg: "Password Updated Successfully" });
+				return res.status(200).send({ msg: "Password Updated Successfully" });
 			}
 		});
 	} catch (err) {
-		res.status(500).send({ msg: err.stack });
+		console.error(err.stack)
+		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 	}
 });
 

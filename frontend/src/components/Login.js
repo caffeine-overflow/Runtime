@@ -66,7 +66,7 @@ function Login(props) {
                 sessionStorage.setItem('sprintCompassToken', data.access_token);
                 sessionStorage.setItem('sprintCompassUser', data.user);
                 sessionStorage.setItem('sprintCompassUserName', data.name);
-                const { from } = props.location.state || { from: { pathname: '/teams' } }
+                const { from } = props.location.state || { from: { pathname: '/projects' } }
                 window.open(from.pathname, '_self');
             }
         }

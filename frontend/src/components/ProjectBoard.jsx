@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
     Sidenav, Dropdown, Nav, Container, Icon,
     Content, Sidebar, Navbar, FlexboxGrid
@@ -56,7 +56,7 @@ function ProjectBoard() {
                 Authorization: `Bearer ${token}`
             }
         };
-        const response = await fetch(`http://localhost:5000/api/sprints/allByProjectId/${url.split('/')[3]}`, requestOptions);
+        const response = await fetch(`http://localhost:5000/api/sprints/allByProjectId/${url.split('/')[2]}`, requestOptions);
         let data = await response.json();
 
         let currentSprint = data.sprints.find(d => !d.is_done);
@@ -81,9 +81,9 @@ function ProjectBoard() {
                 Authorization: `Bearer ${token}`
             }
         };
-        const response = await fetch(`http://localhost:5000/api/projects/byProjectId/${url.split('/')[3]}`, requestOptions);
+        const response = await fetch(`http://localhost:5000/api/projects/byProjectId/${url.split('/')[2]}`, requestOptions);
         let data = await response.json();
-        setcollaborators(data.project.team.members);
+        setcollaborators(data.project.members);
     }
 
     const handleToggle = () => {

@@ -15,7 +15,7 @@ const CustomNav = ({ active, onSelect, ...props }) => {
             <Nav.Item style={{ margin: '0 50px' }}>
                 <img style={{ width: '80px' }} src={Logo} alt="logo" onClick={()=>{window.location.reload();}} />
             </Nav.Item>
-            <Nav.Item className="navHeader" eventKey="teams">Teams</Nav.Item>
+            <Nav.Item className="navHeader" eventKey="projects">Projects</Nav.Item>
             <Nav.Item className="navHeader" eventKey="solutions">Solutions</Nav.Item>
             <Nav.Item className="navHeader" eventKey="products">Products</Nav.Item>
             <Nav.Item className="navHeader" eventKey="about">About</Nav.Item>
@@ -45,13 +45,13 @@ class Navbar extends React.Component {
     }
 
     handleSelect(activeKey) {
-        if (activeKey === "teams") window.open(window.location.origin + '/teams', '_self');
+        if (activeKey === "projects") window.open(window.location.origin + '/projects', '_self');
     }
 
     componentDidMount() {
         let route = window.location.pathname.split('/');
-        if (route[1] === 'team' || route[1] === 'teams') {
-            this.setState({ active: 'teams' })
+        if (route[1] === 'projects' || route[1] === 'project') {
+            this.setState({ active: 'projects' })
         }
     }
 
