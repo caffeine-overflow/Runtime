@@ -198,6 +198,7 @@ function Projects(props) {
                                 style={{
                                     color: "#2D56B3",
                                     marginRight: "10px",
+                                    fontWeight: 600
                                 }}
                             >
                                 Sprint

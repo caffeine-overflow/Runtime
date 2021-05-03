@@ -17,7 +17,6 @@ export default function Backlog(props) {
                 Authorization: `Bearer ${token}`
             }
         };
-
         const response = await fetch(`http://localhost:5000/api/userstories/backlogs/${props.project_id}`, requestOptions);
         let data = await response.json();
 

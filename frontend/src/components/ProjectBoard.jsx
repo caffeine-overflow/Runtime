@@ -291,7 +291,7 @@ function ProjectBoard() {
                             }
                             {
                                 viewBacklogToggle &&
-                                <Backlog project_id={url.split('/')[3]} acitveSprint={acitveSprint} />
+                                <Backlog project_id={url.split('/')[2]} acitveSprint={acitveSprint} />
                             }
                             {
                                 sprintHistoryToggle &&
