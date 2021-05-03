@@ -13,13 +13,11 @@ const FETCH_DATA = async (api) => {
     };
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
 
-    let data = null;
-    if (response.ok) {
-        data = await response.json();
-    }
-    else {
+    let data = await response.json();
+    console.log(data);
+    if (!response.ok) {
         Notification.error({
-            title: 'Server error, Try again later',
+            title: data.msg ?? 'Server error, Try again later',
             description: <div style={{ width: 220 }} rows={3} />,
             placement: 'topEnd'
         });

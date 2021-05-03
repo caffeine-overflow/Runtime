@@ -12,13 +12,15 @@ let authenticateToken = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
 
     //return 403 if no token
-    if (!token) return res.sendStatus(403);
+    if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
-    jwt.verify(token, token_secret, (err, user) => {
-        if (err) return res.sendStatus(403);
-        else if (user.first_login || !!!user.git_token)
-            return res.sendStatus(307);
-        req.user = user;
+    jwt.verify(token, token_secret, async (err, user) => {
+        if(!user)  return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser =  await User.findById(user.id);
+        if (err) return res.status(403).send({ msg: "Not Authorized" });
+        else if (tempUser.first_login || !!!tempUser.git_token)
+            return res.status(307).send({ msg: "Redirecting..." });
+        req.user = tempUser;
 
         //move on from the middleware
         next();
@@ -31,13 +33,35 @@ let authRenewToken = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
 
     //return 403 if no token
-    if (!token) return res.sendStatus(403);
+    if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
-    jwt.verify(token, token_secret, (err, user) => {
-        if (err) return res.sendStatus(403);
-        // else if (!user.firstLogin && user.validGitToken)
-        //     return res.sendStatus(403);
-        req.user = user;
+    jwt.verify(token, token_secret, async (err, user) => {
+        if(!user)  return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser =  await User.findById(user.id);
+        if (err) return res.status(403).send({ msg: "Not Authorized" });
+        else if (!tempUser.first_login && !!tempUser.git_token)
+            return res.status(307).send({ msg: "Redirecting..." });
+        req.user = tempUser;
+
+        //move on from the middleware
+        next();
+    });
+};
+
+
+let gitAuthMiddleware = (req, res, next) => {
+    //get the token
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    //return 403 if no token
+    if (!token) return res.status(403).send({ msg: "Not Authorized" });
+
+    jwt.verify(token, token_secret, async (err, user) => {
+        if(!user)  return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser =  await User.findById(user.id);
+        if (err) return res.status(403).send({ msg: "Not Authorized" });
+        req.user = tempUser;
 
         //move on from the middleware
         next();
@@ -97,9 +121,10 @@ router.post("/register", async (req, res) => {
         });
         return res.status(200).send({ msg: "Account Created" });
     } catch (err) {
+        console.log('err.stack');
         console.log(err.stack);
         return res.status(500).send({ msg: "Something went wrong. Please try again" });
     }
 });
 
-module.exports = { router, authenticateToken, authRenewToken };
+module.exports = { router, authenticateToken, authRenewToken, gitAuthMiddleware };

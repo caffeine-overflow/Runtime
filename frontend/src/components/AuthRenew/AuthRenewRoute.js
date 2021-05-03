@@ -3,11 +3,12 @@ import { Redirect, Route } from 'react-router-dom'
 
 function PrivateRoute({ component: Component, ...rest }) {
     const [isAuthenticated, setisAuthenticated] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState(true);
     const [Validated, setValidated] = useState(false)
 
     useEffect(() => {
         let token = sessionStorage.getItem('sprintCompassToken');
-        console.log('im hererere');
+
         async function fetchData() {
             const requestOptions = {
                 method: 'GET',
@@ -16,29 +17,51 @@ function PrivateRoute({ component: Component, ...rest }) {
             const response = await fetch('http://localhost:5000/auth/authrenew_validate', requestOptions);
 
             if (response.status === 200) {
+                setIsAuthorized(true);
                 setisAuthenticated(true);
-                setValidated(true);
+            }
+            else if (response.status === 403) {
+                setIsAuthorized(false);
             }
             else {
+                setIsAuthorized(true);
                 setisAuthenticated(false);
-                setValidated(true);
             }
+            setValidated(true);
         }
         fetchData();
     }, []);
 
-    if (!isAuthenticated && !Validated) {
+    if (!Validated) {
         return <div></div>
     };
 
-    return <Route {...rest} render={(props) => (
-        isAuthenticated
-            ? <Component {...props} />
-            : <Redirect to={{
-                pathname: '/login',
-                state: { from: props.location }
-            }} />
-    )} />
+    return (
+		<Route
+			{...rest}
+			render={(props) =>
+				isAuthorized ? (
+					isAuthenticated ? (
+						<Component {...props} />
+					) : (
+						<Redirect
+							to={{
+								pathname: "/projects",
+								state: { from: props.location },
+							}}
+						/>
+					)
+				) : (
+					<Redirect
+						to={{
+							pathname: "/login",
+							state: { from: props.location },
+						}}
+					/>
+				)
+			}
+		/>
+	);
 }
 
 export default PrivateRoute;

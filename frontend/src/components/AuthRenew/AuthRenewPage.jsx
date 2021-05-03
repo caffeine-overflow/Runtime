@@ -3,16 +3,17 @@ import PasswordRenewSvg from '../../assets/passwordRenew.svg';
 import BioSvg from '../../assets/bio.svg';
 import Gitsvg from '../../assets/git.svg';
 import './authrenew.css';
-import {
-    Icon, Steps, Panel, Button, Form, FormControl, Drawer,
-    FormGroup, ControlLabel, Schema, Notification
-} from 'rsuite';
 import FETCH_DATA from "../../utility/utils";
+import {
+    Icon, Form, FormControl, Drawer,
+    FormGroup, ControlLabel, Schema, Notification,
+    Steps, Panel, ButtonGroup, Button, Loader 
+} from 'rsuite';
 
 const { StringType } = Schema.Types;
 
 
-export default function AuthRenewPage() {
+export default function AuthRenewPage(props) {
 
     const [user, setuser] = useState(null);
 
@@ -23,7 +24,11 @@ export default function AuthRenewPage() {
     const [newpassword, setnewpassword] = useState("");
     const [confirmPassword, setconfirmPassword] = useState("");
 
-    const [step, setStep] = useState(0);
+    
+    const [authenticating, setAuthenticating] = React.useState(false);
+    const [authorizedUser, setAuthorizedUser] = React.useState(false);
+
+    const [step, setStep] = useState(2);
     const [loading, setloading] = useState(false);
 
     const getUserData = async () => {
@@ -110,6 +115,37 @@ export default function AuthRenewPage() {
         getUserData();
     }, [])
 
+    const refresh = async () => {
+        setAuthenticating(false);
+        let response = await FETCH_DATA(`gitauth/authorized`);
+        if (response.status === 200) {
+            setAuthorizedUser(response.data.authorized);
+            props.history.push('/projects');
+        }
+    }
+
+    const authorize = () => {
+        setAuthenticating(true);
+        var parameters = "location=0,width=800,height=650";
+        let url = `https://github.com/login/oauth/authorize?client_id=9bf7686b61e73fbd065a&scope=repo&state=${sessionStorage.getItem('sprintCompassUser')}`;
+
+        var win = window.open(url, "", parameters);
+        var pollOAuth = window.setInterval(function () {
+            try {
+                if (win.closed) {
+                    window.clearInterval(pollOAuth);
+                    win.close();
+                    refresh();
+                }
+                if (win.document.URL.indexOf("code") != -1) {
+                    window.clearInterval(pollOAuth);
+                    win.close();
+                    refresh();
+                }
+            } catch (e) {
+            }
+        }, 100);
+    }
     return (
         <div style={{ width: '80%', margin: 'auto', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ width: '100%', height: '80vh' }}>
@@ -257,6 +293,17 @@ export default function AuthRenewPage() {
                                         </div>
                                     </section>
                                 </div>}
+                            {
+                                step === 2 &&
+                                <Button
+                                    type="submit"
+                                    style={authenticating || authorizedUser ? styles.disabled__button : styles.update__button}
+                                    onClick={authorize}
+                                    disabled={authenticating || authorizedUser}
+                                >
+                                    Connect to Git
+                                </Button>
+                            }
                         </div>
                     </section>
                 </Panel>
@@ -268,14 +315,6 @@ export default function AuthRenewPage() {
                         onClick={() => setStep(2)}
                     >
                         Next
-                    </Button>
-                }
-                {
-                    step === 2 &&
-                    <Button
-                        style={styles.next__button}
-                    >
-                        Finish
                     </Button>
                 }
             </div>
@@ -383,6 +422,12 @@ const styles = {
     update__button: {
         marginTop: '50px',
         background: '#193A5A',
+        color: '#f5f5f5',
+        minWidth: '300px',
+    },
+    disabled__button: {
+        marginTop: '50px',
+        background: 'grey',
         color: '#f5f5f5',
         minWidth: '300px',
     },
