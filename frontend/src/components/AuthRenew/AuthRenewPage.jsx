@@ -127,8 +127,7 @@ export default function AuthRenewPage(props) {
     const authorize = () => {
         setAuthenticating(true);
         var parameters = "location=0,width=800,height=650";
-        let url = `https://github.com/login/oauth/authorize?client_id=9bf7686b61e73fbd065a&scope=repo&state=${sessionStorage.getItem('sprintCompassUser')}`;
-
+        let url = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&scope=repo&state=${sessionStorage.getItem('sprintCompassUser')}`;
         var win = window.open(url, "", parameters);
         var pollOAuth = window.setInterval(function () {
             try {
