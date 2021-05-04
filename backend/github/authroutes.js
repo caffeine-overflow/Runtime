@@ -4,17 +4,16 @@ const authroutes = require("../routes/authroutes");
 const octokit = require("./instance");
 const router = express.Router();
 const { User } = require("../models/user");
-const { Octokit } = require("@octokit/rest");
+const { github_client_id, github_client_secret } = require("../config");
 
 //route for github callback
 router.get("/callback", async (req, res) => {
-    const { query } = req;
     const { code, state } = req.query;
     request
         .post('https://github.com/login/oauth/access_token')
         .send({
-            client_id: '9bf7686b61e73fbd065a',
-            client_secret: '96c6add10bdf8ae41ab2b2c63cf7d6e13d2bbd35',
+            client_id: github_client_id,
+            client_secret: github_client_secret,
             code: code
         })
         .set('Accept', 'application/json')
@@ -29,23 +28,20 @@ router.get("/callback", async (req, res) => {
                     }
                 });
             }
-           //return res.status(500).send({ success: false, data: result.body });
         });
 });
 
 router.get("/authorized", authroutes.gitAuthMiddleware, async (req, res) => {
     try {
-        console.log('data');
         let user = await User.findById(req.user.id);
         let octo = octokit(user.git_token);
         let { data } = await octo.request("/user");
-        console.log(data);
-        if(data.type == 'User')
+        if (data.type == 'User')
             return res.status(200).send({ authorized: true });
     } catch (err) {
-		console.error(err.stack)
-		return res.status(500).send({msg:"Failed to authorize github" , authorized: false });
-	}
+        console.error(err.stack)
+        return res.status(500).send({ msg: "Failed to authorize github", authorized: false });
+    }
 });
 
-module.exports = router ;
+module.exports = router;
