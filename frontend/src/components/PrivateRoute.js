@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
+import Loader from "react-loader-spinner";
 
 function PrivateRoute({ component: Component, ...rest }) {
 	const [Validated, setValidated] = useState(false);
@@ -16,11 +17,11 @@ function PrivateRoute({ component: Component, ...rest }) {
 			};
 			const response = await fetch("http://localhost:5000/auth/validate", requestOptions);
 
-            if (response.status === 403) {
+			if (response.status === 403) {
 				setIsAuthorized(false);
 			} else if (response.status === 307) {
 				setrenewAuth(true);
-			} 
+			}
 
 			setValidated(true);
 		}
@@ -28,7 +29,13 @@ function PrivateRoute({ component: Component, ...rest }) {
 	}, []);
 
 	if (!Validated) {
-		return <div></div>;
+		return <Loader
+			style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}
+			type="BallTriangle"
+			color="#134069"
+			height={50}
+			width={50}
+		/>
 	}
 
 	return (

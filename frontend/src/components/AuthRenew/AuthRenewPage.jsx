@@ -7,7 +7,7 @@ import FETCH_DATA from "../../utility/utils";
 import {
     Icon, Form, FormControl, Drawer,
     FormGroup, ControlLabel, Schema, Notification,
-    Steps, Panel, ButtonGroup, Button, Loader
+    Steps, Panel, Button
 } from 'rsuite';
 
 const { StringType } = Schema.Types;
@@ -63,7 +63,6 @@ export default function AuthRenewPage(props) {
                     description: <div style={{ width: 220 }} rows={3} />,
                     placement: 'topEnd'
                 });
-                setloading(false);
                 setStep(1);
             }
             else {
@@ -73,6 +72,7 @@ export default function AuthRenewPage(props) {
                     placement: 'topEnd'
                 });
             }
+            setloading(false);
         }
     }
 

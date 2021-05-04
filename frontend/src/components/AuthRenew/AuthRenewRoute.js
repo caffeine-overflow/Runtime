@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect, Route } from 'react-router-dom'
+import Loader from "react-loader-spinner";
 
 function PrivateRoute({ component: Component, ...rest }) {
     const [isAuthenticated, setisAuthenticated] = useState(false);
@@ -33,35 +34,41 @@ function PrivateRoute({ component: Component, ...rest }) {
     }, []);
 
     if (!Validated) {
-        return <div></div>
+        return <Loader
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}
+            type="BallTriangle"
+            color="#134069"
+            height={50}
+            width={50}
+        />
     };
 
     return (
-		<Route
-			{...rest}
-			render={(props) =>
-				isAuthorized ? (
-					isAuthenticated ? (
-						<Component {...props} />
-					) : (
-						<Redirect
-							to={{
-								pathname: "/projects",
-								state: { from: props.location },
-							}}
-						/>
-					)
-				) : (
-					<Redirect
-						to={{
-							pathname: "/login",
-							state: { from: props.location },
-						}}
-					/>
-				)
-			}
-		/>
-	);
+        <Route
+            {...rest}
+            render={(props) =>
+                isAuthorized ? (
+                    isAuthenticated ? (
+                        <Component {...props} />
+                    ) : (
+                        <Redirect
+                            to={{
+                                pathname: "/projects",
+                                state: { from: props.location },
+                            }}
+                        />
+                    )
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: "/login",
+                            state: { from: props.location },
+                        }}
+                    />
+                )
+            }
+        />
+    );
 }
 
 export default PrivateRoute;
