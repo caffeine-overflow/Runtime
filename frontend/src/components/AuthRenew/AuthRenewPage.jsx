@@ -7,7 +7,7 @@ import FETCH_DATA from "../../utility/utils";
 import {
     Icon, Form, FormControl, Drawer,
     FormGroup, ControlLabel, Schema, Notification,
-    Steps, Panel, ButtonGroup, Button, Loader 
+    Steps, Panel, ButtonGroup, Button, Loader
 } from 'rsuite';
 
 const { StringType } = Schema.Types;
@@ -24,11 +24,11 @@ export default function AuthRenewPage(props) {
     const [newpassword, setnewpassword] = useState("");
     const [confirmPassword, setconfirmPassword] = useState("");
 
-    
+
     const [authenticating, setAuthenticating] = React.useState(false);
     const [authorizedUser, setAuthorizedUser] = React.useState(false);
 
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(0);
     const [loading, setloading] = useState(false);
 
     const getUserData = async () => {
@@ -301,7 +301,7 @@ export default function AuthRenewPage(props) {
                                     onClick={authorize}
                                     disabled={authenticating || authorizedUser}
                                 >
-                                    Connect to Git
+                                    Authorize Github
                                 </Button>
                             }
                         </div>
@@ -352,7 +352,7 @@ export default function AuthRenewPage(props) {
                     }
                 </Drawer.Body>
             </Drawer>
-        </div >
+        </div>
     )
 }
 

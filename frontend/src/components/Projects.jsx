@@ -172,57 +172,54 @@ function Projects(props) {
     return (
         <div>
             <Navbar />
-            <Grid fluid>
-                <Row className="show-grid" style={{ minHeight: '500px' }}>
-                    <Col xs={12} className="teamImageContainer">
-                        <img
-                            style={{ width: "80%", maxWidth: "750px" }}
-                            src={ProjectSvg}
-                            alt="ProjectSvg"
-                        />
-                    </Col>
-                    <Col xs={12} className="projectImageContainer">
-                        <div
+            <section className="projectBannerContainer">
+                <div className="teamImageContainer">
+                    <img
+                        style={{ width: "80%", maxWidth: "600px" }}
+                        src={ProjectSvg}
+                        alt="ProjectSvg"
+                    />
+                </div>
+                <div className="projectImageContainer">
+                    <div
+                        style={{
+                            fontSize: "45px",
+                            fontWeight: "bold",
+                            lineHeight: "1.2",
+                            marginBottom: "50px",
+                            width: '100%',
+                            textAlign: 'center'
+                        }}
+                    >
+                        Welcome To
+                            <br />
+                        <span
                             style={{
-                                fontSize: "45px",
-                                fontWeight: "bold",
-                                lineHeight: "1.2",
-                                marginBottom: "100px",
-                                width: '100%',
-                                textAlign: 'center'
+                                color: "#2D56B3",
+                                marginRight: "10px",
+                                fontWeight: 600
                             }}
                         >
-                            Welcome To
-                            <br />
-                            <span
-                                style={{
-                                    color: "#2D56B3",
-                                    marginRight: "10px",
-                                    fontWeight: 600
-                                }}
-                            >
-                                Sprint
+                            Sprint
                             </span>
-                            <span style={{ color: "#515B60" }}>Compass</span>
-                        </div>
-                        <div style={{ width: '100%' }}>
-                            <div
-                                className="teamButtons"
-                                onClick={() => setcreateProjectDrawer(true)}
-                            >
-                                Create a Project
+                        <span style={{ color: "#515B60" }}>Compass</span>
+                    </div>
+                    <div style={{ width: '100%' }}>
+                        <div
+                            className="teamButtons"
+                            onClick={() => setcreateProjectDrawer(true)}
+                        >
+                            Create a Project
                             </div>
-                            <div
-                                className="teamButtons"
-                                onClick={() => setjoinProjectDrawer(true)}
-                            >
-                                Join a Project
+                        <div
+                            className="teamButtons"
+                            onClick={() => setjoinProjectDrawer(true)}
+                        >
+                            Join a Project
                             </div>
-                        </div>
-                    </Col>
-                </Row>
-            </Grid>
-
+                    </div>
+                </div>
+            </section>
             {
                 (userProjects && userProjects.length > 0) ?
                     <div>

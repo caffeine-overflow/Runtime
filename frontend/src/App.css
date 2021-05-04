@@ -20,22 +20,24 @@ li {
   color: #000000 !important;
 }
 
-.projectImageContainer {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  align-content: center !important;
-  height: 750px !important;
+.projectBannerContainer {
+  display: flex;
+  justify-content: center;
   flex-wrap: wrap;
+  height: 70vh;
 }
 
+.projectImageContainer,
 .teamImageContainer {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  align-content: center !important;
-  height: 600px !important;
+  width: 40%;
+  display: flex;
+  justify-content: center;
   flex-wrap: wrap;
+  align-content: center;
+}
+
+.teamImageContainer > div {
+  width: 100%;
 }
 
 .createProjectButton {
