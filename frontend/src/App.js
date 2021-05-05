@@ -14,6 +14,7 @@ import {
   Switch
 } from 'react-router-dom'
 import Profile from "./components/Profile";
+import adminPage from "./components/Admin/adminPage";
 
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
         <PrivateRoute exact path="/projects" component={Projects} />
         <PrivateRoute exact path="/project/:id" component={ProjectBoard} />
         <PrivateRoute path="/profile" component={Profile} />
+        <PrivateRoute path="/admin" component={adminPage} />
         <AuthRenewRoute path="/auth" component={AuthRenewPage} />
       </Switch>
     </Router>

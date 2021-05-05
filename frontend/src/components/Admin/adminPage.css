@@ -1,0 +1,64 @@
+.adminContainer {
+  height: 80vh;
+  width: 90%;
+  margin: 50px auto 20px auto;
+  display: flex;
+}
+
+.adminContainer__1 {
+  width: 450px;
+  height: 100%;
+  padding: 10px;
+  background: #134069;
+  border-radius: 15px;
+}
+
+.adminContainer__2 {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+}
+
+.functionCard {
+  width: 80%;
+  margin: 20px auto;
+  height: 80px;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.functionCard:hover {
+  background: #e6e6e6;
+}
+
+.functionCard > div {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.functionCard > div:first-of-type {
+  width: 40%;
+  justify-content: center;
+}
+
+.functionCard > div:nth-of-type(2) {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.adminHome {
+  width: 80%;
+}
+
+.adminHome > img {
+  max-width: 700px;
+  display: block;
+  margin: auto;
+}

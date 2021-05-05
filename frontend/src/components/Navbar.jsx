@@ -18,7 +18,7 @@ const CustomNav = ({ active, onSelect, ...props }) => {
             <Nav.Item className="navHeader" eventKey="projects">Projects</Nav.Item>
             <Nav.Item className="navHeader" eventKey="solutions">Solutions</Nav.Item>
             <Nav.Item className="navHeader" eventKey="products">Products</Nav.Item>
-            <Nav.Item className="navHeader" eventKey="about">About</Nav.Item>
+            <Nav.Item className="navHeader" eventKey="admin">Administrator</Nav.Item>
             <Dropdown
                 style={{ float: 'right', marginRight: '30px' }}
                 className="navHeader"
@@ -46,12 +46,16 @@ class Navbar extends React.Component {
 
     handleSelect(activeKey) {
         if (activeKey === "projects") window.open(window.location.origin + '/projects', '_self');
+        else if (activeKey === "admin") window.open(window.location.origin + '/admin', '_self');
     }
 
     componentDidMount() {
         let route = window.location.pathname.split('/');
         if (route[1] === 'projects' || route[1] === 'project') {
-            this.setState({ active: 'projects' })
+            this.setState({ active: 'projects' });
+        }
+        else if (route[1] === 'admin') {
+            this.setState({ active: 'admin' });
         }
     }
 
