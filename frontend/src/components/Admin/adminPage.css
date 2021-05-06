@@ -62,3 +62,21 @@
   display: block;
   margin: auto;
 }
+
+.functionContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+}
+
+.functionContainer > div {
+  width: 50%;
+  margin: auto;
+}
+
+.addUserForm {
+  width: 300px;
+  margin: auto;
+}

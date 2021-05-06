@@ -15,8 +15,8 @@ let authenticateToken = (req, res, next) => {
     if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
     jwt.verify(token, token_secret, async (err, user) => {
-        if(!user)  return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser =  await User.findById(user.id);
+        if (!user) return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser = await User.findById(user.id);
         if (err) return res.status(403).send({ msg: "Not Authorized" });
         else if (tempUser.first_login || !!!tempUser.git_token)
             return res.status(307).send({ msg: "Redirecting..." });
@@ -36,8 +36,8 @@ let authRenewToken = (req, res, next) => {
     if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
     jwt.verify(token, token_secret, async (err, user) => {
-        if(!user)  return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser =  await User.findById(user.id);
+        if (!user) return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser = await User.findById(user.id);
         if (err) return res.status(403).send({ msg: "Not Authorized" });
         else if (!tempUser.first_login && !!tempUser.git_token)
             return res.status(307).send({ msg: "Redirecting..." });
@@ -58,8 +58,8 @@ let gitAuthMiddleware = (req, res, next) => {
     if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
     jwt.verify(token, token_secret, async (err, user) => {
-        if(!user)  return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser =  await User.findById(user.id);
+        if (!user) return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser = await User.findById(user.id);
         if (err) return res.status(403).send({ msg: "Not Authorized" });
         req.user = tempUser;
 
@@ -105,24 +105,37 @@ router.post("/login", async (req, res) => {
 });
 
 //register function
-router.post("/register", async (req, res) => {
+router.post("/register", authenticateToken, async (req, res) => {
     try {
-        const { firstname, lastname, email, password, phone, location, image } = req.body;
+        const { firstname, lastname, email, phone, location, image } = req.body;
+
         const existingUser = await User.findOne({ email: email });
-        if (existingUser) return res.status(400).send({ msg: "User already exists" });
+        if (existingUser) {
+            return res.status(400).send({ msg: "User already exists" });
+        }
+
+        let password = "abc";
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({ firstname: firstname, lastname: lastname, email: email, password: hashedPassword, phone: phone, location: location, image: image });
-        newUser.save(function (err, newUser) {
+        const newUser = new User({
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: hashedPassword,
+            phone: phone,
+            location: location,
+            image: image
+        });
+
+        newUser.save(function (err) {
             if (err) {
-                console.error(err);
                 return res.status(500).send({ msg: "Something went wrong. Please try again" });
             }
+            else {
+                return res.status(200).send({ msg: "Account Created" });
+            }
         });
-        return res.status(200).send({ msg: "Account Created" });
     } catch (err) {
-        console.log('err.stack');
-        console.log(err.stack);
         return res.status(500).send({ msg: "Something went wrong. Please try again" });
     }
 });
