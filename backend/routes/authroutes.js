@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const { token_secret } = require("../config");
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user.js");
+const { testEmail } = require('../utils/email');
+
 
 //function to authenticate the token, act as a middleware
 let authenticateToken = (req, res, next) => {
@@ -132,6 +134,7 @@ router.post("/register", authenticateToken, async (req, res) => {
                 return res.status(500).send({ msg: "Something went wrong. Please try again" });
             }
             else {
+                testEmail().catch(console.error);
                 return res.status(200).send({ msg: "Account Created" });
             }
         });
