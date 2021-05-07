@@ -33,6 +33,14 @@ const user = mongoose.Schema({
         type: String,
         required: false
     },
+    first_login: {
+        type: Boolean,
+        required: false
+    },
+	git_token: {
+		type: String,
+		required: false,
+	},
 });
 
 const userSchema = mongoose.model('users', user);

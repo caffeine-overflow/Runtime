@@ -8,6 +8,7 @@ const authroutes = require('./routes/authroutes');
 const projectroutes = require('./routes/projectroutes');
 const sprintroutes = require('./routes/sprintroutes');
 const userstoryroutes = require('./routes/userstoryroutes');
+const gitauthroutes = require('./github/authroutes');
 
 //mongo db connection
 mongoose.connect(db_connection, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -29,6 +30,7 @@ app.use(cors());
 
 //declare routes
 app.use('/auth', authroutes.router);
+app.use('/gitauth', gitauthroutes);
 app.use('/api/users', userroutes);
 app.use('/api/projects', projectroutes);
 app.use('/api/sprints', sprintroutes);

@@ -67,7 +67,12 @@ function Login(props) {
                 sessionStorage.setItem('sprintCompassUser', data.user);
                 sessionStorage.setItem('sprintCompassUserName', data.name);
                 const { from } = props.location.state || { from: { pathname: '/projects' } }
-                window.open(from.pathname, '_self');
+                if (data.firstLogin || !data.validGitToken) {
+                    window.open("/auth", '_self');
+                }
+                else {
+                    window.open(from.pathname, '_self');
+                }
             }
         }
     };
