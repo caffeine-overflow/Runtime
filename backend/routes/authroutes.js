@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const { token_secret } = require("../config");
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user.js");
-const { testEmail } = require('../utils/email');
+const { sendEmail } = require('../utils/email');
+const { welcomeEmail } = require("../utils/email_templates/welcome");
 
 
 //function to authenticate the token, act as a middleware
@@ -134,7 +135,8 @@ router.post("/register", authenticateToken, async (req, res) => {
                 return res.status(500).send({ msg: "Something went wrong. Please try again" });
             }
             else {
-                testEmail().catch(console.error);
+                let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
+                sendEmail(htmlTemplate, email, "Welcome").catch(console.error);
                 return res.status(200).send({ msg: "Account Created" });
             }
         });
