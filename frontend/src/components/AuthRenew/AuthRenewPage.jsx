@@ -28,12 +28,14 @@ export default function AuthRenewPage(props) {
     const [authenticating, setAuthenticating] = React.useState(false);
     const [authorizedUser, setAuthorizedUser] = React.useState(false);
 
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState();
     const [loading, setloading] = useState(false);
 
     const getUserData = async () => {
         let response = await FETCH_DATA(`api/users/getUserById/${sessionStorage.getItem('sprintCompassUser')}`);
         if (response.status === 200) {
+            let user = response.data.user;
+            user.first_login ? setStep(0) : setStep(2);
             setuser(response.data.user);
         }
     };
@@ -110,41 +112,59 @@ export default function AuthRenewPage(props) {
             setloading(false);
         }
     }
+    const getQueryVariable = (variable) => {
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split("=");
+			if (pair[0] == variable) {
+				return pair[1];
+			}
+		}
+		return false;
+	};
+
+    const checkAuthorization = async () => {
+		if (getQueryVariable("error") === "access_denied") {
+			Notification.error({
+				title: `Authorization Failed`,
+				description: <div style={{ width: 220 }} rows={3} />,
+				placement: "topEnd",
+			});
+		}
+		let code = getQueryVariable("code");
+		if (code) {
+			const response = await FETCH_DATA(`gitauth/get_token?code=${code}`);
+			if (response.status === 200) {
+				Notification.success({
+					title: "Successfully authorized github",
+					description: <div style={{ width: 220 }} rows={3} />,
+					placement: "topEnd",
+				});
+				props.history.push("/projects");
+			} else {
+				Notification.error({
+					title: "Failed to Authorize with GitHub",
+					description: <div style={{ width: 220 }} rows={3} />,
+					placement: "topEnd",
+				});
+			}
+		}
+	};
+
 
     useEffect(() => {
+        checkAuthorization();
         getUserData();
     }, [])
 
-    const refresh = async () => {
-        setAuthenticating(false);
-        let response = await FETCH_DATA(`gitauth/authorized`);
-        if (response.status === 200) {
-            setAuthorizedUser(response.data.authorized);
-            props.history.push('/projects');
-        }
-    }
 
     const authorize = () => {
         setAuthenticating(true);
-        var parameters = "location=0,width=800,height=650";
-        let url = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&scope=repo&state=${sessionStorage.getItem('sprintCompassUser')}`;
-        var win = window.open(url, "", parameters);
-        var pollOAuth = window.setInterval(function () {
-            try {
-                if (win.closed) {
-                    window.clearInterval(pollOAuth);
-                    win.close();
-                    refresh();
-                }
-                if (win.document.URL.indexOf("code") != -1) {
-                    window.clearInterval(pollOAuth);
-                    win.close();
-                    refresh();
-                }
-            } catch (e) {
-            }
-        }, 100);
+        let url = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&scope=repo`;
+        window.open(url, "_self");
     }
+
     return (
         <div style={{ width: '80%', margin: 'auto', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ width: '100%', height: '80vh' }}>
