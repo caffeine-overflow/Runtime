@@ -6,11 +6,11 @@ import {
     Input, InputPicker, FlexboxGrid, Modal
 } from 'rsuite';
 import { withRouter } from 'react-router-dom';
-import '../App.css';
+import '../../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import SubTaskForm from "./SubTaskForm";
-import NotFound from "./NotFound";
-import NoUserStories from "../assets/noactivesprint.svg";
+import NotFound from "../NotFound";
+import NoUserStories from "../../assets/noactivesprint.svg";
 
 //four states of the stories, has to match the db
 const STORY_STATES = ["To Do", "In Progress", "Testing", "Done"];

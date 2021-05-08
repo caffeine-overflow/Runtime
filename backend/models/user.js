@@ -13,6 +13,10 @@ const user = mongoose.Schema({
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        required: false
+    },
     password: {
         type: String,
         required: true
@@ -37,10 +41,10 @@ const user = mongoose.Schema({
         type: Boolean,
         required: false
     },
-	git_token: {
-		type: String,
-		required: false,
-	},
+    git_token: {
+        type: String,
+        required: false,
+    },
 });
 
 const userSchema = mongoose.model('users', user);

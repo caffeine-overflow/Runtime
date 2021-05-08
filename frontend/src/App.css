@@ -129,6 +129,10 @@ li {
   margin-right: 5px !important;
 }
 
+.rs-sidenav .rs-sidenav-nav > ul {
+  font-size: 0;
+  margin-top: 15px;
+}
 .dashBoardSectionImg {
   width: 80%;
   display: block;

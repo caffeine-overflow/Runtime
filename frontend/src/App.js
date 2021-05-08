@@ -5,7 +5,7 @@ import Login from './components/Login';
 import 'rsuite/dist/styles/rsuite-default.css';
 import PrivateRoute from './components/PrivateRoute';
 import AuthRenewRoute from './components/AuthRenew/AuthRenewRoute';
-import ProjectBoard from './components/ProjectBoard';
+import ProjectBoard from './components/Sprint/ProjectBoard';
 import Projects from './components/Projects';
 import AuthRenewPage from './components/AuthRenew/AuthRenewPage';
 import {

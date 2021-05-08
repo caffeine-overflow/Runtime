@@ -99,7 +99,15 @@ router.post("/login", async (req, res) => {
             //create the json web tokens
             const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname };
             const access_token = jwt.sign(userToken, token_secret);
-            return res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}`, firstLogin: user.first_login, validGitToken: !!user.git_token });
+            return res.status(200).send(
+                {
+                    access_token, 'user': user._id,
+                    'name': `${user.firstname} ${user.lastname}`,
+                    firstLogin: user.first_login,
+                    validGitToken: !!user.git_token,
+                    userRole: user.role
+                }
+            );
         } else return res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
         console.log(err.stack);
@@ -117,7 +125,7 @@ router.post("/register", authenticateToken, async (req, res) => {
             return res.status(400).send({ msg: "User already exists" });
         }
 
-        let password = Math.random().toString(36).substring(2,8)+(Math.random()*100).toFixed();
+        let password = Math.random().toString(36).substring(2, 8) + (Math.random() * 100).toFixed();
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = new User({
