@@ -3,6 +3,8 @@ const router = express.Router();
 const { User } = require("../models/user.js");
 const authroutes = require("./authroutes");
 const bcrypt = require("bcrypt");
+const { sendEmail } = require('../utils/email');
+const { welcomeEmail } = require("../utils/email_templates/welcome");
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
@@ -143,4 +145,44 @@ router.put("/update_password", authroutes.authRenewToken, async (req, res) => {
 	}
 });
 
+
+//register function
+router.post("/create", authroutes.authenticateToken, async (req, res) => {
+    try {
+        const { firstname, lastname, email, phone, location, image } = req.body;
+
+        const existingUser = await User.findOne({ email: email });
+        if (existingUser) {
+            return res.status(400).send({ msg: "User already exists" });
+        }
+
+        let password = Math.random().toString(36).substring(2,8)+(Math.random()*100).toFixed();
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const newUser = new User({
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: hashedPassword,
+            phone: phone,
+            location: location,
+            image: image,
+            first_login: true,
+            git_token: null,
+        });
+
+        newUser.save(function (err) {
+            if (err) {
+                return res.status(500).send({ msg: "Something went wrong. Please try again" });
+            }
+            else {
+                let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
+                sendEmail(htmlTemplate, email, "Welcome").catch(console.error);
+                return res.status(200).send({ msg: "Account Created" });
+            }
+        });
+    } catch (err) {
+        return res.status(500).send({ msg: "Something went wrong. Please try again" });
+    }
+});
 module.exports = router;
