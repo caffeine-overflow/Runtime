@@ -6,10 +6,10 @@ const mongoose = require("mongoose");
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
-		let projects = await Project.find({ })
+		let projects = await Project.find({})
 			.populate("members")
 			.populate("project_lead");
-		
+
 		return res.status(200).send({ projects });
 	} catch (err) {
 		console.log(err.stack);
@@ -45,11 +45,11 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 		project
 			.save()
 			.then((data) => {
-                return res.status(200).send(data);
+				return res.status(200).send(data);
 			})
 			.catch((err) => {
 				console.error(err.stack);
-                return res.status(500).send({ msg: "Something went wrong. Please try again" });
+				return res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
 		console.log(err.stack);
@@ -57,26 +57,4 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 	}
 });
 
-router.put("/join", authroutes.authenticateToken, async (req, res) => {
-	try {
-		const { projectId } = req.body;
-		let joinedProject = await Project.findOne({ members: { $in: [req.user.id] }, _id: projectId });
-		if (joinedProject) return res.status(400).send("Already Joined");
-		mongoose.set("useFindAndModify", false);
-		const project = await Project.findOneAndUpdate({ _id: projectId }, { $push: { members: req.user.id } });
-
-		project
-			.save()
-			.then((data) => {
-                return res.status(200).send(data);
-			})
-			.catch((err) => {
-				console.error(err.stack);
-                return res.status(500).send({ msg: "Something went wrong. Please try again" });
-			});
-	} catch (err) {
-		console.log(err.stack);
-		return res.status(500).send({ msg: "Something went wrong. Please try again" });
-	}
-});
 module.exports = router;
