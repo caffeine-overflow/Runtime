@@ -37,6 +37,10 @@ const user = mongoose.Schema({
         type: String,
         required: false
     },
+    role: {
+        type: String,
+        required: false
+    },
     first_login: {
         type: Boolean,
         required: false
