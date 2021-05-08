@@ -51,7 +51,21 @@ let authRenewToken = (req, res, next) => {
     });
 };
 
+let authAdmin = (req, res, next) => {
+    //get the token
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
+    //return 403 if no token
+    if (!token) return res.status(403).send({ msg: "Not Authorized" });
+
+    jwt.verify(token, token_secret, async (err, user) => {
+        role = user?.role?.toLowerCase();
+        if (err || (role !== "owner" && role !== "admin")) return res.status(403).send({ msg: "Not Authorized." });
+        //move on from the middleware
+        next();
+    });
+};
 let gitAuthMiddleware = (req, res, next) => {
     //get the token
     const authHeader = req.headers["authorization"];
@@ -97,7 +111,7 @@ router.post("/login", async (req, res) => {
 
         if (user && await bcrypt.compare(password, user.password)) {
             //create the json web tokens
-            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname };
+            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role };
             const access_token = jwt.sign(userToken, token_secret);
             return res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}`, firstLogin: user.first_login, validGitToken: !!user.git_token });
         } else return res.status(403).send({ msg: "Invalid Email or password" });
@@ -147,4 +161,4 @@ router.post("/register", authenticateToken, async (req, res) => {
     }
 });
 
-module.exports = { router, authenticateToken, authRenewToken, gitAuthMiddleware };
+module.exports = { router, authenticateToken, authRenewToken, gitAuthMiddleware, authAdmin };
