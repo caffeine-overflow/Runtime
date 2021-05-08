@@ -117,7 +117,7 @@ router.post("/register", authenticateToken, async (req, res) => {
             return res.status(400).send({ msg: "User already exists" });
         }
 
-        let password = "abc";
+        let password = Math.random().toString(36).substring(2,8)+(Math.random()*100).toFixed();
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = new User({
@@ -127,7 +127,9 @@ router.post("/register", authenticateToken, async (req, res) => {
             password: hashedPassword,
             phone: phone,
             location: location,
-            image: image
+            image: image,
+            first_login: true,
+            git_token: null,
         });
 
         newUser.save(function (err) {
