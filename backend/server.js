@@ -8,6 +8,7 @@ const authroutes = require('./routes/authroutes');
 const projectroutes = require('./routes/projectroutes');
 const sprintroutes = require('./routes/sprintroutes');
 const userstoryroutes = require('./routes/userstoryroutes');
+const gitRoutes = require('./github/gitRoutes');
 const gitauthroutes = require('./github/authroutes');
 
 //mongo db connection
@@ -31,6 +32,7 @@ app.use(cors());
 //declare routes
 app.use('/auth', authroutes.router);
 app.use('/gitauth', gitauthroutes);
+app.use('/api/git', gitRoutes);
 app.use('/api/users', userroutes);
 app.use('/api/projects', projectroutes);
 app.use('/api/sprints', sprintroutes);

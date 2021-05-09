@@ -171,6 +171,7 @@ export default function Profile(props) {
                                         alt='dp'
                                     /> :
                                     <img
+                                        style={{ maxWidth: '500px', display: 'block', margin: 'auto' }}
                                         src={ImagePlaceHolder}
                                         alt='dp'
                                     />

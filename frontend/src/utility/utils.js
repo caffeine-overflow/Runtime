@@ -14,7 +14,7 @@ const FETCH_DATA = async (api) => {
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
 
     let data = await response.json();
-    console.log(data);
+
     if (!response.ok) {
         Notification.error({
             title: data.msg ?? 'Server error, Try again later',

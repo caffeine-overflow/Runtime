@@ -23,6 +23,11 @@ let authenticateToken = (req, res, next) => {
         if (err) return res.status(403).send({ msg: "Not Authorized" });
         else if (tempUser.first_login || !!!tempUser.git_token)
             return res.status(307).send({ msg: "Redirecting..." });
+        else if (tempUser.role === 'owner' && !tempUser.client_id)
+            return res.status(307).send({ msg: "Redirecting..." });
+        else if (tempUser !== 'owner' && !!!tempUser.invitation_accepted) {
+            return res.status(307).send({ msg: "Redirecting..." });
+        }
         req.user = tempUser;
 
         //move on from the middleware
@@ -42,8 +47,16 @@ let authRenewToken = (req, res, next) => {
         if (!user) return res.status(403).send({ msg: "Not Authorized" });
         let tempUser = await User.findById(user.id);
         if (err) return res.status(403).send({ msg: "Not Authorized" });
-        else if (!tempUser.first_login && !!tempUser.git_token)
-            return res.status(307).send({ msg: "Redirecting..." });
+        else if (!tempUser.first_login && !!tempUser.git_token) {
+            if (tempUser.role === 'owner') {
+                if (!!tempUser.client_id)
+                    return res.status(307).send({ msg: "Redirecting..." });
+            }
+            else {
+                if (!!tempUser.invitation_accepted)
+                    return res.status(307).send({ msg: "Redirecting..." });
+            }
+        }
         req.user = tempUser;
 
         //move on from the middleware
@@ -60,12 +73,18 @@ let authAdmin = (req, res, next) => {
     if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
     jwt.verify(token, token_secret, async (err, user) => {
-        role = user?.role?.toLowerCase();
-        if (err || (role !== "owner" && role !== "admin")) return res.status(403).send({ msg: "Not Authorized." });
+        if (!user) return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser = await User.findById(user.id);
+        if (err) return res.status(403).send({ msg: "Not Authorized" });
+        else if (tempUser.role !== "owner" && tempUser.role !== "admin")
+            return res.status(403).send({ msg: "Not Authorized." });
+
+        req.user = tempUser;
         //move on from the middleware
         next();
     });
 };
+
 let gitAuthMiddleware = (req, res, next) => {
     //get the token
     const authHeader = req.headers["authorization"];
@@ -76,7 +95,7 @@ let gitAuthMiddleware = (req, res, next) => {
 
     jwt.verify(token, token_secret, async (err, user) => {
         if (!user) return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser = await User.findById(user.id);
+        let tempUser = await User.findById(user.id).populate("client_id");
         if (err) return res.status(403).send({ msg: "Not Authorized" });
         req.user = tempUser;
 

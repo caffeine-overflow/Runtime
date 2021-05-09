@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { User } = require("../models/user.js");
+const { Client } = require("../models/client.js");
 const authroutes = require("./authroutes");
 const bcrypt = require("bcrypt");
 const { sendEmail } = require('../utils/email');
@@ -148,42 +149,63 @@ router.put("/update_password", authroutes.authRenewToken, async (req, res) => {
 
 //register function
 router.post("/create", authroutes.authAdmin, async (req, res) => {
-    try {
-        const { firstname, lastname, email, phone, location, image, role } = req.body;
+	try {
+		const { firstname, lastname, email, phone, location, image, role } = req.body;
 
-        const existingUser = await User.findOne({ email: email });
-        if (existingUser) {
-            return res.status(400).send({ msg: "User already exists" });
-        }
+		const existingUser = await User.findOne({ email: email });
+		if (existingUser) {
+			return res.status(400).send({ msg: "User already exists" });
+		}
 
-        let password = Math.random().toString(36).substring(2,8)+(Math.random()*100).toFixed();
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            password: hashedPassword,
-            phone: phone,
-            location: location,
-            image: image,
-            first_login: true,
+		let password = Math.random().toString(36).substring(2, 8) + (Math.random() * 100).toFixed();
+		const salt = await bcrypt.genSalt();
+		const hashedPassword = await bcrypt.hash(password, salt);
+		const newUser = new User({
+			firstname: firstname,
+			lastname: lastname,
+			email: email,
+			password: hashedPassword,
+			phone: phone,
+			location: location,
+			image: image,
+			first_login: true,
 			git_token: null,
 			role: role
-        });
+		});
 
-        newUser.save(function (err) {
-            if (err) {
-                return res.status(500).send({ msg: "Something went wrong. Please try again" });
-            }
-            else {
-                let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
-                sendEmail(htmlTemplate, email, "Welcome").catch(console.error);
-                return res.status(200).send({ msg: "Account Created" });
-            }
-        });
-    } catch (err) {
-        return res.status(500).send({ msg: "Something went wrong. Please try again" });
-    }
+		newUser.save(function (err) {
+			if (err) {
+				return res.status(500).send({ msg: "Something went wrong. Please try again" });
+			}
+			else {
+				let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
+				sendEmail(htmlTemplate, email, "Welcome").catch(console.error);
+				return res.status(200).send({ msg: "Account Created" });
+			}
+		});
+	} catch (err) {
+		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+	}
 });
+
+router.post("/addClient", authroutes.authAdmin, async (req, res) => {
+
+	const client = await new Client({
+		'name': req.body.name,
+		'organization': req.body.organization
+	}).save();
+
+	if (!client) {
+		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+	}
+
+	await User.findByIdAndUpdate(req.user.id, { $set: { client_id: client._id } }, function (err, result) {
+		if (err) {
+			return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		} else {
+			return res.status(200).send({ msg: "Successfully added Organization" });
+		}
+	});
+});
+
 module.exports = router;

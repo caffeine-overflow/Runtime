@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const { ObjectId } = Schema.Types;
 
 const user = mongoose.Schema({
     firstname: {
@@ -12,10 +14,6 @@ const user = mongoose.Schema({
     email: {
         type: String,
         required: true
-    },
-    role: {
-        type: String,
-        required: false
     },
     password: {
         type: String,
@@ -49,6 +47,19 @@ const user = mongoose.Schema({
         type: String,
         required: false,
     },
+    git_id: {
+        type: Number,
+        required: false,
+    },
+    invitation_accepted: {
+        type: Boolean,
+        required: false
+    },
+    client_id: {
+        type: ObjectId,
+        ref: 'clients',
+        required: false
+    }
 });
 
 const userSchema = mongoose.model('users', user);
