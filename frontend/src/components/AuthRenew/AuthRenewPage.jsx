@@ -235,7 +235,7 @@ export default function AuthRenewPage(props) {
 
     const authorize = () => {
         setAuthenticating(true);
-        let url = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&scope=admin:org`;
+        let url = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&scope=admin:org%20repo`;
         window.open(url, "_self");
     }
 
