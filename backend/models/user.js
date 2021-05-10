@@ -47,6 +47,10 @@ const user = mongoose.Schema({
         type: String,
         required: false,
     },
+    git_username: {
+        type: String,
+        required: false,
+    },
     git_id: {
         type: Number,
         required: false,

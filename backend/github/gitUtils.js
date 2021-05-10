@@ -12,11 +12,11 @@ const getOrganizationsByUser = async (token) => {
     return organizations;
 }
 
-const sendOrganizationInvite = async (token, organization, id) => {
+const sendOrganizationInvite = async (token, organization, username) => {
     let octo = octokit(token);
-    await octo.request('POST /orgs/{org}/invitations', {
+    await octo.request('PUT /orgs/{org}/memberships/{username}', {
         org: organization,
-        invitee_id: id
+        username: username,
     })
 }
 

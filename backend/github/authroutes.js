@@ -20,7 +20,7 @@ router.get("/get_token", authroutes.gitAuthMiddleware, async (req, res) => {
             let access_token = result.body.access_token;
             if (access_token) {
                 let gitUser = await getUser(access_token);
-                await User.findByIdAndUpdate(req.user.id, { $set: { git_token: access_token, git_id: gitUser.data.id } }, async function (err, result) {
+                await User.findByIdAndUpdate(req.user.id, { $set: { git_token: access_token, git_id: gitUser.data.id, git_username: gitUser.data.login } }, async function (err, result) {
                     if (err) {
                         return res.status(500).send({ msg: "Something went wrong." });
                     } else {
@@ -28,7 +28,7 @@ router.get("/get_token", authroutes.gitAuthMiddleware, async (req, res) => {
                         if (req.user.role !== 'owner') {
                             //find the owner
                             let owner = await User.findOne({ role: "owner" });
-                            await sendOrganizationInvite(owner.git_token, req.user.client_id.organization, req.user.git_id)
+                            await sendOrganizationInvite(owner.git_token, req.user.client_id.organization, gitUser.data.login)
                         }
 
                         return res.status(200).send({ msg: "Successfully Authorized. Close the window to continue." });
