@@ -40,6 +40,7 @@ router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req,
 			name: body.name,
 			description: body.description,
 			is_done: false,
+			client_id: req.user.client_id,
 		});
 
 		project
