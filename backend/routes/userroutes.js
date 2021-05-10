@@ -150,7 +150,7 @@ router.put("/update_password", authroutes.authRenewToken, async (req, res) => {
 //register function
 router.post("/create", authroutes.authAdmin, async (req, res) => {
 	try {
-		const { firstname, lastname, email, phone, location, image, role } = req.body;
+		const { firstname, lastname, email, phone, location, image } = req.body;
 
 		const existingUser = await User.findOne({ email: email });
 		if (existingUser) {
@@ -170,7 +170,7 @@ router.post("/create", authroutes.authAdmin, async (req, res) => {
 			image: image,
 			first_login: true,
 			git_token: null,
-			role: role
+			role: "member"
 		});
 
 		newUser.save(function (err) {
