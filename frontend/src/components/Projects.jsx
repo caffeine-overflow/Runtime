@@ -55,10 +55,12 @@ function Projects(props) {
     const [projectName, setprojectName] = useState("");
     const [description, setdescription] = useState("");
     const [userProjects, setuserProjects] = useState([]);
+    const [userRole, setUserRole] = useState([]);
 
     let getProjects = async () => {
         let currentUser = sessionStorage.getItem('sprintCompassUser');
         let token = sessionStorage.getItem('sprintCompassToken');
+        setUserRole(sessionStorage.getItem('sprintCompassUserRole'));
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -154,14 +156,13 @@ function Projects(props) {
                             </span>
                         <span style={{ color: "#515B60" }}>time</span>
                     </div>
-                    <div style={{ width: '100%' }}>
-                        <div
-                            className="teamButtons"
-                            onClick={() => setcreateProjectDrawer(true)}
-                        >
-                            Create a Project
-                    </div>
-                    </div>
+                    {(userRole == "owner" || userRole == "admin") && (
+						<div style={{ width: "100%" }}>
+							<div className="teamButtons" onClick={() => setcreateProjectDrawer(true)}>
+								Create a Project
+							</div>
+						</div>
+					)}
                 </div>
             </section>
             {
