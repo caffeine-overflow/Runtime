@@ -75,7 +75,7 @@ let authAdmin = (req, res, next) => {
 
     jwt.verify(token, token_secret, async (err, user) => {
         if (!user || err) return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser = await User.findById(user.id);
+        let tempUser = await User.findById(user.id).populate('client_id');
         if (tempUser.role !== "owner" && tempUser.role !== "admin")
             return res.status(403).send({ msg: "Not Authorized." });
 

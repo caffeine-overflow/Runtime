@@ -170,7 +170,7 @@ router.post("/create", authroutes.authAdmin, async (req, res) => {
 			image: image,
 			first_login: true,
 			git_token: null,
-			client_id: req.user.client_id,
+			client_id: req.user.client_id._id,
 			role: "member"
 		});
 

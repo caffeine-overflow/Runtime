@@ -3,6 +3,7 @@ const router = express.Router();
 const { Project } = require("../models/project.js");
 const authroutes = require("./authroutes");
 const mongoose = require("mongoose");
+const { createRepo } = require("../github/gitUtils");
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
@@ -45,7 +46,9 @@ router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req,
 
 		project
 			.save()
-			.then((data) => {
+			.then(async (data) => {
+				let repoName = body.name
+				let resp = await createRepo(req.user.git_token, req.user.client_id.organization, repoName);
 				return res.status(200).send(data);
 			})
 			.catch((err) => {
