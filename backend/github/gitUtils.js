@@ -51,4 +51,14 @@ const checkOrganizationMembership = async (token, organization, username) => {
     }
 }
 
-module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation };
+
+const createRepo = async (token, organization, repoName) => {
+    let octo = octokit(token);
+    return await octo.request('POST /orgs/{org}/repos', {
+        org: organization,
+        name: repoName,
+        private: true,
+    });
+}
+
+module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo };
