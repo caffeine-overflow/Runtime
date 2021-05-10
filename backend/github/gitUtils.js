@@ -20,4 +20,35 @@ const sendOrganizationInvite = async (token, organization, username) => {
     })
 }
 
-module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser };
+const hasActiveInvitation = async (token, organization, username) => {
+    let octo = octokit(token);
+    let pendingInvite = await octo.request('GET /orgs/{org}/invitations', {
+        org: organization
+    });
+    let invitationFound = pendingInvite.data.find(invite => invite.login === username && invite.failed_at == null);
+    if(invitationFound)
+        return true;
+    else {
+        await octo.request('PUT /orgs/{org}/memberships/{username}', {
+            org: organization,
+            username: username,
+        })
+        return false;
+    }
+}
+
+const checkOrganizationMembership = async (token, organization, username) => {
+    try {
+        let octo = octokit(token);
+        let response =  await octo.request('GET /orgs/{org}/members/{username}', {
+            org: organization,
+            username: username,
+        });
+        return response.status;
+    }
+    catch (err) {
+        return 404;
+    }
+}
+
+module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation };

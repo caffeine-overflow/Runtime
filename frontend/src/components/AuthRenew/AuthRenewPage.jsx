@@ -169,6 +169,18 @@ export default function AuthRenewPage(props) {
         setorganizations(response.data.organizations);
     }
 
+    let validateInvite = async () => {
+        const response = await FETCH_DATA(`gitauth/validateInvite`);
+        if (response.status === 200) {
+            Notification.success({
+                title: "Congratulations!",
+                description: <div style={{ width: 220 }} rows={3} > You are now member of our company </div>,
+                placement: "topEnd",
+            });
+            props.history.push('/projects');
+        }
+    }
+
     let submitOrganization = async () => {
         if (!companyName || !gitOrganization) {
             Notification.error({
