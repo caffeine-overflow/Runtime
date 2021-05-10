@@ -30,7 +30,7 @@ router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req,
 	}
 });
 
-router.post("/", authroutes.authenticateToken, async (req, res) => {
+router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req, res) => {
 	try {
 		let body = req.body;
 		const project = new Project({
