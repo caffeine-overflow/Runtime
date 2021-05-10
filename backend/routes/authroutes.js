@@ -129,7 +129,7 @@ router.post("/login", async (req, res) => {
 
         if (user && await bcrypt.compare(password, user.password)) {
             //create the json web tokens
-            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role };
+            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted};
             const access_token = jwt.sign(userToken, token_secret);
             return res.status(200).send(
                 {
@@ -137,7 +137,8 @@ router.post("/login", async (req, res) => {
                     'name': `${user.firstname} ${user.lastname}`,
                     firstLogin: user.first_login,
                     validGitToken: !!user.git_token,
-                    userRole: user.role
+                    userRole: user.role,
+                    invitationAccepted: user.invitation_accepted
                 }
             );
         } else return res.status(403).send({ msg: "Invalid Email or password" });
