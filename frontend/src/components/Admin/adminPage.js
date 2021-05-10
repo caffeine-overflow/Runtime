@@ -96,7 +96,7 @@ let AddUserCard = () => {
                     firstname, lastname, email
                 })
             };
-            const response = await fetch('http://localhost:5000/auth/register', requestOptions);
+            const response = await fetch('http://localhost:5000/api/users/create', requestOptions);
             const data = await response.json();
 
             if (response.ok) {

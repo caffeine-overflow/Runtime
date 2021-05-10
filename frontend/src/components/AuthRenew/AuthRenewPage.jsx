@@ -1,13 +1,14 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import PasswordRenewSvg from '../../assets/passwordRenew.svg';
 import BioSvg from '../../assets/bio.svg';
 import Gitsvg from '../../assets/git.svg';
+import OrganizationSvg from '../../assets/organization.svg';
 import './authrenew.css';
 import FETCH_DATA from "../../utility/utils";
 import {
-    Icon, Form, FormControl, Drawer,
-    FormGroup, ControlLabel, Schema, Notification,
-    Steps, Panel, Button
+    Form, FormControl, FormGroup, ControlLabel, Schema,
+    Notification, Steps, Panel, Button, InputPicker, Message
 } from 'rsuite';
 
 const { StringType } = Schema.Types;
@@ -17,25 +18,33 @@ export default function AuthRenewPage(props) {
 
     const [user, setuser] = useState(null);
 
-    const [openDrawer, setopenDrawer] = useState(false);
-    const [changeAttribute, setChangeAttribute] = useState('');
-
     const [currentPassord, setcurrentPassord] = useState("");
     const [newpassword, setnewpassword] = useState("");
     const [confirmPassword, setconfirmPassword] = useState("");
 
+    const [position, setPosition] = useState('');
+    const [phone, setphone] = useState('');
+    const [location, setlocation] = useState('');
 
-    const [authenticating, setAuthenticating] = React.useState(false);
-    const [authorizedUser, setAuthorizedUser] = React.useState(false);
+    const [authenticating, setAuthenticating] = useState(false);
 
     const [step, setStep] = useState();
     const [loading, setloading] = useState(false);
+
+    const [organizations, setorganizations] = useState([]);
+    const [companyName, setcompanyName] = useState("");
+    const [gitOrganization, setgitOrganization] = useState(null);
 
     const getUserData = async () => {
         let response = await FETCH_DATA(`api/users/getUserById/${sessionStorage.getItem('sprintCompassUser')}`);
         if (response.status === 200) {
             let user = response.data.user;
-            user.first_login ? setStep(0) : setStep(2);
+            if (!!user.first_login) setStep(0);
+            else if (!!user.git_token) setStep(3);
+            else {
+                console.log(user);
+                setStep(2);
+            }
             setuser(response.data.user);
         }
     };
@@ -78,80 +87,145 @@ export default function AuthRenewPage(props) {
         }
     }
 
-    const updateUserData = async (status) => {
-        if (status) {
-            setloading(true);
-            setopenDrawer(false);
-            let token = sessionStorage.getItem('sprintCompassToken');
-            const requestOptions = {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ [changeAttribute.toLowerCase()]: user[changeAttribute.toLowerCase()] })
-            };
+    const updateUserData = async () => {
+        if (position === "" && phone === "" && location === "") {
+            setStep(2);
+            return;
+        }
+        let token = sessionStorage.getItem('sprintCompassToken');
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ position, phone, location })
+        };
 
-            const response = await fetch(`http://localhost:5000/api/users/update_user`, requestOptions);
-            if (response.status === 200) {
-                Notification.success({
-                    title: `${changeAttribute} Has Been Updated`,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-            else {
-                Notification.error({
-                    title: 'Server error, Try again later',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-
-            setChangeAttribute(null);
-            setloading(false);
+        const response = await fetch(`http://localhost:5000/api/users/update_user`, requestOptions);
+        if (response.status === 200) {
+            Notification.success({
+                title: `Profile Has Been Updated`,
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: 'topEnd'
+            });
+            setStep(2);
+        }
+        else {
+            Notification.error({
+                title: 'Server error, Try again later',
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: 'topEnd'
+            });
         }
     }
+
     const getQueryVariable = (variable) => {
-		var query = window.location.search.substring(1);
-		var vars = query.split("&");
-		for (var i = 0; i < vars.length; i++) {
-			var pair = vars[i].split("=");
-			if (pair[0] == variable) {
-				return pair[1];
-			}
-		}
-		return false;
-	};
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return false;
+    };
 
     const checkAuthorization = async () => {
-		if (getQueryVariable("error") === "access_denied") {
-			Notification.error({
-				title: `Authorization Failed`,
-				description: <div style={{ width: 220 }} rows={3} />,
-				placement: "topEnd",
-			});
-		}
-		let code = getQueryVariable("code");
-		if (code) {
-			const response = await FETCH_DATA(`gitauth/get_token?code=${code}`);
-			if (response.status === 200) {
-				Notification.success({
-					title: "Successfully authorized github",
-					description: <div style={{ width: 220 }} rows={3} />,
-					placement: "topEnd",
-				});
-				props.history.push("/projects");
-			} else {
-				Notification.error({
-					title: "Failed to Authorize with GitHub",
-					description: <div style={{ width: 220 }} rows={3} />,
-					placement: "topEnd",
-				});
-			}
-		}
-	};
+        if (getQueryVariable("error") === "access_denied") {
+            Notification.error({
+                title: `Authorization Failed`,
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+        }
+        let code = getQueryVariable("code");
+        if (code) {
+            const response = await FETCH_DATA(`gitauth/get_token?code=${code}`);
+            if (response.status === 200) {
+                Notification.success({
+                    title: "Successfully authorized github",
+                    description: <div style={{ width: 220 }} rows={3} />,
+                    placement: "topEnd",
+                });
+                setStep(3);
 
+                //remove code from the url withour reloading
+                let newUrl = window.location.origin + '/auth';
+                window.history.pushState({}, null, newUrl);
+            } else {
+                Notification.error({
+                    title: "Failed to Authorize with GitHub",
+                    description: <div style={{ width: 220 }} rows={3} />,
+                    placement: "topEnd",
+                });
+            }
+        }
+    };
+
+    let getOrganizations = async () => {
+        const response = await FETCH_DATA(`api/git/getOrganizations`);
+        setorganizations(response.data.organizations);
+    }
+
+    let validateInvite = async () => {
+        const response = await FETCH_DATA(`gitauth/validateInvite`);
+        if (response.status === 200) {
+            Notification.success({
+                title: "Congratulations!",
+                description: <div style={{ width: 220 }} rows={3} > You are now member of our company </div>,
+                placement: "topEnd",
+            });
+            props.history.push('/projects');
+        }
+    }
+
+    let submitOrganization = async () => {
+        if (!companyName || !gitOrganization) {
+            Notification.error({
+                title: "Missing Fields",
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+            return;
+        }
+
+        let token = sessionStorage.getItem("sprintCompassToken");
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ name: companyName, organization: gitOrganization })
+        };
+
+        let response = await fetch(`http://localhost:5000/api/users/addClient`, requestOptions);
+        let res = await response.json();
+
+        if (response.status === 200) {
+            Notification.success({
+                title: res.msg,
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+            props.history.push('/projects');
+        }
+        else {
+            Notification.error({
+                title: res.msg,
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+        }
+    }
+
+    useEffect(() => {
+        if (step === 3 && user?.role === 'owner' && organizations.length === 0) {
+            getOrganizations();
+        }
+    }, [step, user]);
 
     useEffect(() => {
         checkAuthorization();
@@ -161,7 +235,7 @@ export default function AuthRenewPage(props) {
 
     const authorize = () => {
         setAuthenticating(true);
-        let url = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&scope=repo`;
+        let url = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&scope=admin:org%20repo`;
         window.open(url, "_self");
     }
 
@@ -169,13 +243,18 @@ export default function AuthRenewPage(props) {
         <div style={{ width: '80%', margin: 'auto', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ width: '100%', height: '80vh' }}>
                 <Steps current={step}>
-                    <Steps.Item title="Change Password" description="Description" />
-                    <Steps.Item title="Update Bio" description="Description" />
-                    <Steps.Item title="Authorize Github" description="Description" />
+                    <Steps.Item title="Change Password" />
+                    <Steps.Item title="Update Bio" />
+                    <Steps.Item title="Authorize Github" />
+                    {
+                        user && user.role === 'owner' ?
+                            <Steps.Item title="Choose Organization" /> :
+                            <Steps.Item title="Accept Organization Invite" />
+                    }
                 </Steps>
                 <hr />
                 <Panel style={{ height: '60vh' }} >
-                    <section style={{ display: 'flex' }}>
+                    <section style={{ display: 'flex', height: '60vh' }}>
                         <div style={{ width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             {
                                 step === 0 &&
@@ -183,11 +262,15 @@ export default function AuthRenewPage(props) {
                             }
                             {
                                 step === 1 &&
-                                <img style={{ maxWidth: '550px' }} src={BioSvg} alt="passwordrenewimg" />
+                                <img style={{ maxWidth: '550px' }} src={BioSvg} alt="profileimg" />
                             }
                             {
                                 step === 2 &&
-                                <img style={{ maxWidth: '550px' }} src={Gitsvg} alt="passwordrenewimg" />
+                                <img style={{ maxWidth: '550px' }} src={Gitsvg} alt="gitimg" />
+                            }
+                            {
+                                step === 3 &&
+                                <img style={{ maxWidth: '550px' }} src={OrganizationSvg} alt="orgImg" />
                             }
                         </div>
                         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -249,128 +332,106 @@ export default function AuthRenewPage(props) {
                             {
                                 step === 1 && !!user &&
                                 <div>
-                                    <div style={styles.name}>
-                                        {`${user.firstname} ${user.lastname}`}
-                                    </div>
-                                    <div style={styles.profession}>
-                                        {user.position && `${user.position}`}
-                                        <span
-                                            style={styles.change}
-                                            onClick={() => {
-                                                setopenDrawer(true);
-                                                setChangeAttribute('Position');
+                                    <Form
+                                        onSubmit={() => updateUserData()}
+                                    >
+                                        <TextField
+                                            label='Job Title'
+                                            onChange={(value) => {
+                                                setPosition(value);
                                             }}
+                                        />
+                                        <TextField
+                                            label='Phone'
+                                            onChange={(value) => {
+                                                setphone(value);
+                                            }}
+                                        />
+                                        <TextField
+                                            label='Location'
+                                            onChange={(value) => {
+                                                setlocation(value);
+                                            }}
+                                        />
+                                        <Button
+                                            type="submit"
+                                            style={styles.update__button}
                                         >
-                                            {user.position ? 'change' : 'Add Position'}
-                                        </span>
-                                    </div>
-                                    <section style={styles.info}>
-                                        <div style={styles.attribute__container}>
-                                            <Icon size='2x' icon='send' style={styles.info__1} />
-                                            <div style={styles.info__2}>
-                                                {`${user.email}`}
-                                                <span
-                                                    style={styles.change}
-                                                    onClick={() => {
-                                                        setopenDrawer(true);
-                                                        setChangeAttribute('Email');
-                                                    }}
-                                                >
-                                                    change
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div style={styles.attribute__container}>
-                                            {(user.phone) && <Icon size='2x' icon='phone' style={styles.info__1} />}
-                                            <div style={styles.info__2}>
-                                                {user.phone && `${user.phone}`}
-                                                <span
-                                                    style={styles.change}
-                                                    onClick={() => {
-                                                        setopenDrawer(true);
-                                                        setChangeAttribute('Phone');
-                                                    }}
-                                                >
-                                                    {user.phone ? 'change' : 'Add Phone Number'}{' '}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div style={styles.attribute__container}>
-                                            {(user.location) && <Icon size='2x' icon='map-marker' style={styles.info__1} />}
-                                            <div style={styles.info__2}>
-                                                {user.location && `${user.location}`}
-                                                <span
-                                                    style={styles.change}
-                                                    onClick={() => {
-                                                        setopenDrawer(true);
-                                                        setChangeAttribute('Location');
-                                                    }}
-                                                >
-                                                    {user.location ? 'change' : 'Add Location'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </section>
-                                </div>}
+                                            Update Bio
+                                        </Button>
+                                    </Form>
+                                </div>
+                            }
                             {
                                 step === 2 &&
                                 <Button
                                     type="submit"
-                                    style={authenticating || authorizedUser ? styles.disabled__button : styles.update__button}
+                                    style={authenticating ? styles.disabled__button : styles.update__button}
                                     onClick={authorize}
-                                    disabled={authenticating || authorizedUser}
+                                    disabled={authenticating}
                                 >
                                     Authorize Github
                                 </Button>
+                            }
+                            {
+                                step === 3 &&
+                                <>
+                                    {
+                                        user && user.role === 'owner' &&
+                                        <div>
+                                            <Form
+                                                onSubmit={() => submitOrganization()}
+                                            >
+                                                <TextField
+                                                    label='Organization Name'
+                                                    onChange={(value) => {
+                                                        setcompanyName(value);
+                                                    }}
+                                                />
+                                                <InputPicker
+                                                    data={organizations}
+                                                    onChange={(value) => setgitOrganization(value)}
+                                                    block
+                                                    placeholder="Select a Github Organization"
+                                                />
+                                                <Button
+                                                    type="submit"
+                                                    style={styles.update__button}
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </Form>
+                                        </div>
+                                    }
+                                    {
+                                        user && user.role !== 'owner' &&
+                                        <Message
+                                            showIcon
+                                            type="success"
+                                            title="Invitation Sent"
+                                            description={
+                                                <>
+                                                    We have sent you an email invitation to join the organization.<br />
+                                                    Please accept it and click finish.
+                                                </>
+                                            }
+                                        />
+                                    }
+                                </>
                             }
                         </div>
                     </section>
                 </Panel>
                 <hr />
-                {
-                    step === 1 &&
-                    <Button
-                        style={styles.next__button}
-                        onClick={() => setStep(2)}
-                    >
-                        Next
-                    </Button>
-                }
-            </div>
-            <Drawer show={openDrawer} onHide={() => setopenDrawer(false)}>
-                <Drawer.Header>
-                    <Drawer.Title>Add/Change {changeAttribute}</Drawer.Title>
-                </Drawer.Header>
-                <Drawer.Body style={styles.drawer__body}>
-                    {
-                        user && changeAttribute &&
-                        <Form
-                            model={Schema.Model({
-                                [changeAttribute]: StringType().isRequired(`${changeAttribute} is required.`),
-                            })}
-                            onSubmit={(status) => { updateUserData(status) }}
-                        >
-                            <TextField
-                                name={changeAttribute}
-                                label={changeAttribute}
-                                value={user[changeAttribute.toLowerCase()] ?? ""}
-                                onChange={(value) => {
-                                    let userTemp = JSON.parse(JSON.stringify(user));
-                                    userTemp[changeAttribute.toLowerCase()] = value;
-                                    setuser(userTemp);
-                                }}
-                            />
-                            <Button
-                                type="submit"
-                                style={styles.update__button}
-                                disabled={loading}
-                            >
-                                Update {changeAttribute}
-                            </Button>
-                        </Form>
+                <div style={{ float: 'right' }}>
+                    {step === 3 && user?.role != "owner" &&
+                        <Button style={{ background: "#193A5A", color: "#f5f5f5", width: "100px" }} onClick={validateInvite}>
+                            Finish
+                        </Button>
                     }
-                </Drawer.Body>
-            </Drawer>
+                </div>
+
+            </div>
         </div>
     )
 }
@@ -386,58 +447,6 @@ function TextField(props) {
 }
 
 const styles = {
-    name: {
-        fontSize: '25px',
-        fontWeight: 'bold',
-        width: '100%',
-        margin: '5px 0',
-    },
-    profession: {
-        fontSize: '15px',
-    },
-    info: {
-        width: '100%',
-        margin: '50px 0',
-    },
-    attribute__container: {
-        display: 'flex',
-        margin: '25px 0',
-    },
-    info__1: {
-        width: '50px',
-    },
-    info__2: {
-        flex: 1,
-        fontSize: '17px',
-    },
-    change: {
-        marginLeft: '5px',
-        color: 'blue',
-        textDecoration: 'underline',
-        fontSize: '15px',
-        cursor: 'pointer'
-    },
-    change__image: {
-        color: 'blue',
-        textDecoration: 'underline',
-        fontSize: '15px',
-        marginTop: '15px',
-        textAlign: 'center',
-        cursor: 'pointer',
-    },
-    update__password: {
-        color: 'blue',
-        textDecoration: 'underline',
-        fontSize: '15px',
-        width: '100%',
-        cursor: 'pointer'
-    },
-    drawer__body: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignContent: 'center',
-        flexWrap: 'wrap',
-    },
     update__button: {
         marginTop: '50px',
         background: '#193A5A',

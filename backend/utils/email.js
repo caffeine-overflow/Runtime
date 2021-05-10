@@ -2,7 +2,7 @@
 const nodemailer = require("nodemailer");
 const { runtime_email, runtime_password } = require("../config");
 
-let testEmail = async () => {
+let sendEmail = async (htmlTemplate, email, subject) => {
 
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
@@ -21,13 +21,12 @@ let testEmail = async () => {
     // send mail with defined transport object
     let info = await transporter.sendMail({
         from: `"Runtime App" <${runtime_email}>`,
-        to: "danishdavis@hotmail.com", // list of receivers
-        subject: "Hello",
-        text: "Hello world?",
-        html: "<b>Hello world?</b>",
+        to: email, // list of receivers
+        subject: subject,
+        html: htmlTemplate
     });
 
     console.log("Message sent: %s", info.messageId);
 }
 
-module.exports = { testEmail };
+module.exports = { sendEmail };

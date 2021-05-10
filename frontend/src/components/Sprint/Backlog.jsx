@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react'
 import { Button, FlexboxGrid, Notification, PanelGroup, Panel } from 'rsuite';
-import NotFound from "./NotFound";
-import NoBacklog from "../assets/nobacklog.svg";
+import NotFound from "../NotFound";
+import NoBacklog from "../../assets/nobacklog.svg";
 
 export default function Backlog(props) {
 

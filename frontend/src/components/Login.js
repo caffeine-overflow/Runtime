@@ -14,14 +14,6 @@ const loginModel = Schema.Model({
     password: StringType().isRequired('Password is required.')
 });
 
-//data validation for register
-const registerModel = Schema.Model({
-    firstname: StringType().isRequired('First Name is required.'),
-    lastname: StringType().isRequired('Last Name is required.'),
-    email: StringType().isRequired('Email is required.'),
-    password: StringType().isRequired('Password is required.')
-});
-
 function TextField(props) {
     const { name, label, accepter, type, ...rest } = props;
     return (
@@ -63,9 +55,12 @@ function Login(props) {
                 });
             }
             else if (response.status === 200) {
+
                 sessionStorage.setItem('sprintCompassToken', data.access_token);
                 sessionStorage.setItem('sprintCompassUser', data.user);
                 sessionStorage.setItem('sprintCompassUserName', data.name);
+                sessionStorage.setItem('sprintCompassUserRole', data.userRole);
+
                 const { from } = props.location.state || { from: { pathname: '/projects' } }
                 if (data.firstLogin || !data.validGitToken) {
                     window.open("/auth", '_self');
@@ -76,36 +71,6 @@ function Login(props) {
             }
         }
     };
-
-    const register = async (status) => {
-        if (status) {
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    firstname: state.firstname, lastname: state.lastname, email: state.userLogin, password: state.userPass
-                })
-            };
-            const response = await fetch('http://localhost:5000/auth/register', requestOptions);
-            const data = await response.json();
-            if (response.status === 201) {
-                Notification.success({
-                    title: "Successfully Created the Account",
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-            else {
-                Notification.error({
-                    title: data.msg,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-            setState({ login: true, firstname: "", lastname: "", userLogin: "", userPass: "" });
-        }
-    };
-
 
     return (
         <div className="App">
@@ -187,56 +152,6 @@ function Login(props) {
                                 >
                                     Sign In
                                 </Button>
-                                <div
-                                    className="signOptionsLink"
-                                    onClick={() => setState({ login: false })}
-                                >
-                                    Sign Up
-                                </div>
-                            </Form>
-                        }
-
-                        {
-                            !state.login &&
-                            <Form
-                                className="loginForm"
-                                model={registerModel}
-                                onSubmit={(status) => { register(status) }}
-                            >
-                                <TextField
-                                    name="firstname"
-                                    label="First Name"
-                                    onChange={(value) => setState({ firstname: value })}
-                                />
-                                <TextField
-                                    name="lastname"
-                                    label="Last Name"
-                                    onChange={(value) => setState({ lastname: value })}
-                                />
-                                <TextField
-                                    name="email"
-                                    label="Email"
-                                    onChange={(value) => setState({ userLogin: value })}
-                                />
-                                <TextField
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    onChange={(value) => setState({ userPass: value })}
-                                />
-                                <Button
-                                    appearance="primary"
-                                    type="submit"
-                                    style={{ width: '100%' }}
-                                >
-                                    Sign Up
-                                </Button>
-                                <div
-                                    className="signOptionsLink"
-                                    onClick={() => setState({ login: true })}
-                                >
-                                    Sign In
-                                </div>
                             </Form>
                         }
                     </div>

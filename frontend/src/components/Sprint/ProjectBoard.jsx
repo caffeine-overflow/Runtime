@@ -4,17 +4,18 @@ import {
     Content, Sidebar, Navbar, FlexboxGrid
 } from 'rsuite';
 import { useRouteMatch, withRouter } from 'react-router-dom';
-import '../App.css';
-import MainNavbar from './Navbar';
+import '../../App.css';
+import MainNavbar from '../Navbar';
 import SprintTable from './SprintTable';
-import CreateTicket from "../assets/createTicket.svg";
-import SprintImg from "../assets/sprint.svg";
-import NoActiveSprint from "../assets/noactivesprint.svg";
+import CreateTicket from "../../assets/createTicket.svg";
+import SprintImg from "../../assets/sprint.svg";
+import NoActiveSprint from "../../assets/noactivesprint.svg";
 import Backlog from "./Backlog";
 import SprintHistory from "./SprintHistory";
 import UserStoryForm from "./UserStoryForm";
 import SprintForm from "./SprintForm";
-import NotFound from "./NotFound";
+import NotFound from "../NotFound";
+import SprintHome from "./sprintHome";
 
 const NavToggle = ({ expand, onChange }) => {
     return (
@@ -36,6 +37,8 @@ const NavToggle = ({ expand, onChange }) => {
 function ProjectBoard() {
     const [collaborators, setcollaborators] = useState([]);
     const [sprints, setsprints] = useState([]);
+
+    const [homeToggle, setHomeToggle] = useState(true);
     const [activeSprintToggle, setactiveSprintToggle] = useState(false);
     const [createSprintToggle, setcreateSprintToggle] = useState(false);
     const [createUserStoryToggle, setcreateUserStoryToggle] = useState(false);
@@ -61,14 +64,6 @@ function ProjectBoard() {
 
         let currentSprint = data.sprints.find(d => !d.is_done);
         setActiveSprint(currentSprint);
-
-        if (!currentSprint) {
-            setcreateSprintToggle(true);
-        }
-        else {
-            setactiveSprintToggle(true);
-        }
-
         setsprints(data.sprints);
     }
 
@@ -96,6 +91,7 @@ function ProjectBoard() {
         setcreateSprintToggle(false);
         setviewBacklogToggle(false);
         setsprintHistoryToggle(false);
+        setHomeToggle(false);
 
         toggleFunction(true);
     };
@@ -126,6 +122,8 @@ function ProjectBoard() {
                                     <Nav.Item
                                         eventKey="2"
                                         icon={<Icon icon="home" />}
+                                        active={homeToggle}
+                                        onClick={() => navbarToggleHandler(setHomeToggle)}
                                     >
                                         Home
                                     </Nav.Item>
@@ -199,6 +197,10 @@ function ProjectBoard() {
 
                     <Container>
                         <Content>
+                            {
+                                homeToggle &&
+                                <SprintHome />
+                            }
                             {
                                 activeSprintToggle &&
                                 <div>

@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const { token_secret } = require("../config");
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user.js");
-const { testEmail } = require('../utils/email');
+const { sendEmail } = require('../utils/email');
+const { welcomeEmail } = require("../utils/email_templates/welcome");
 
 
 //function to authenticate the token, act as a middleware
@@ -17,11 +18,18 @@ let authenticateToken = (req, res, next) => {
     if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
     jwt.verify(token, token_secret, async (err, user) => {
-        if (!user) return res.status(403).send({ msg: "Not Authorized" });
+        if (!user || err) return res.status(403).send({ msg: "Not Authorized" });
         let tempUser = await User.findById(user.id);
-        if (err) return res.status(403).send({ msg: "Not Authorized" });
-        else if (tempUser.first_login || !!!tempUser.git_token)
+        if (tempUser.first_login || !!!tempUser.git_token) {
             return res.status(307).send({ msg: "Redirecting..." });
+        }
+        else if (tempUser.role === 'owner' && !tempUser.client_id)
+        {
+            return res.status(307).send({ msg: "Redirecting..." });
+        }
+        else if (tempUser.role !== 'owner' && !!!tempUser.invitation_accepted) {
+            return res.status(307).send({ msg: "Redirecting..." });
+        }
         req.user = tempUser;
 
         //move on from the middleware
@@ -38,11 +46,18 @@ let authRenewToken = (req, res, next) => {
     if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
     jwt.verify(token, token_secret, async (err, user) => {
-        if (!user) return res.status(403).send({ msg: "Not Authorized" });
+        if (!user || err) return res.status(403).send({ msg: "Not Authorized" });
         let tempUser = await User.findById(user.id);
-        if (err) return res.status(403).send({ msg: "Not Authorized" });
-        else if (!tempUser.first_login && !!tempUser.git_token)
-            return res.status(307).send({ msg: "Redirecting..." });
+        if (!tempUser.first_login && !!tempUser.git_token) {
+            if (tempUser.role === 'owner') {
+                if (!!tempUser.client_id)
+                    return res.status(307).send({ msg: "Redirecting..." });
+            }
+            else {
+                if (!!tempUser.invitation_accepted)
+                    return res.status(307).send({ msg: "Redirecting..." });
+            }
+        }
         req.user = tempUser;
 
         //move on from the middleware
@@ -50,6 +65,25 @@ let authRenewToken = (req, res, next) => {
     });
 };
 
+let authAdmin = (req, res, next) => {
+    //get the token
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    //return 403 if no token
+    if (!token) return res.status(403).send({ msg: "Not Authorized" });
+
+    jwt.verify(token, token_secret, async (err, user) => {
+        if (!user || err) return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser = await User.findById(user.id).populate('client_id');
+        if (tempUser.role !== "owner" && tempUser.role !== "admin")
+            return res.status(403).send({ msg: "Not Authorized." });
+
+        req.user = tempUser;
+        //move on from the middleware
+        next();
+    });
+};
 
 let gitAuthMiddleware = (req, res, next) => {
     //get the token
@@ -60,9 +94,8 @@ let gitAuthMiddleware = (req, res, next) => {
     if (!token) return res.status(403).send({ msg: "Not Authorized" });
 
     jwt.verify(token, token_secret, async (err, user) => {
-        if (!user) return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser = await User.findById(user.id);
-        if (err) return res.status(403).send({ msg: "Not Authorized" });
+        if (!user || err) return res.status(403).send({ msg: "Not Authorized" });
+        let tempUser = await User.findById(user.id).populate("client_id");
         req.user = tempUser;
 
         //move on from the middleware
@@ -96,9 +129,18 @@ router.post("/login", async (req, res) => {
 
         if (user && await bcrypt.compare(password, user.password)) {
             //create the json web tokens
-            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname };
+            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted};
             const access_token = jwt.sign(userToken, token_secret);
-            return res.status(200).send({ access_token, 'user': user._id, 'name': `${user.firstname} ${user.lastname}`, firstLogin: user.first_login, validGitToken: !!user.git_token });
+            return res.status(200).send(
+                {
+                    access_token, 'user': user._id,
+                    'name': `${user.firstname} ${user.lastname}`,
+                    firstLogin: user.first_login,
+                    validGitToken: !!user.git_token,
+                    userRole: user.role,
+                    invitationAccepted: user.invitation_accepted
+                }
+            );
         } else return res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
         console.log(err.stack);
@@ -116,7 +158,7 @@ router.post("/register", authenticateToken, async (req, res) => {
             return res.status(400).send({ msg: "User already exists" });
         }
 
-        let password = "abc";
+        let password = Math.random().toString(36).substring(2, 8) + (Math.random() * 100).toFixed();
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = new User({
@@ -126,7 +168,9 @@ router.post("/register", authenticateToken, async (req, res) => {
             password: hashedPassword,
             phone: phone,
             location: location,
-            image: image
+            image: image,
+            first_login: true,
+            git_token: null,
         });
 
         newUser.save(function (err) {
@@ -134,7 +178,8 @@ router.post("/register", authenticateToken, async (req, res) => {
                 return res.status(500).send({ msg: "Something went wrong. Please try again" });
             }
             else {
-                testEmail().catch(console.error);
+                let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
+                sendEmail(htmlTemplate, email, "Welcome").catch(console.error);
                 return res.status(200).send({ msg: "Account Created" });
             }
         });
@@ -143,4 +188,4 @@ router.post("/register", authenticateToken, async (req, res) => {
     }
 });
 
-module.exports = { router, authenticateToken, authRenewToken, gitAuthMiddleware };
+module.exports = { router, authenticateToken, authRenewToken, gitAuthMiddleware, authAdmin };

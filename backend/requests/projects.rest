@@ -12,20 +12,6 @@ Content-Type: application/json
   "team_id":"605117e72900ec3aecef3ebc"
 }
 
-
-
-###
-//join to a project
-PUT http://localhost:5000/api/projects/join
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNDdkYjY1ODI4Yzk4NTRiMGE3MzUzNiIsImVtYWlsIjoicHJhYmluQGd5YXdhbGkuY2EiLCJwYXNzd29yZCI6IiQyYiQxMCRYLnA4RWNoLjkxYk9PTzZFTHhpWXplZVpQZTFHWmtIck5pT282VVc3ejRLNUZyTDhzb2NvZSIsImlhdCI6MTYxNTkyNDM4M30.xDTsVYQtwh0pnFhSovncHROXCpHsS-rQTswjKqVPkhY
-Content-Type: application/json
-
-{
-  "projectId": "605171ebb02c251a30726b4d"
-}
-
-
-
 ###
 //getProject by teamID.
 GET http://localhost:5000/api/projects/byTeamId/605117e72900ec3aecef3ebc

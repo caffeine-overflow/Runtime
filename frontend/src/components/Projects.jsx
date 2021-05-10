@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react'
 import ProjectSvg from "../assets/teamsHome.svg";
 import Loader from "react-loader-spinner";
 import {
-    Grid, Row, Col, Drawer, Icon, Breadcrumb,
-    Button, Form, FormGroup, FormControl, ControlLabel,
-    ButtonToolbar, Schema, Notification, Avatar, Tag,
-    Whisper, Popover, InputPicker, List, FlexboxGrid
+    Drawer, Icon, Button, Form, FormGroup, FormControl, ControlLabel,
+    ButtonToolbar, Schema, Notification, List, FlexboxGrid
 } from 'rsuite';
 import {
     useRouteMatch,
@@ -53,22 +51,16 @@ const titleStyle = {
 };
 
 function Projects(props) {
-    const [user, setuser] = useState(null)
     const [createProjectDrawer, setcreateProjectDrawer] = useState(false);
-    const [joinProjectDrawer, setjoinProjectDrawer] = useState(false);
     const [projectName, setprojectName] = useState("");
     const [description, setdescription] = useState("");
-    const [projects, setProjects] = useState([]);
     const [userProjects, setuserProjects] = useState([]);
-    const [notUserProjects, setnotUserProjects] = useState([]);
-    const [selectedProject, setselectedProject] = useState(null);
-
-    let { url } = useRouteMatch();
-
+    const [userRole, setUserRole] = useState([]);
 
     let getProjects = async () => {
         let currentUser = sessionStorage.getItem('sprintCompassUser');
         let token = sessionStorage.getItem('sprintCompassToken');
+        setUserRole(sessionStorage.getItem('sprintCompassUserRole'));
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -80,27 +72,19 @@ function Projects(props) {
         let data = await response.json();
 
         let userProjects = [];
-        let notUserProjects = [];
         data.projects.map(d => {
             let userExist = d.members.find(m => m._id === currentUser);
             if (userExist) {
                 userProjects.push(d);
             }
-            else {
-                notUserProjects.push(d);
-            }
         });
-        setProjects(data.projects);
         setuserProjects(userProjects);
-        setnotUserProjects(notUserProjects);
     }
 
     let close = () => {
         setcreateProjectDrawer(false);
-        setjoinProjectDrawer(false);
         setprojectName("");
         setdescription("");
-        setselectedProject(null);
     }
 
     let createProject = async (status) => {
@@ -134,38 +118,7 @@ function Projects(props) {
         }
     }
 
-    let joinProject = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ 'projectId': selectedProject })
-        };
-        const response = await fetch(`http://localhost:5000/api/projects/join`, requestOptions);
-
-        if (response.status === 200) {
-            Notification.success({
-                title: 'Successfully Joined the Project',
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
-        }
-        else {
-            Notification.error({
-                title: 'Server error, Try again later',
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
-        }
-        close();
-        getProjects();
-    }
-
     useEffect(() => {
-        setuser(sessionStorage.getItem('sprintCompassUser'));
         getProjects();
     }, []);
 
@@ -191,33 +144,25 @@ function Projects(props) {
                             textAlign: 'center'
                         }}
                     >
-                        Welcome To
+                        Welcome to
                             <br />
                         <span
                             style={{
                                 color: "#2D56B3",
-                                marginRight: "10px",
                                 fontWeight: 600
                             }}
                         >
-                            Sprint
+                            Run
                             </span>
-                        <span style={{ color: "#515B60" }}>Compass</span>
+                        <span style={{ color: "#515B60" }}>time</span>
                     </div>
-                    <div style={{ width: '100%' }}>
-                        <div
-                            className="teamButtons"
-                            onClick={() => setcreateProjectDrawer(true)}
-                        >
-                            Create a Project
-                            </div>
-                        <div
-                            className="teamButtons"
-                            onClick={() => setjoinProjectDrawer(true)}
-                        >
-                            Join a Project
-                            </div>
-                    </div>
+                    {(userRole == "owner" || userRole == "admin") && (
+						<div style={{ width: "100%" }}>
+							<div className="teamButtons" onClick={() => setcreateProjectDrawer(true)}>
+								Create a Project
+							</div>
+						</div>
+					)}
                 </div>
             </section>
             {
@@ -316,48 +261,7 @@ function Projects(props) {
                     </div>
                 </Drawer.Body>
             </Drawer>
-
-            <Drawer
-                show={joinProjectDrawer}
-                onHide={() => { close() }}
-            >
-                <Drawer.Body>
-                    <div className="drawerBody">
-                        <Form
-                            onSubmit={() => { joinProject() }}
-                        >
-                            <h5 style={{ textAlign: 'center', marginBottom: '50px' }}>Join a Project</h5>
-                            {
-                                notUserProjects && notUserProjects.length === 0 &&
-                                <div style={{ textAlign: 'center' }}>No Projects Available to Join</div>
-                            }
-                            {
-                                notUserProjects && notUserProjects.length > 0 &&
-                                <div>
-                                    <InputPicker
-                                        data={notUserProjects.map(p => {
-                                            return { "label": p.name, "value": p._id }
-                                        })}
-                                        style={{ width: 224 }}
-                                        onChange={(value) => setselectedProject(value)}
-                                    />
-                                    <ButtonToolbar>
-                                        <Button
-                                            appearance="primary"
-                                            type="submit"
-                                            style={{ width: '100%', margin: '30px 0' }}
-                                            disabled={!selectedProject}
-                                        >
-                                            Submit
-                                        </Button>
-                                    </ButtonToolbar>
-                                </div>
-                            }
-                        </Form>
-                    </div>
-                </Drawer.Body>
-            </Drawer>
-        </div >
+        </div>
     )
 }
 export default withRouter(Projects);
