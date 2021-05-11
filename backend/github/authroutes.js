@@ -54,18 +54,19 @@ router.get("/validateInvite", authroutes.gitAuthMiddleware, async (req, res) => 
                 if (err) {
                     return res.status(500).send({ msg: "Something went wrong." });
                 } else {
-                    return res.status(200).send({ msg: 'Congratulations! You are now member of our company' });
+                    return res.status(200).send({ msg: 'Congratulations! You are now a member of Runtime' });
                 }
             });
         }
         else if (status === 404) { // if the user is not the member
             //check if the organization has active invitation for the user
-
             let invitationActive = await hasActiveInvitation(owner.git_token, req.user.client_id.organization, req.user.git_username);
-            if(invitationActive) //if the invitation is active
-                return res.status(400).send({ msg: "The invitation has not be accepted yet" });
+            if (invitationActive) //if the invitation is active
+                return res.status(400).send({ msg: "The invitation has not been accepted yet" });
             else // if invitation is inactive
+            {
                 return res.status(400).send({ msg: "The invitation was re-sent." });
+            }
         }
     }
     catch (err) {
