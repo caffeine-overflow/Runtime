@@ -56,8 +56,10 @@ function Projects(props) {
     const [description, setdescription] = useState("");
     const [userProjects, setuserProjects] = useState([]);
     const [userRole, setUserRole] = useState([]);
+    const [loading, setloading] = useState(false);
 
     let getProjects = async () => {
+        setloading(true);
         let currentUser = sessionStorage.getItem('sprintCompassUser');
         let token = sessionStorage.getItem('sprintCompassToken');
         setUserRole(sessionStorage.getItem('sprintCompassUserRole'));
@@ -79,6 +81,7 @@ function Projects(props) {
             }
         });
         setuserProjects(userProjects);
+        setloading(false);
     }
 
     let close = () => {
@@ -156,76 +159,79 @@ function Projects(props) {
                             </span>
                         <span style={{ color: "#515B60" }}>time</span>
                     </div>
-                    {(userRole == "owner" || userRole == "admin") && (
-						<div style={{ width: "100%" }}>
-							<div className="teamButtons" onClick={() => setcreateProjectDrawer(true)}>
-								Create a Project
+                    {(userRole === "owner" || userRole === "admin") && (
+                        <div style={{ width: "100%" }}>
+                            <div className="teamButtons" onClick={() => setcreateProjectDrawer(true)}>
+                                Create a Project
 							</div>
-						</div>
-					)}
+                        </div>
+                    )}
                 </div>
             </section>
             {
-                (userProjects && userProjects.length > 0) ?
-                    <div>
-                        <div className="projectHomeHeader">Your Projects</div>
-                        <List hover style={{ width: '80%', margin: 'auto' }}>
-                            {userProjects.map((item, index) => (
-                                <List.Item key={item._id} index={index}>
-                                    <FlexboxGrid>
-                                        <FlexboxGrid.Item
-                                            colspan={10}
-                                            style={{
-                                                ...styleCenter,
-                                                flexDirection: 'column',
-                                                alignItems: 'flex-start',
-                                                overflow: 'hidden'
-                                            }}
-                                        >
-                                            <div style={titleStyle}>{item.name}</div>
-                                            <div style={slimText}>
-                                                <div>Description</div>
-                                                <div>{item.description}</div>
-                                            </div>
-                                        </FlexboxGrid.Item>
-                                        <FlexboxGrid.Item colspan={6} style={styleCenter}>
-                                            <div>
-                                                <div style={slimText}>Project Lead</div>
-                                                <div>
-                                                    <Icon icon="user-circle-o" />
-                                                    {`  ${item.project_lead.firstname} ${item.project_lead.lastname}`}
-                                                </div>
-                                            </div>
-                                        </FlexboxGrid.Item>
-                                        <FlexboxGrid.Item colspan={5} style={styleCenter}>
-                                            <div>
-                                                <div style={slimText}>Start Date</div>
-                                                <div style={slimText}>{item.created_at}</div>
-                                            </div>
-                                        </FlexboxGrid.Item>
-                                        <FlexboxGrid.Item
-                                            colspan={3}
-                                            style={{ ...styleCenter, justifyContent: 'center' }}
-                                        >
-                                            <div
-                                                style={{ cursor: 'pointer', color: '#134069' }}
-                                                onClick={() => props.history.push(`project/${item._id}`)}
-                                            >
-                                                View
+                loading &&
+                <Loader
+                    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
+                    type="ThreeDots"
+                    color="#134069"
+                    height={50}
+                    width={50}
+                />
+            }
+            <div>
+                <div className="projectHomeHeader">Your Projects</div>
+                <List hover style={{ width: '80%', margin: 'auto' }}>
+                    {userProjects.map((item, index) => (
+                        <List.Item key={item._id} index={index}>
+                            <FlexboxGrid>
+                                <FlexboxGrid.Item
+                                    colspan={10}
+                                    style={{
+                                        ...styleCenter,
+                                        flexDirection: 'column',
+                                        alignItems: 'flex-start',
+                                        overflow: 'hidden'
+                                    }}
+                                >
+                                    <div style={titleStyle}>{item.name}</div>
+                                    <div style={slimText}>
+                                        <div>Description</div>
+                                        <div>{item.description}</div>
+                                    </div>
+                                </FlexboxGrid.Item>
+                                <FlexboxGrid.Item colspan={6} style={styleCenter}>
+                                    <div>
+                                        <div style={slimText}>Project Lead</div>
+                                        <div>
+                                            <Icon icon="user-circle-o" />
+                                            {`  ${item.project_lead.firstname} ${item.project_lead.lastname}`}
                                         </div>
-                                        </FlexboxGrid.Item>
-                                    </FlexboxGrid>
-                                </List.Item>
-                            ))}
-                        </List>
-                    </div> :
-                    <Loader
-                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
-                        type="ThreeDots"
-                        color="#134069"
-                        height={50}
-                        width={50}
-                    />
+                                    </div>
+                                </FlexboxGrid.Item>
+                                <FlexboxGrid.Item colspan={5} style={styleCenter}>
+                                    <div>
+                                        <div style={slimText}>Start Date</div>
+                                        <div style={slimText}>{item.created_at}</div>
+                                    </div>
+                                </FlexboxGrid.Item>
+                                <FlexboxGrid.Item
+                                    colspan={3}
+                                    style={{ ...styleCenter, justifyContent: 'center' }}
+                                >
+                                    <div
+                                        style={{ cursor: 'pointer', color: '#134069' }}
+                                        onClick={() => props.history.push(`project/${item._id}`)}
+                                    >
+                                        View
+                                        </div>
+                                </FlexboxGrid.Item>
+                            </FlexboxGrid>
+                        </List.Item>
+                    ))}
+                </List>
+            </div>
+            {
+                userProjects.length === 0 && <div style={{ textAlign: 'center' }}>No Projects Found</div>
             }
             <Drawer
                 show={createProjectDrawer}
