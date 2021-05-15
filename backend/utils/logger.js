@@ -8,17 +8,13 @@ require("winston-daily-rotate-file");
             new transports.DailyRotateFile({
                 dirname: '.log',
                 filename: 'info.log',
-                maxsize: '5m',
-                format: format.combine(
-                    format.timestamp({ format: 'YYYY-MM-DD' })
-                ),
+                maxsize: '5m'
             })
         ],
         format: winston.format.combine(
             format.timestamp({format: 'YYYY-MM-DDTHH:mm:ss.sss'}),
             format.json(),
-            winston.format.printf(info => JSON.stringify({ 
-                level: info.level ,
+            winston.format.printf(info => JSON.stringify({
                 route: info.route,
                 user_id: info.id,
                 firstname:info.firstname,
