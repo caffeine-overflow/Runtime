@@ -59,7 +59,6 @@ function Sprint(props) {
 
     const [state, setState] = useState(null);
     const [userStories, setuserStories] = useState([]);
-    const [users, setUsers] = useState([]);
     const [showdrawer, setshowdrawer] = useState(false);
     const [selectedUserStory, setselectedUserStory] = useState(null);
 
@@ -155,20 +154,6 @@ function Sprint(props) {
         }
     }
 
-    const getAllUsers = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
-        let data = await response.json();
-        setUsers(data.users)
-    }
-
     const updateUserStory = async () => {
         let body = {};
 
@@ -255,7 +240,7 @@ function Sprint(props) {
                 returnContent = `Updated Title to  "${history.new_value}"`
 
             else if (history.attribute == "assigned_to") {
-                let assigned_to = users.find(element => element._id == history.new_value);
+                let assigned_to = props.collaborators.find(element => element._id == history.new_value);
                 returnContent = assigned_to ? `Changed Assiginee to ${assigned_to.firstname} ${assigned_to.lastname}` : `Unassigned`;
             }
 
@@ -274,14 +259,13 @@ function Sprint(props) {
             else if (history.attribute == "sprint_id")
                 returnContent = `Moved task to sprint ${history.new_value}`
 
-            let user = users.find(element => element._id == history.updated_by);
+            let user = props.collaborators.find(element => element._id == history.updated_by);
             return <div><p style={{ fontWeight: 500 }}>{history.timestamp}</p><p style={{ marginTop: -3 }}>{returnContent}</p><p style={{ marginTop: -1, fontWeight: 400 }}>By: {user?.firstname} {user?.lastname}</p></div>
         })
         setHistory(parsedHisotry);
     }
 
     useEffect(() => {
-        getAllUsers();
         getUserStories();
     }, []);
 

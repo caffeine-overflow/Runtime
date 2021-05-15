@@ -7,7 +7,6 @@ import {
 
 
 export default function SprintForm(props) {
-
     const [title, settitle] = useState("");
     const [description, setdescription] = useState("");
     const [step, setStep] = useState(0);

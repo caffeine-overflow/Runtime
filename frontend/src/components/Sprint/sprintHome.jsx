@@ -46,19 +46,21 @@ function SprintHome(props) {
                     </div>
                     {
                         repo &&
-                        <Clipboard
-                            data-clipboard-text={repo.clone_url}
-                            style={{ background: 'none', display: 'flex', marginTop: '40px' }}
-                        >
-                            <div style={{ background: '#e6e6e6', padding: '7px', border: '1px solid #e6e6e6' }}>Clone Url</div>
-                            <div style={{ background: '#f5f5f5', padding: '7px', border: '1px solid #e6e6e6' }}>
-                                {repo.clone_url}
-                            </div>
+                        <div style={{ marginTop: '40px', display: 'flex' }}>
+                            <Clipboard
+                                data-clipboard-text={repo.clone_url}
+                                style={{ background: 'none', display: 'flex' }}
+                            >
+                                <div style={{ background: '#e6e6e6', padding: '7px', border: '1px solid #e6e6e6' }}>Clone Url</div>
+                                <div style={{ background: '#f5f5f5', padding: '7px', border: '1px solid #e6e6e6' }}>
+                                    {repo.clone_url}
+                                </div>
+                            </Clipboard>
                             <IconButton
                                 style={{ marginLeft: '10px' }}
                                 icon={<Icon icon="copy" />}
                             />
-                        </Clipboard>
+                        </div>
                     }
                 </section>
             </section>

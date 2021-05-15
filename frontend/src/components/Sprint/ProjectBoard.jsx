@@ -79,8 +79,6 @@ function ProjectBoard() {
         };
         const response = await fetch(`http://localhost:5000/api/projects/byProjectId/${url.split('/')[2]}`, requestOptions);
         let data = await response.json();
-        setcollaborators(data.project.members);
-        console.log(data.project);
         setproject(data.project);
     }
 
@@ -99,7 +97,22 @@ function ProjectBoard() {
         toggleFunction(true);
     };
 
+    const getAllUsers = async () => {
+        let token = sessionStorage.getItem('sprintCompassToken');
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+        const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
+        let data = await response.json();
+        setcollaborators(data.users);
+    }
+
     useEffect(() => {
+        getAllUsers();
         getSprints();
         getProjectById();
     }, []);
@@ -215,7 +228,7 @@ function ProjectBoard() {
                                             <SprintTable
                                                 sprint={acitveSprint}
                                                 collaborators={collaborators}
-                                                project_id={url.split('/')[3]}
+                                                project_id={url.split('/')[2]}
                                             /> :
                                             <NotFound
                                                 image={NoActiveSprint}
@@ -244,7 +257,7 @@ function ProjectBoard() {
                                                 style={{ margin: 'auto' }}
                                             >
                                                 <SprintForm
-                                                    project_id={url.split('/')[3]}
+                                                    project_id={url.split('/')[2]}
                                                     acitveSprint={acitveSprint}
                                                     refresh={() => {
                                                         setcreateSprintToggle(false);
@@ -287,7 +300,7 @@ function ProjectBoard() {
                                                     Create User Story
                                                 </div>
                                                 <UserStoryForm
-                                                    project_id={url.split('/')[3]}
+                                                    project_id={url.split('/')[2]}
                                                     acitveSprint={acitveSprint}
                                                     collaborators={collaborators}
                                                 />
