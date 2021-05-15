@@ -6,7 +6,6 @@ import {
     ButtonToolbar, Schema, Notification, List, FlexboxGrid
 } from 'rsuite';
 import {
-    useRouteMatch,
     withRouter
 } from 'react-router-dom';
 import '../App.css';
@@ -72,15 +71,7 @@ function Projects(props) {
         };
         const response = await fetch(`http://localhost:5000/api/projects`, requestOptions);
         let data = await response.json();
-
-        let userProjects = [];
-        data.projects.map(d => {
-            let userExist = d.members.find(m => m._id === currentUser);
-            if (userExist) {
-                userProjects.push(d);
-            }
-        });
-        setuserProjects(userProjects);
+        setuserProjects(data.projects);
         setloading(false);
     }
 
@@ -231,7 +222,7 @@ function Projects(props) {
                 </List>
             </div>
             {
-                userProjects.length === 0 && <div style={{ textAlign: 'center' }}>No Projects Found</div>
+                userProjects.length === 0 && !loading && <div style={{ textAlign: 'center' }}>No Projects Found</div>
             }
             <Drawer
                 show={createProjectDrawer}

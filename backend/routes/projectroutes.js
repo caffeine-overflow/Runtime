@@ -8,7 +8,6 @@ const { createRepo } = require("../github/gitUtils");
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
 		let projects = await Project.find({})
-			.populate("members")
 			.populate("project_lead");
 
 		return res.status(200).send({ projects });
@@ -34,11 +33,13 @@ router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req,
 router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req, res) => {
 	try {
 		let body = req.body;
+		let repo = await createRepo(req.user.git_token, req.user.client_id.organization, body.name);
 		const project = new Project({
 			members: [req.user.id],
 			project_lead: req.user.id,
 			created_at: new Date().toLocaleString(),
 			name: body.name,
+			repo: repo.data.name,
 			description: body.description,
 			is_done: false,
 			client_id: req.user.client_id,
@@ -46,17 +47,13 @@ router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req,
 
 		project
 			.save()
-			.then(async (data) => {
-				let repoName = body.name
-				let resp = await createRepo(req.user.git_token, req.user.client_id.organization, repoName);
+			.then((data) => {
 				return res.status(200).send(data);
 			})
 			.catch((err) => {
-				console.error(err.stack);
 				return res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
-		console.log(err.stack);
 		return res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });

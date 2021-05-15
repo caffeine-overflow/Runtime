@@ -36,6 +36,7 @@ const NavToggle = ({ expand, onChange }) => {
 
 function ProjectBoard() {
     const [collaborators, setcollaborators] = useState([]);
+    const [project, setproject] = useState(null);
     const [sprints, setsprints] = useState([]);
 
     const [homeToggle, setHomeToggle] = useState(true);
@@ -79,6 +80,8 @@ function ProjectBoard() {
         const response = await fetch(`http://localhost:5000/api/projects/byProjectId/${url.split('/')[2]}`, requestOptions);
         let data = await response.json();
         setcollaborators(data.project.members);
+        console.log(data.project);
+        setproject(data.project);
     }
 
     const handleToggle = () => {
@@ -198,8 +201,10 @@ function ProjectBoard() {
                     <Container>
                         <Content>
                             {
-                                homeToggle &&
-                                <SprintHome />
+                                homeToggle && !!project &&
+                                <SprintHome
+                                    project={project}
+                                />
                             }
                             {
                                 activeSprintToggle &&

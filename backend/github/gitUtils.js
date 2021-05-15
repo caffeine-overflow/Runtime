@@ -26,7 +26,7 @@ const hasActiveInvitation = async (token, organization, username) => {
         org: organization
     });
     let invitationFound = pendingInvite.data.find(invite => invite.login === username && invite.failed_at == null);
-    if(invitationFound)
+    if (invitationFound)
         return true;
     else {
         await octo.request('PUT /orgs/{org}/memberships/{username}', {
@@ -40,7 +40,7 @@ const hasActiveInvitation = async (token, organization, username) => {
 const checkOrganizationMembership = async (token, organization, username) => {
     try {
         let octo = octokit(token);
-        let response =  await octo.request('GET /orgs/{org}/members/{username}', {
+        let response = await octo.request('GET /orgs/{org}/members/{username}', {
             org: organization,
             username: username,
         });
@@ -51,7 +51,6 @@ const checkOrganizationMembership = async (token, organization, username) => {
     }
 }
 
-
 const createRepo = async (token, organization, repoName) => {
     let octo = octokit(token);
     return await octo.request('POST /orgs/{org}/repos', {
@@ -61,4 +60,12 @@ const createRepo = async (token, organization, repoName) => {
     });
 }
 
-module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo };
+const getRepo = async (token, organization, repo) => {
+    let octo = octokit(token);
+    return await octo.request('GET /repos/{owner}/{repo}', {
+        owner: organization,
+        repo: repo
+    });
+}
+
+module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo };

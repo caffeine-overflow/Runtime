@@ -19,12 +19,11 @@ let authenticateToken = (req, res, next) => {
 
     jwt.verify(token, token_secret, async (err, user) => {
         if (!user || err) return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser = await User.findById(user.id);
+        let tempUser = await User.findById(user.id).populate('client_id');
         if (tempUser.first_login || !!!tempUser.git_token) {
             return res.status(307).send({ msg: "Redirecting..." });
         }
-        else if (tempUser.role === 'owner' && !tempUser.client_id)
-        {
+        else if (tempUser.role === 'owner' && !tempUser.client_id) {
             return res.status(307).send({ msg: "Redirecting..." });
         }
         else if (tempUser.role !== 'owner' && !!!tempUser.invitation_accepted) {
@@ -47,7 +46,7 @@ let authRenewToken = (req, res, next) => {
 
     jwt.verify(token, token_secret, async (err, user) => {
         if (!user || err) return res.status(403).send({ msg: "Not Authorized" });
-        let tempUser = await User.findById(user.id);
+        let tempUser = await User.findById(user.id).populate('client_id');
         if (!tempUser.first_login && !!tempUser.git_token) {
             if (tempUser.role === 'owner') {
                 if (!!tempUser.client_id)
@@ -129,7 +128,7 @@ router.post("/login", async (req, res) => {
 
         if (user && await bcrypt.compare(password, user.password)) {
             //create the json web tokens
-            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted};
+            const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted };
             const access_token = jwt.sign(userToken, token_secret);
             return res.status(200).send(
                 {
