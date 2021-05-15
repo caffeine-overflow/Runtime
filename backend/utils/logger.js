@@ -1,9 +1,9 @@
 const winston = require('winston');
-const {format, transports, level } = require('winston');
+const {format, transports } = require('winston');
 require("winston-daily-rotate-file");
 
 
-  module.exports =  winston.createLogger({
+ const logger =  winston.createLogger({
         transports: [
             new transports.DailyRotateFile({
                 dirname: '.log',
@@ -17,6 +17,15 @@ require("winston-daily-rotate-file");
         format: winston.format.combine(
             format.timestamp({format: 'YYYY-MM-DDTHH:mm:ss.sss'}),
             format.json(),
-            winston.format.printf(info => JSON.stringify({ level: info.level ,timestamp : info.timestamp, info :info.message}))
+            winston.format.printf(info => JSON.stringify({ 
+                level: info.level ,
+                route: info.route,
+                user_id: info.id,
+                firstname:info.firstname,
+                lastname:info.lastname,
+                message :info.message,
+                timestamp : info.timestamp}))
         ),
     });
+
+    module.exports = logger;
