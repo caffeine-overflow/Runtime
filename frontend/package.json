@@ -17,6 +17,7 @@
     "react-loader-spinner": "^4.0.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
+    "react-rte": "^0.16.3",
     "react-scripts": "4.0.3",
     "rsuite": "^4.9.2",
     "web-vitals": "^1.0.1"
