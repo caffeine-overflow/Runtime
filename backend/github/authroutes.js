@@ -20,7 +20,7 @@ router.get("/get_token", authroutes.gitAuthMiddleware, async (req, res) => {
             let access_token = result.body.access_token;
             if (access_token) {
                 let gitUser = await getUser(access_token);
-                await User.findByIdAndUpdate(req.user.id, { $set: { git_token: access_token, git_id: gitUser.data.id, git_username: gitUser.data.login } }, async function (err, result) {
+                await User.findByIdAndUpdate(req.user.id, { $set: { git_token: access_token, git_id: gitUser.data.id, git_username: gitUser.data.login, git_avatar: gitUser.data.avatar_url } }, async function (err, result) {
                     if (err) {
                         return res.status(500).send({ msg: "Something went wrong." });
                     } else {

@@ -9,7 +9,8 @@ const { welcomeEmail } = require("../utils/email_templates/welcome");
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
-		let users = await User.find({});
+		let users = await User.find({ client_id: req.user.client_id._id });
+		users.forEach(user => user.password = undefined)
 		return res.status(200).send({ users });
 	} catch (err) {
 		console.error(err.stack)
@@ -42,6 +43,25 @@ router.get("/getUserById/:id", authroutes.authRenewToken, async (req, res) => {
 	}
 });
 
+router.put("/updateUserById", authroutes.authAdmin, async (req, res) => {
+	try {
+		let body = req.body;
+		let user = await User.findById(body.id);
+		user.disabled = body.disabled;
+		user.role = body.role;
+
+		user.save()
+			.then((data) => {
+				return res.status(200).send({ msg: "User Updated Successfully" });
+			})
+			.catch((err) => {
+				console.error(err.stack)
+				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+			});
+	} catch (err) {
+		return res.status(500).send({ msg: err.stack });
+	}
+});
 
 router.put("/", authroutes.authenticateToken, async (req, res) => {
 	try {
