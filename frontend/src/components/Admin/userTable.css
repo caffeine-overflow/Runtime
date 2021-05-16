@@ -1,0 +1,29 @@
+.rs-table-cell-content {
+  padding: 0 10px !important;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  height: 65px !important;
+  align-items: center;
+}
+
+[role='columnheader'] > .rs-table-cell-content {
+  height: fit-content !important;
+}
+
+.rs-progress-icon-success {
+  font-size: 15px !important;
+}
+
+.rs-progress-circle-info {
+  font-size: 15px;
+  padding-top: 2px;
+}
+
+.rs-table-cell {
+  background: none !important;
+}
+
+[role='row']:nth-child(even) {
+  background: #f7f7f7 !important;
+}

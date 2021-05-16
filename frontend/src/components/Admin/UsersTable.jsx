@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Avatar, Schema, Progress, Icon, InputPicker, Toggle, Notification, Drawer, Button } from "rsuite";
-import "../App.css";
+import { Table, Tag, Avatar, Progress, Icon, InputPicker, Notification, Drawer, Button } from "rsuite";
+import Loader from "react-loader-spinner";
+import './userTable.css';
 
 const { Column, HeaderCell, Cell, Pagination } = Table;
 const UserRoles = [
@@ -17,7 +18,10 @@ export default function UsersTable(props) {
 	const [openDrawer, setOpenDrawer] = useState(false);
 	const [userStatus, setUserStatus] = useState(false);
 
+	const [loading, setloading] = useState(false);
+
 	const getUsers = async () => {
+		setloading(true);
 		let token = sessionStorage.getItem("sprintCompassToken");
 		const requestOptions = {
 			method: "GET",
@@ -29,9 +33,10 @@ export default function UsersTable(props) {
 		const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
 		let data = await response.json();
 		let filteredUsers = data.users.filter((user) => {
-			if (user.role.toLowerCase() != "owner") return user;
+			if (user.role.toLowerCase() !== "owner") return user;
 		});
 		setUsers(filteredUsers);
+		setloading(false);
 	};
 
 	useEffect(() => {
@@ -62,7 +67,7 @@ export default function UsersTable(props) {
 	};
 
 	const TagCell = ({ rowData, dataKey, ...props }) => {
-		let colour = rowData[dataKey] ? "" : "green";
+		let colour = rowData[dataKey] ? "blue" : "green";
 		let content = rowData[dataKey] ? "Disabled" : "Active";
 
 		return (
@@ -77,13 +82,19 @@ export default function UsersTable(props) {
 		percentage = isNaN(percentage) ? 0 : percentage;
 
 		return (
-			<Cell {...props} style={{ marginTop: -5, alignContent: "center" }}>
-				{percentage == 0 ? (
-					<Progress.Circle style={{ height: 45, width: 45 }} />
-				) : percentage == 100 ? (
-					<Progress.Circle style={{ height: 45, width: 45 }} percent={percentage} status="success" />
+			<Cell {...props}>
+				{percentage === 0 ? (
+					<div style={{ width: '35px' }}>
+						<Progress.Circle />
+					</div>
+				) : percentage === 100 ? (
+					<div style={{ width: '35px' }}>
+						<Progress.Circle percent={percentage} status="success" />
+					</div>
 				) : (
-					<Progress.Circle style={{ height: 45, width: 45 }} percent={percentage} strokeColor="#ffc107" />
+					<div style={{ width: '35px' }}>
+						<Progress.Circle percent={percentage} strokeColor="#ffc107" />
+					</div>
 				)}
 			</Cell>
 		);
@@ -135,47 +146,56 @@ export default function UsersTable(props) {
 
 	return (
 		<div>
-			<Table
-				width={900}
-				height={600}
-				data={getData()}
-				rowHeight={65}
-				bordered
-				sortColumn={sortColumn}
-				sortType={sortType}
-				onSortColumn={handleSortColumn}
-				onRowClick={(data) => {
-					setSelectedRole(data.role);
-					setSelectedUser(data);
-					setOpenDrawer(true);
-					setUserStatus(data.disabled);
-				}}
-			>
-				<Column width={50} fixed>
-					<HeaderCell />
-					<ImageCell dataKey="git_avatar" />
-				</Column>
-				<Column width={150} fixed sortable>
-					<HeaderCell style={styles.header}>First Name</HeaderCell>
-					<Cell style={styles.cell} dataKey="firstname" />
-				</Column>
-				<Column width={150} fixed sortable>
-					<HeaderCell style={styles.header}>Last Name</HeaderCell>
-					<Cell style={styles.cell} dataKey="lastname" />
-				</Column>
-				<Column width={200} fixed sortable>
-					<HeaderCell style={styles.header}>User Role</HeaderCell>
-					<Cell style={styles.cell} dataKey="role" />
-				</Column>
-				<Column width={100}>
-					<HeaderCell style={styles.header}>Status</HeaderCell>
-					<TagCell dataKey="disabled" />
-				</Column>
-				<Column width={150}>
-					<HeaderCell style={styles.header}>Onboarding</HeaderCell>
-					<ProcessCell />
-				</Column>
-			</Table>
+			{
+				loading ?
+					<Loader
+						type="ThreeDots"
+						color="#134069"
+						height={50}
+						width={50}
+					/>
+					:
+					<Table
+						width={1000}
+						height={600}
+						data={getData()}
+						rowHeight={65}
+						sortColumn={sortColumn}
+						sortType={sortType}
+						onSortColumn={handleSortColumn}
+						onRowClick={(data) => {
+							setSelectedRole(data.role);
+							setSelectedUser(data);
+							setOpenDrawer(true);
+							setUserStatus(data.disabled);
+						}}
+					>
+						<Column width={100} fixed>
+							<HeaderCell />
+							<ImageCell dataKey="git_avatar" />
+						</Column>
+						<Column width={200} fixed sortable>
+							<HeaderCell style={styles.header}>First Name</HeaderCell>
+							<Cell style={styles.cell} dataKey="firstname" />
+						</Column>
+						<Column width={200} fixed sortable>
+							<HeaderCell style={styles.header}>Last Name</HeaderCell>
+							<Cell style={styles.cell} dataKey="lastname" />
+						</Column>
+						<Column width={200} fixed sortable>
+							<HeaderCell style={styles.header}>User Role</HeaderCell>
+							<Cell style={styles.cell} dataKey="role" />
+						</Column>
+						<Column width={100}>
+							<HeaderCell style={styles.header}>Status</HeaderCell>
+							<TagCell dataKey="disabled" />
+						</Column>
+						<Column width={150}>
+							<HeaderCell style={styles.header}>Onboarding</HeaderCell>
+							<ProcessCell />
+						</Column>
+					</Table>
+			}
 			<Drawer
 				show={openDrawer}
 				onHide={() => {
@@ -230,12 +250,9 @@ export default function UsersTable(props) {
 
 const styles = {
 	header: {
-		fontWeight: "bold",
-		color: "black",
-		fontSize: 18,
+		color: 'black',
 	},
 	cell: {
-		fontWeight: "bold",
-		fontSize: 16,
+		color: 'black'
 	},
 };

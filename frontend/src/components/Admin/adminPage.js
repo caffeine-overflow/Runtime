@@ -4,7 +4,7 @@ import {
     Form, FormGroup, ControlLabel, Icon, Button, FormControl, Schema, Message, Notification
 } from 'rsuite';
 import './adminPage.css';
-import UsersTable from '../UsersTable';
+import UsersTable from './UsersTable';
 import AdminSvg from '../../assets/admin.svg';
 
 const { StringType } = Schema.Types;
@@ -55,7 +55,7 @@ export default function AdminPage() {
                         </section>
                     }
                     {
-                        activeKey === 3 && 
+                        activeKey === 3 &&
                         <div>
                             < UsersTable />
                         </div>
