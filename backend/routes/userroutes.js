@@ -6,6 +6,7 @@ const authroutes = require("./authroutes");
 const bcrypt = require("bcrypt");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
+const logger = require('../utils/logger');
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
