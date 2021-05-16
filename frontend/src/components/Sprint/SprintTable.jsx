@@ -410,7 +410,6 @@ function Sprint(props) {
                                     width: '40%',
                                     display: 'flex',
                                     justifyContent: 'start',
-                                    alignContent: 'center',
                                     height: '100%',
                                     flexWrap: 'wrap',
                                     marginLeft: '30px',

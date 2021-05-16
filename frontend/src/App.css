@@ -143,3 +143,13 @@ li {
   height: 35vh;
   overflow-y: auto;
 }
+
+.EditorToolbar__root___3_Aqz {
+    position: fixed !important;
+    background-color: #ffffff !important;
+    z-index: 100 !important;
+}
+
+.public-DraftEditor-content{
+  margin-top: 50px !important;
+}

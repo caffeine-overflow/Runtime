@@ -111,13 +111,13 @@ export default function UsersTable(props) {
 
 	const PassFailIcon = (pass) => {
 		return (
-			<div>
+			<>
 				{pass ? (
 					<Icon icon="check-circle" style={{ margin: 5, color: "green" }} size="2x" />
 				) : (
 					<Icon icon="close-circle" style={{ margin: 5, color: "red" }} size="2x" />
 				)}
-			</div>
+			</>
 		);
 	};
 

@@ -9,15 +9,23 @@
 
 [role='columnheader'] > .rs-table-cell-content {
   height: fit-content !important;
+  font-size: 17px !important;
+}
+
+.rs-table-cell-header-icon-sort{
+  height: revert !important;
+  width: revert !important;
+  font-size: 20px !important;
 }
 
 .rs-progress-icon-success {
+  margin-top: -3px !important;
   font-size: 15px !important;
 }
 
 .rs-progress-circle-info {
-  font-size: 15px;
-  padding-top: 2px;
+  font-size: 12px;
+  padding-top: 5px;
 }
 
 .rs-table-cell {
