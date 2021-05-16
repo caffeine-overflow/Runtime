@@ -15,7 +15,7 @@ require("winston-daily-rotate-file");
             format.timestamp({format: 'YYYY-MM-DDTHH:mm:ss.sss'}),
             format.json(),
             winston.format.printf(info => JSON.stringify({
-                route: info.route,
+                url: info.url,
                 user_id: info.id,
                 firstname:info.firstname,
                 lastname:info.lastname,
