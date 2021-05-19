@@ -3,10 +3,7 @@ import homeImg from "../../assets/sprintHome.svg";
 import FETCH_DATA from "../../utility/utils";
 import Clipboard from 'react-clipboard.js';
 import {
-    IconButton, Icon, InputNumber, Timeline,
-    Button, Notification, Toggle, Tag,
-    Input, InputPicker, FlexboxGrid, Modal
-} from 'rsuite';
+    IconButton, Icon, Button} from 'rsuite';
 
 function SprintHome(props) {
 

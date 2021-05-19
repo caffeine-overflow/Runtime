@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Loader from "react-loader-spinner";
 import {
-    Drawer, Icon, InputNumber, Timeline,
-    Button, Notification, Toggle, Tag,
-    Input, InputPicker, FlexboxGrid, Modal, Divider
-} from 'rsuite';
+    Drawer, Icon, InputNumber, Button, Notification, Toggle, Tag,
+    Input, InputPicker, FlexboxGrid, Modal} from 'rsuite';
 import { withRouter } from 'react-router-dom';
 import '../../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";

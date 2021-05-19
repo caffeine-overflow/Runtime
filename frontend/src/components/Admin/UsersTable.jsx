@@ -3,7 +3,7 @@ import { Table, Tag, Avatar, Progress, Icon, InputPicker, Notification, Drawer, 
 import Loader from "react-loader-spinner";
 import './userTable.css';
 
-const { Column, HeaderCell, Cell, Pagination } = Table;
+const { Column, HeaderCell, Cell } = Table;
 const UserRoles = [
 	{ label: "Admin", value: "admin" },
 	{ label: "Manager", value: "manager" },
@@ -34,6 +34,7 @@ export default function UsersTable(props) {
 		let data = await response.json();
 		let filteredUsers = data.users.filter((user) => {
 			if (user.role.toLowerCase() !== "owner") return user;
+			return undefined;
 		});
 		setUsers(filteredUsers);
 		setloading(false);

@@ -424,7 +424,7 @@ export default function AuthRenewPage(props) {
                 </Panel>
                 <hr />
                 <div style={{ float: 'right' }}>
-                    {step === 3 && user?.role != "owner" &&
+                    {step === 3 && user?.role !== "owner" &&
                         <Button style={{ background: "#193A5A", color: "#f5f5f5", width: "100px" }} onClick={validateInvite}>
                             Finish
                         </Button>
