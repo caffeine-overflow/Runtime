@@ -174,7 +174,7 @@ export default function AuthRenewPage(props) {
         if (response.status === 200) {
             Notification.success({
                 title: "Congratulations!",
-                description: <div style={{ width: 220 }} rows={3} > You are now member of our company </div>,
+                description: <div style={{ width: 220 }} rows={3} > Welocome to Runtime </div>,
                 placement: "topEnd",
             });
             props.history.push('/projects');
@@ -424,7 +424,7 @@ export default function AuthRenewPage(props) {
                 </Panel>
                 <hr />
                 <div style={{ float: 'right' }}>
-                    {step === 3 && user?.role != "owner" &&
+                    {step === 3 && user?.role !== "owner" &&
                         <Button style={{ background: "#193A5A", color: "#f5f5f5", width: "100px" }} onClick={validateInvite}>
                             Finish
                         </Button>

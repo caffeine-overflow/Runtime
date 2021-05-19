@@ -7,10 +7,12 @@ const bcrypt = require("bcrypt");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
 const errorHandler = require('../utils/errorhandler');
+const { removeUserFromOrganization } = require("../github/gitUtils");
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
-		let users = await User.find({});
+		let users = await User.find({ client_id: req.user.client_id._id });
+		users.forEach(user => user.password = undefined)
 		return res.status(200).send({ users });
 	} catch (err) {
 		// console.error(err.stack)
@@ -46,6 +48,48 @@ router.get("/getUserById/:id", authroutes.authRenewToken, async (req, res) => {
 	}
 });
 
+router.put("/updateUserById", authroutes.authAdmin, async (req, res) => {
+	let userRemoveError = false;
+	try {
+		let body = req.body;
+		let renewedUser = false;
+		let password = ""
+		let user = await User.findById(body.id);
+		if (user.disabled && !body.disabled) {
+			renewedUser = true
+			password = Math.random().toString(36).substring(2, 8) + (Math.random() * 100).toFixed();
+			const salt = await bcrypt.genSalt();
+			user.password = await bcrypt.hash(password, salt);
+		}
+		if (body.disabled && !user.disabled) {
+			user.git_token = ""
+			user.first_login = true
+			user.invitation_accepted = false
+			await removeUserFromOrganization(req.user.git_token, req.user.client_id.organization, user.git_username)
+			userRemoveError = true;
+
+		}		
+		user.disabled = body.disabled;
+		user.role = body.role;
+		user.save()
+			.then((data) => {
+				if (renewedUser) {
+					let htmlTemplate = welcomeEmail(`${data.firstname} ${data.lastname}`, data.email, password);
+					sendEmail(htmlTemplate, data.email, "Welcome").catch(console.error);
+				}
+				return res.status(200).send({ msg: "User Updated Successfully" });
+			})
+			.catch((err) => {
+				console.error(err.stack)
+				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+			});
+	} catch (err) {
+		if(userRemoveError) 
+			return res.status(500).send({ msg: "Something went wrong. Please Try again!" });
+		else
+			return res.status(500).send({ msg: err.stack });
+	}
+});
 
 router.put("/", authroutes.authenticateToken, async (req, res) => {
 	try {

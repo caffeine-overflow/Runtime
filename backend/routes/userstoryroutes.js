@@ -91,10 +91,13 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
         }).save();
 
         let project = await Project.findById(body.project_id);
-        let identifierAcronym = project.name.split(/\s/).reduce((response, word) => response += word.slice(0, 1), '');
+        let identifierAcronym = project.name
+			.split(/[\s_]/)
+			.reduce((response, word) => (response += word.slice(0, 1) + word.slice(1, word.length).replace(/[^A-Z]/g, "")), "")
+			.toUpperCase();
 
         //find the last instance to get the unique identifier
-        let lastStory = (await UserStory.find({}).sort({ _id: -1 }).limit(1))[0];
+        let lastStory = (await UserStory.find({project_id: body.project_id}).sort({ _id: -1 }).limit(1))[0];
         let lastStoryIdentifier = 0;
         if (lastStory) {
             lastStoryIdentifier = Number(lastStory.identifier.split("-")[1]) + 1;

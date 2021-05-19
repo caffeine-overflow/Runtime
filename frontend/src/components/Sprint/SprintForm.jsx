@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import {
-    InputNumber, Button, Form, InputPicker, Schema,
-    FormGroup, ControlLabel, FormControl, Notification,
+    InputNumber, Button, Form, FormGroup, ControlLabel, FormControl, Notification,
     Table, Toggle, Steps, Panel, ButtonGroup
 } from 'rsuite';
 
 
 export default function SprintForm(props) {
-
     const [title, settitle] = useState("");
     const [description, setdescription] = useState("");
     const [step, setStep] = useState(0);
@@ -121,8 +119,8 @@ export default function SprintForm(props) {
         };
 
         const response = await fetch('http://localhost:5000/api/sprints', requestOptions);
+        let res = await response.json();
         if (response.status === 200) {
-            let res = await response.json();
             Notification.success({
                 title: 'Sprint Created Successfully',
                 description: <div style={{ width: 220 }} rows={3} />,
@@ -132,7 +130,7 @@ export default function SprintForm(props) {
         }
         else {
             Notification.error({
-                title: 'Server error',
+                title: res.msg ?? 'Server error',
                 description: <div style={{ width: 220 }} rows={3} />,
                 placement: 'topEnd'
             });

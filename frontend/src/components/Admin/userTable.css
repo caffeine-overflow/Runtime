@@ -1,0 +1,37 @@
+.rs-table-cell-content {
+  padding: 0 10px !important;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  height: 65px !important;
+  align-items: center;
+}
+
+[role='columnheader'] > .rs-table-cell-content {
+  height: fit-content !important;
+  font-size: 17px !important;
+}
+
+.rs-table-cell-header-icon-sort{
+  height: revert !important;
+  width: revert !important;
+  font-size: 20px !important;
+}
+
+.rs-progress-icon-success {
+  margin-top: -3px !important;
+  font-size: 15px !important;
+}
+
+.rs-progress-circle-info {
+  font-size: 12px;
+  padding-top: 5px;
+}
+
+.rs-table-cell {
+  background: none !important;
+}
+
+[role='row']:nth-child(even) {
+  background: #f7f7f7 !important;
+}

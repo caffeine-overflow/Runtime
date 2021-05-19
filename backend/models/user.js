@@ -51,11 +51,19 @@ const user = mongoose.Schema({
         type: String,
         required: false,
     },
+    git_avatar: {
+        type: String,
+        required: false,
+    },
     git_id: {
         type: Number,
         required: false,
     },
     invitation_accepted: {
+        type: Boolean,
+        required: false
+    },
+    disabled: {
         type: Boolean,
         required: false
     },

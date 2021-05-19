@@ -18,7 +18,7 @@ const CustomNav = ({ active, onSelect, ...props }) => {
             <Nav.Item className="navHeader" eventKey="projects">Projects</Nav.Item>
             <Nav.Item className="navHeader" eventKey="solutions">Solutions</Nav.Item>
             <Nav.Item className="navHeader" eventKey="products">Products</Nav.Item>
-            {(sessionStorage.getItem('sprintCompassUserRole') == "owner" || sessionStorage.getItem('sprintCompassUserRole') == "admin") && (
+            {(sessionStorage.getItem('sprintCompassUserRole') === "owner" || sessionStorage.getItem('sprintCompassUserRole') === "admin") && (
 				<Nav.Item className="navHeader" eventKey="admin">
 					Administrator
 				</Nav.Item>

@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Loader from "react-loader-spinner";
 import {
-    Drawer, Icon, InputNumber, Timeline,
-    Button, Notification, Toggle, Tag,
-    Input, InputPicker, FlexboxGrid, Modal
-} from 'rsuite';
+    Drawer, Icon, InputNumber, Button, Notification, Toggle, Tag,
+    Input, InputPicker, FlexboxGrid, Modal} from 'rsuite';
 import { withRouter } from 'react-router-dom';
 import '../../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import SubTaskForm from "./SubTaskForm";
 import NotFound from "../NotFound";
 import NoUserStories from "../../assets/noactivesprint.svg";
+import Editor from "../utilitycomponents/Editor";
 
 //four states of the stories, has to match the db
 const STORY_STATES = ["To Do", "In Progress", "Testing", "Done"];
@@ -59,10 +58,10 @@ function Sprint(props) {
 
     const [state, setState] = useState(null);
     const [userStories, setuserStories] = useState([]);
-    const [users, setUsers] = useState([]);
     const [showdrawer, setshowdrawer] = useState(false);
     const [selectedUserStory, setselectedUserStory] = useState(null);
 
+    const [identifier, setidentifier] = useState("");
     const [title, settitle] = useState("");
     const [description, setdescription] = useState("");
     const [assignedTo, setassignedTo] = useState(null);
@@ -155,20 +154,6 @@ function Sprint(props) {
         }
     }
 
-    const getAllUsers = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
-        let data = await response.json();
-        setUsers(data.users)
-    }
-
     const updateUserStory = async () => {
         let body = {};
 
@@ -243,45 +228,43 @@ function Sprint(props) {
 
         let parsedHisotry = histories.map((history) => {
             let returnContent = '';
-            if (history.attribute == "user_story") {
+            if (history.attribute === "user_story") {
                 returnContent = `Created the task`
             }
-            else if (history.attribute == "description")
-                returnContent = `Updated Description to  "${history.new_value}"`
-            else if (history.attribute == "state")
+            else if (history.attribute === "description")
+                returnContent = `Updated Description`
+            else if (history.attribute === "state")
                 returnContent = `Changed state from "${history.old_value}" to  "${history.new_value}"`
 
-            else if (history.attribute == "title")
+            else if (history.attribute === "title")
                 returnContent = `Updated Title to  "${history.new_value}"`
 
-            else if (history.attribute == "assigned_to") {
-                let assigned_to = users.find(element => element._id == history.new_value);
+            else if (history.attribute === "assigned_to") {
+                let assigned_to = props.collaborators.find(element => element._id === history.new_value);
                 returnContent = assigned_to ? `Changed Assiginee to ${assigned_to.firstname} ${assigned_to.lastname}` : `Unassigned`;
             }
-
-            else if (history.attribute == "estimated_time")
+            else if (history.attribute === "estimated_time")
                 returnContent = `Re-estimated the task to be completed in ${history.new_value.split(',')[0]} hours and  ${history.new_value.split(',')[1]} minutes`
 
-            else if (history.attribute == "time_spent")
+            else if (history.attribute === "time_spent")
                 returnContent = `Increased the time stpent to ${history.new_value.split(',')[0]} hours and  ${history.new_value.split(',')[1]} minutes`
 
-            else if (history.attribute == "state")
+            else if (history.attribute === "state")
                 returnContent = `Changed State from ${history.old_value} to ${history.new_value}`
 
-            else if (history.attribute == "moveto_backlog")
+            else if (history.attribute === "moveto_backlog")
                 returnContent = `Moved task to backlog.`
 
-            else if (history.attribute == "sprint_id")
+            else if (history.attribute === "sprint_id")
                 returnContent = `Moved task to sprint ${history.new_value}`
 
-            let user = users.find(element => element._id == history.updated_by);
+            let user = props.collaborators.find(element => element._id == history.updated_by);
             return <div><p style={{ fontWeight: 500 }}>{history.timestamp}</p><p style={{ marginTop: -3 }}>{returnContent}</p><p style={{ marginTop: -1, fontWeight: 400 }}>By: {user?.firstname} {user?.lastname}</p></div>
         })
         setHistory(parsedHisotry);
     }
 
     useEffect(() => {
-        getAllUsers();
         getUserStories();
     }, []);
 
@@ -350,6 +333,7 @@ function Sprint(props) {
                                                                         setshowdrawer(true);
                                                                         setselectedUserStory(item);
                                                                         parseHistory(item.history);
+                                                                        setidentifier(item.identifier);
                                                                         settitle(item.title);
                                                                         setdescription(item.description);
                                                                         setassignedTo(item.assigned_to?._id);
@@ -371,11 +355,6 @@ function Sprint(props) {
                                                                             <Tag style={{ fontWeight: '600', marginBottom: '10px', background: '#ececec' }}>
                                                                                 {item.identifier}
                                                                             </Tag>
-                                                                        </div>
-                                                                        <div
-                                                                            style={{ margin: '10px 0' }}
-                                                                        >
-                                                                            {item.description}
                                                                         </div>
                                                                         <div style={{ marginTop: "15px" }}>
                                                                             <Icon
@@ -416,128 +395,132 @@ function Sprint(props) {
                     setshowdrawer(false);
                     setselectedUserStory(null);
                 }}
-                size="md"
+                full
             >
                 <Drawer.Header>
                 </Drawer.Header>
                 <Drawer.Body>
                     {
                         !!selectedUserStory &&
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'start',
-                                alignContent: 'center',
-                                height: '100%',
-                                flexWrap: 'wrap',
-                                marginLeft: '30px',
-                                textAlign: 'left'
-                            }}>
-                            <Input
-                                style={{ fontSize: '20px', width: '100%', fontWeight: 'bold' }}
-                                value={title}
-                                onChange={(value) => settitle(value)}
-                            />
-
-                            <p style={{ width: '90%', margin: '20px 0 5px 10px', fontWeight: '600' }}>Description</p>
-                            <Input
-                                componentClass="textarea"
-                                rows={15}
-                                style={{ fontSize: '15px', background: '#f5f5f5' }}
-                                value={description}
-                                onChange={(value) => setdescription(value)}
-                            />
-                            <FlexboxGrid style={{ width: '100%' }}>
-                                <FlexboxGrid.Item colspan={12}>
-                                    <p style={{ width: '100%', margin: '40px 0 5px 15px', fontWeight: '600' }}>Assigned To</p>
-                                    <div style={{ width: '100%' }}>
-                                        <InputPicker
-                                            data={props.collaborators.map(c => {
-                                                return { "label": `${c.firstname} ${c.lastname}`, "value": c._id }
+                        <div style={{ display: 'flex', height: '100%', justifyContent: 'space-between' }}>
+                            <div
+                                style={{
+                                    width: '40%',
+                                    display: 'flex',
+                                    justifyContent: 'start',
+                                    height: '100%',
+                                    flexWrap: 'wrap',
+                                    marginLeft: '30px',
+                                    textAlign: 'left'
+                                }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', width: '100%' }}>
+                                    <Icon icon="task" size="2x" />
+                                    <h3 style={{ color: '#193A5A', marginLeft: '15px' }}>{identifier}</h3>
+                                    <Button
+                                        appearance="default"
+                                        style={{ background: '#e6e6e6', marginLeft: 'auto' }}
+                                        onClick={() => setshowModal(true)}
+                                    >
+                                        Create Subtask
+                                    </Button>
+                                </div>
+                                <p style={{ width: '90%', margin: '20px 0 5px 10px', fontWeight: '600' }}>Title</p>
+                                <Input
+                                    style={{ fontSize: '20px', width: '100%', fontWeight: 'bold' }}
+                                    value={title}
+                                    onChange={(value) => settitle(value)}
+                                />
+                                <p style={{ width: '90%', margin: '20px 0 5px 10px', fontWeight: '600' }}>Description</p>
+                                <Editor
+                                    setText={(value) => setdescription(value)}
+                                    value={description}
+                                />
+                                <FlexboxGrid style={{ width: '100%', marginTop: '50px' }}>
+                                    <FlexboxGrid.Item colspan={12}>
+                                        <p style={{ width: '100%', margin: '0 0 5px 15px', fontWeight: '600' }}>Assigned To</p>
+                                        <div style={{ width: '100%' }}>
+                                            <InputPicker
+                                                data={props.collaborators.map(c => {
+                                                    return { "label": `${c.firstname} ${c.lastname}`, "value": c._id }
+                                                })}
+                                                placeholder="Assign To"
+                                                style={{ padding: "5px 0", maxWidth: '310px', marginLeft: '12px' }}
+                                                value={assignedTo}
+                                                onChange={(value) => setassignedTo(value)}
+                                            />
+                                        </div>
+                                        <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Move to Backlog</p>
+                                        <Toggle
+                                            style={{ margin: "0 12px" }}
+                                            checkedChildren={<Icon icon="check" />}
+                                            unCheckedChildren={<Icon icon="close" />}
+                                            value={moveToBacklog}
+                                            onChange={(val) => setmoveToBacklog(val)}
+                                        />
+                                    </FlexboxGrid.Item>
+                                    <FlexboxGrid.Item
+                                        colspan={12}
+                                    >
+                                        {/* <Timeline endless style={{ margin: '40px 0px 0 30px', maxHeight: '300px', overflowY: 'auto' }}>
+                                            {history.map((h, i) => {
+                                                return <Timeline.Item key={i} style={{ width: '90%' }}>{h}</Timeline.Item>
                                             })}
-                                            placeholder="Assign To"
-                                            style={{ padding: "5px 0", width: '50%', maxWidth: '310px', marginLeft: '12px' }}
-                                            value={assignedTo}
-                                            onChange={(value) => setassignedTo(value)}
-                                        />
-                                    </div>
-                                    <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Estimated Time</p>
-                                    <div style={{ display: 'flex', marginLeft: '12px' }}>
-                                        <InputNumber
-                                            style={{ width: 150, marginRight: 10 }}
-                                            postfix="Hour(s)"
-                                            min={0}
-                                            max={50}
-                                            value={estimatedHours ?? 0}
-                                            onChange={(val) => setestimatedHours(val)}
-                                        />
-                                        <InputNumber
-                                            postfix="Minute(s)"
-                                            style={{ width: 150 }}
-                                            min={0}
-                                            max={59}
-                                            value={estimatedMinutes ?? 0}
-                                            onChange={(val) => setestimatedMinutes(val)}
-                                        />
-                                    </div>
+                                        </Timeline> */}
+                                        <p style={{ width: '100%', margin: '0px 0 5px 15px', fontWeight: '600' }}>Estimated Time</p>
+                                        <div style={{ display: 'flex', marginLeft: '12px' }}>
+                                            <InputNumber
+                                                style={{ width: 150, marginRight: 10 }}
+                                                postfix="Hour(s)"
+                                                min={0}
+                                                max={50}
+                                                value={estimatedHours ?? 0}
+                                                onChange={(val) => setestimatedHours(val)}
+                                            />
+                                            <InputNumber
+                                                postfix="Minute(s)"
+                                                style={{ width: 150 }}
+                                                min={0}
+                                                max={59}
+                                                value={estimatedMinutes ?? 0}
+                                                onChange={(val) => setestimatedMinutes(val)}
+                                            />
+                                        </div>
 
-                                    <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Time Spent</p>
-                                    <div style={{ display: 'flex', marginLeft: '12px' }}>
-                                        <InputNumber
-                                            style={{ width: 150, marginRight: 10 }}
-                                            postfix="Hour(s)"
-                                            min={0}
-                                            max={50}
-                                            value={timeSpentHours ?? 0}
-                                            onChange={(val) => settimeSpentHours(val)}
-                                        />
-                                        <InputNumber
-                                            postfix="Minute(s)"
-                                            style={{ width: 150 }}
-                                            min={0}
-                                            max={59}
-                                            value={timeSpentMinuts ?? 0}
-                                            onChange={(val) => settimeSpentMinuts(val)}
-                                        />
-                                    </div>
+                                        <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Time Spent</p>
+                                        <div style={{ display: 'flex', marginLeft: '12px' }}>
+                                            <InputNumber
+                                                style={{ width: 150, marginRight: 10 }}
+                                                postfix="Hour(s)"
+                                                min={0}
+                                                max={50}
+                                                value={timeSpentHours ?? 0}
+                                                onChange={(val) => settimeSpentHours(val)}
+                                            />
+                                            <InputNumber
+                                                postfix="Minute(s)"
+                                                style={{ width: 150 }}
+                                                min={0}
+                                                max={59}
+                                                value={timeSpentMinuts ?? 0}
+                                                onChange={(val) => settimeSpentMinuts(val)}
+                                            />
+                                        </div>
 
-                                    <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Move to Backlog</p>
-                                    <Toggle
-                                        style={{ margin: "0 12px" }}
-                                        checkedChildren={<Icon icon="check" />}
-                                        unCheckedChildren={<Icon icon="close" />}
-                                        value={moveToBacklog}
-                                        onChange={(val) => setmoveToBacklog(val)}
-                                    />
-                                </FlexboxGrid.Item>
+                                    </FlexboxGrid.Item>
+                                </FlexboxGrid>
+                                <div style={{ height: '1px', width: '100%', background: '#e6e6e6', margin: '30px 0' }} />
+                                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+                                    <Button
+                                        appearance="primary"
+                                        style={{ width: '250px' }}
+                                        onClick={() => updateUserStory()}
+                                    >
+                                        Update User Story
+                                    </Button>
+                                </div>
+                            </div>
+                            <div style={{ width: '55%', borderLeft: '1px solid #e6e6e6' }}>
 
-                                <FlexboxGrid.Item
-                                    colspan={12}
-                                    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
-                                >
-                                    <Timeline endless style={{ margin: '40px 0px 0 30px', maxHeight: '300px', overflowY: 'auto' }}>
-                                        {history.map((h, i) => {
-                                            return <Timeline.Item key={i} style={{ width: '90%' }}>{h}</Timeline.Item>
-                                        })}
-                                    </Timeline>
-                                </FlexboxGrid.Item>
-                            </FlexboxGrid>
-
-                            <div style={{ width: '100%', marginTop: '50px', display: 'flex', justifyContent: 'space-evenly' }}>
-                                <Button
-                                    appearance="primary"
-                                    style={{ width: '250px' }}
-                                    onClick={() => updateUserStory()}
-                                >
-                                    Update User Story
-                                </Button>
-                                <Button
-                                    appearance="default"
-                                    style={{ width: '250px', background: '#e6e6e6' }}
-                                    onClick={() => setshowModal(true)}
-                                >
-                                    Create Subtask
-                                </Button>
                             </div>
                         </div>
                     }

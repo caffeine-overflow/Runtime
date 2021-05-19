@@ -7,7 +7,6 @@ p,
 ul,
 li {
   font-family: 'Open Sans', sans-serif;
-  font-weight: 100;
 }
 
 .navHeader {
@@ -137,4 +136,20 @@ li {
   width: 80%;
   display: block;
   margin: auto;
+}
+
+.RichTextEditor__root___2QXK- {
+  width: 100% !important;
+  height: 35vh;
+  overflow-y: auto;
+}
+
+.EditorToolbar__root___3_Aqz {
+    position: fixed !important;
+    background-color: #ffffff !important;
+    z-index: 100 !important;
+}
+
+.public-DraftEditor-content{
+  margin-top: 50px !important;
 }
