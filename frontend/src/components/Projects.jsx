@@ -101,8 +101,9 @@ function Projects(props) {
                 });
             }
             else {
+                let data = await response.json()
                 Notification.error({
-                    title: 'Server error, Try again later',
+                    title: data.msg ?? 'Server error, Try again later',
                     description: <div style={{ width: 220 }} rows={3} />,
                     placement: 'topEnd'
                 });

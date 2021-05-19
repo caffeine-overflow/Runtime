@@ -31,9 +31,11 @@ router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req,
 });
 
 router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req, res) => {
+	let repoError = true;
 	try {
 		let body = req.body;
 		let repo = await createRepo(req.user.git_token, req.user.client_id.organization, body.name);
+		repoError = false
 		const project = new Project({
 			members: [req.user.id],
 			project_lead: req.user.id,
@@ -54,7 +56,10 @@ router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req,
 				return res.status(500).send({ msg: "Something went wrong. Please try again" });
 			});
 	} catch (err) {
-		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+		if(repoError)
+			return res.status(400).send({ msg: "Duplicate Project name. Please try again" });
+		else
+			return res.status(500).send({ msg: "Something went wrong. Please try again" });
 	}
 });
 
