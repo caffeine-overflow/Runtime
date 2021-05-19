@@ -58,7 +58,7 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 					history.push(userStoryHistory._id);
 				}
 				userstory.history = [...userstory.history, ...history];
-				userstory.estimated_time = body.hasOwnProperty(estimated_time) ? body.estimated_time : userstory.estimated_time;
+				userstory.estimated_time = task_detail.hasOwnProperty("estimated_time") ? task_detail.estimated_time : userstory.estimated_time;
 				userstory.sprint_id = task_detail["moveto_backlog"] ? null : sprint._id;
 				//change state to "todo" if moving to backlog
 				if (task_detail["moveto_backlog"]) {

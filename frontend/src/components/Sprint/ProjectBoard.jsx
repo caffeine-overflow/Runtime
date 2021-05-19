@@ -260,7 +260,7 @@ function ProjectBoard() {
                                                     project_id={url.split('/')[2]}
                                                     acitveSprint={acitveSprint}
                                                     refresh={() => {
-                                                        setcreateSprintToggle(false);
+                                                        navbarToggleHandler(setHomeToggle);
                                                         getSprints()
                                                     }}
                                                 />
