@@ -115,7 +115,7 @@ router.get("/authrenew_validate", authRenewToken, async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        const query = User.where({ email: email });
+        const query = User.where({ email: email, disabled: false });
         let user = await query.findOne(function (
             err,
             user
