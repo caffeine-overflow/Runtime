@@ -6,15 +6,16 @@ const authroutes = require("./authroutes");
 const bcrypt = require("bcrypt");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
-const logger = require('../utils/logger');
+const errorHandler = require('../utils/errorhandler');
 
 router.get("/", authroutes.authenticateToken, async (req, res) => {
 	try {
 		let users = await User.find({});
 		return res.status(200).send({ users });
 	} catch (err) {
-		console.error(err.stack)
-		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		// console.error(err.stack)
+		// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		next(errorHandler(err,req,500));
 	}
 });
 
@@ -25,8 +26,9 @@ router.get("/getById/:id", authroutes.authenticateToken, async (req, res) => {
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		console.error(err.stack)
-		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		// console.error(err.stack)
+		// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		next(errorHandler(err,req,500));
 	}
 });
 
@@ -38,8 +40,9 @@ router.get("/getUserById/:id", authroutes.authRenewToken, async (req, res) => {
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		console.error(err.stack)
-		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		// console.error(err.stack)
+		// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		next(errorHandler(err,req,500));
 	}
 });
 
@@ -61,11 +64,13 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				console.error(err.stack)
-				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				// console.error(err.stack)
+				// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				next(errorHandler(err,req,500));
 			});
 	} catch (err) {
-		return res.status(500).send({ msg: err.stack });
+		// return res.status(500).send({ msg: err.stack });
+		next(errorHandler(err,req,500));
 	}
 });
 
@@ -87,18 +92,20 @@ router.put("/update_user", authroutes.authRenewToken, async (req, res) => {
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				console.error(err.stack)
-				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				// console.error(err.stack)
+				// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				next(errorHandler(err,req,500));
 			});
 	} catch (err) {
-		return res.status(500).send({ msg: err.stack });
+		// return res.status(500).send({ msg: err.stack });
+		next(errorHandler(err,req,500));
 	}
 });
 
 
 
 //Change Password
-router.put("/change_password", authroutes.authenticateToken, async (req, res) => {
+router.put("/change_password", authroutes.authenticateToken, async (req, res,next) => {
 	try {
 		const { old_password, new_password } = req.body;
 		const user = await User.findById(req.user.id);
@@ -117,8 +124,7 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res) =>
 			}
 		});
 	} catch (err) {
-		console.error(err.stack)
-		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		next(errorHandler(err,req,500));
 	}
 });
 
@@ -136,20 +142,20 @@ router.put("/update_password", authroutes.authRenewToken, async (req, res) => {
 
 		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword, first_login: false } }, function (err, result) {
 			if (err) {
-				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				next(errorHandler(err,req,500));
 			} else {
 				return res.status(200).send({ msg: "Password Updated Successfully" });
 			}
 		});
 	} catch (err) {
-		console.error(err.stack)
-		return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+		next(errorHandler(err,req,500));
 	}
 });
 
 
 //register function
-router.post("/create", authroutes.authAdmin, async (req, res) => {
+router.post("/create", authroutes.authAdmin, async (req, res,next) => {
 	try {
 		const { firstname, lastname, email, phone, location, image } = req.body;
 
@@ -186,7 +192,7 @@ router.post("/create", authroutes.authAdmin, async (req, res) => {
 			}
 		});
 	} catch (err) {
-		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+		next(errorHandler(err,req,500));
 	}
 });
 

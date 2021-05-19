@@ -7,7 +7,7 @@ const { Sprint } = require("../models/sprint.js");
 const authroutes = require("./authroutes");
 const mongoose = require("mongoose");
 mongoose.set('useFindAndModify', false);
-
+const errorHandler = require('../utils/errorhandler');
 router.get(
     "/bySprint/:sprint_id",
     authroutes.authenticateToken,
@@ -28,8 +28,7 @@ router.get(
                 .populate("history");
             return res.status(200).send({ userstories });
         } catch (err) {
-            console.error(err.stack)
-            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            next(errorHandler(err,req,500));
         }
     }
 );
@@ -55,8 +54,7 @@ router.get(
                 .populate("history");
             return res.status(200).send({ userstories });
         } catch (err) {
-            console.error(err.stack)
-            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            next(errorHandler(err,req,500));
         }
     }
 );
@@ -75,8 +73,7 @@ router.get(
 
             return res.status(200).send({ userstories });
         } catch (err) {
-            console.error(err.stack)
-            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            next(errorHandler(err,req,500));
         }
     }
 );
@@ -127,12 +124,10 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
                 return res.status(200).send(data);
             })
             .catch((err) => {
-				console.error(err.stack)
-                return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+                next(errorHandler(err,req,500));
             });
     } catch (err) {
-        console.error(err.stack)
-        return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+        next(errorHandler(err,req,500));
     }
 });
 
@@ -197,12 +192,10 @@ router.put(
                     return res.status(200).send(data);
                 })
                 .catch((err) => {
-                    console.error(err.stack)
-                    return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+                    next(errorHandler(err,req,500));
                 });
         } catch (err) {
-            console.error(err.stack)
-            return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+            next(errorHandler(err,req,500));
         }
     }
 );

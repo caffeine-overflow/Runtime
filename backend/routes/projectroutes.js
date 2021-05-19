@@ -4,21 +4,20 @@ const { Project } = require("../models/project.js");
 const authroutes = require("./authroutes");
 const mongoose = require("mongoose");
 const { createRepo } = require("../github/gitUtils");
+const errorHandler = require('../utils/errorhandler');
 
-router.get("/", authroutes.authenticateToken, async (req, res) => {
+router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 	try {
 		let projects = await Project.find({})
 			.populate("members")
 			.populate("project_lead");
-
 		return res.status(200).send({ projects });
 	} catch (err) {
-		console.log(err.stack);
-		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+		next(errorHandler(err,req,500));
 	}
 });
 
-router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req, res) => {
+router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req, res, next) => {
 	try {
 		let project = await Project.findById(req.params.project_id)
 			.populate("members")
@@ -26,12 +25,11 @@ router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req,
 		if (project) return res.status(200).send({ project });
 		else return res.status(400).send("Cannot find the project");
 	} catch (err) {
-		console.log(err.stack);
-		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+		next(errorHandler(err,req,500));
 	}
 });
 
-router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req, res) => {
+router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req, res,next) => {
 	try {
 		let body = req.body;
 		const project = new Project({
@@ -52,12 +50,10 @@ router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req,
 				return res.status(200).send(data);
 			})
 			.catch((err) => {
-				console.error(err.stack);
-				return res.status(500).send({ msg: "Something went wrong. Please try again" });
+				next(errorHandler(err,req,500));
 			});
 	} catch (err) {
-		console.log(err.stack);
-		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+		next(errorHandler(err,req,500));
 	}
 });
 

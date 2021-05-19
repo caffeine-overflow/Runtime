@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const { User } = require("../models/user.js");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
-
+const errorHandler = require('../utils/errorhandler');
 
 //function to authenticate the token, act as a middleware
 let authenticateToken = (req, res, next) => {
@@ -113,7 +113,7 @@ router.get("/authrenew_validate", authRenewToken, async (req, res) => {
 });
 
 //login function
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res,next) => {
     try {
         const { email, password } = req.body;
         const query = User.where({ email: email });
@@ -143,13 +143,12 @@ router.post("/login", async (req, res) => {
             );
         } else return res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
-        console.log(err.stack);
-        return res.status(500).send({ msg: "Something went wrong. Please try again" });
+        next(errorHandler(err,req,500));
     }
 });
 
 //register function
-router.post("/register", authenticateToken, async (req, res) => {
+router.post("/register", authenticateToken, async (req, res,next) => {
     try {
         const { firstname, lastname, email, phone, location, image } = req.body;
 
@@ -184,7 +183,7 @@ router.post("/register", authenticateToken, async (req, res) => {
             }
         });
     } catch (err) {
-        return res.status(500).send({ msg: "Something went wrong. Please try again" });
+        next(errorHandler(err,req,500));
     }
 });
 
