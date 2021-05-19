@@ -68,4 +68,24 @@ const getRepo = async (token, organization, repo) => {
     });
 }
 
-module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo };
+const removeUserFromOrganization = async (token, organization, username) => {
+    let octo = octokit(token);
+    try {
+        let userStatus = await octo.request('GET /orgs/{org}/memberships/{username}', {
+            org: organization,
+            username: username,
+        });
+
+        if(userStatus.data.state === "active")
+            return await octo.request('DELETE /orgs/{org}/memberships/{username}', {
+                org: organization,
+                username: username
+            })
+    }
+    catch (err) {
+        console.log(err)
+        return;
+    }
+}
+
+module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization };
