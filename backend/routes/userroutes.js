@@ -49,7 +49,11 @@ router.put("/updateUserById", authroutes.authAdmin, async (req, res) => {
 		let user = await User.findById(body.id);
 		user.disabled = body.disabled;
 		user.role = body.role;
-
+		if (body.disabled) {
+			user.git_token = ""
+			user.first_login = true
+			user.invitation_accepted = false
+		}
 		user.save()
 			.then((data) => {
 				return res.status(200).send({ msg: "User Updated Successfully" });
