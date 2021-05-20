@@ -9,46 +9,40 @@ const { welcomeEmail } = require("../utils/email_templates/welcome");
 const errorHandler = require('../utils/errorhandler');
 const { removeUserFromOrganization } = require("../github/gitUtils");
 
-router.get("/", authroutes.authenticateToken, async (req, res) => {
+router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 	try {
 		let users = await User.find({ client_id: req.user.client_id._id });
 		users.forEach(user => user.password = undefined)
 		return res.status(200).send({ users });
 	} catch (err) {
-		// console.error(err.stack)
-		// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 		next(errorHandler(err,req,500));
 	}
 });
 
-router.get("/getById/:id", authroutes.authenticateToken, async (req, res) => {
+router.get("/getById/:id", authroutes.authenticateToken, async (req, res, next) => {
 	try {
 		let user = await User.findById(req.params.id);
 		user.password = undefined;
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		// console.error(err.stack)
-		// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 		next(errorHandler(err,req,500));
 	}
 });
 
 //same as the function above but with a different middleware auth
-router.get("/getUserById/:id", authroutes.authRenewToken, async (req, res) => {
+router.get("/getUserById/:id", authroutes.authRenewToken, async (req, res, next) => {
 	try {
 		let user = await User.findById(req.params.id);
 		user.password = undefined;
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		// console.error(err.stack)
-		// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 		next(errorHandler(err,req,500));
 	}
 });
 
-router.put("/updateUserById", authroutes.authAdmin, async (req, res) => {
+router.put("/updateUserById", authroutes.authAdmin, async (req, res, next) => {
 	let userRemoveError = false;
 	try {
 		let body = req.body;
@@ -80,18 +74,17 @@ router.put("/updateUserById", authroutes.authAdmin, async (req, res) => {
 				return res.status(200).send({ msg: "User Updated Successfully" });
 			})
 			.catch((err) => {
-				console.error(err.stack)
-				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+				next(errorHandler(err,req,500));
 			});
 	} catch (err) {
 		if(userRemoveError) 
-			return res.status(500).send({ msg: "Something went wrong. Please Try again!" });
+				next(errorHandler(err,req,500));
 		else
 			return res.status(500).send({ msg: err.stack });
 	}
 });
 
-router.put("/", authroutes.authenticateToken, async (req, res) => {
+router.put("/", authroutes.authenticateToken, async (req, res, next) => {
 	try {
 		let body = req.body;
 		let user = await User.findById(req.user.id);
@@ -108,18 +101,15 @@ router.put("/", authroutes.authenticateToken, async (req, res) => {
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				// console.error(err.stack)
-				// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 				next(errorHandler(err,req,500));
 			});
 	} catch (err) {
-		// return res.status(500).send({ msg: err.stack });
 		next(errorHandler(err,req,500));
 	}
 });
 
 //same as the function above but with diffrent middleware auth
-router.put("/update_user", authroutes.authRenewToken, async (req, res) => {
+router.put("/update_user", authroutes.authRenewToken, async (req, res, next) => {
 	try {
 		let body = req.body;
 		let user = await User.findById(req.user.id);
@@ -136,12 +126,9 @@ router.put("/update_user", authroutes.authRenewToken, async (req, res) => {
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				// console.error(err.stack)
-				// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 				next(errorHandler(err,req,500));
 			});
 	} catch (err) {
-		// return res.status(500).send({ msg: err.stack });
 		next(errorHandler(err,req,500));
 	}
 });
@@ -173,7 +160,7 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res,nex
 });
 
 //same as the function above but with a different middleware auth
-router.put("/update_password", authroutes.authRenewToken, async (req, res) => {
+router.put("/update_password", authroutes.authRenewToken, async (req, res, next) => {
 	try {
 		const { old_password, new_password } = req.body;
 		const user = await User.findById(req.user.id);
@@ -186,7 +173,6 @@ router.put("/update_password", authroutes.authRenewToken, async (req, res) => {
 
 		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword, first_login: false } }, function (err, result) {
 			if (err) {
-				// return res.status(500).send({ msg: "Something went wrong. Please try again!" });
 				next(errorHandler(err,req,500));
 			} else {
 				return res.status(200).send({ msg: "Password Updated Successfully" });
@@ -227,7 +213,7 @@ router.post("/create", authroutes.authAdmin, async (req, res,next) => {
 
 		newUser.save(function (err) {
 			if (err) {
-				return res.status(500).send({ msg: "Something went wrong. Please try again" });
+				next(errorHandler(err,req,500));
 			}
 			else {
 				let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
@@ -240,7 +226,7 @@ router.post("/create", authroutes.authAdmin, async (req, res,next) => {
 	}
 });
 
-router.post("/addClient", authroutes.authAdmin, async (req, res) => {
+router.post("/addClient", authroutes.authAdmin, async (req, res,next) => {
 
 	const client = await new Client({
 		'name': req.body.name,
@@ -248,12 +234,12 @@ router.post("/addClient", authroutes.authAdmin, async (req, res) => {
 	}).save();
 
 	if (!client) {
-		return res.status(500).send({ msg: "Something went wrong. Please try again" });
+		next(errorHandler(err,req,500));
 	}
 
 	await User.findByIdAndUpdate(req.user.id, { $set: { client_id: client._id } }, function (err, result) {
 		if (err) {
-			return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+			next(errorHandler(err,req,500));
 		} else {
 			return res.status(200).send({ msg: "Successfully added Organization" });
 		}

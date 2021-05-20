@@ -62,7 +62,7 @@ router.get(
 router.get(
     "/backlogs/:project_id",
     authroutes.authenticateToken,
-    async (req, res) => {
+    async (req, res,next) => {
         try {
             let project_id = req.params.project_id;
             let userstories = await UserStory.find({ project_id: project_id, sprint_id: null })
@@ -78,7 +78,7 @@ router.get(
     }
 );
 
-router.post("/", authroutes.authenticateToken, async (req, res) => {
+router.post("/", authroutes.authenticateToken, async (req, res,next) => {
     try {
         let body = req.body;
 
@@ -138,7 +138,7 @@ router.post("/", authroutes.authenticateToken, async (req, res) => {
 router.put(
     "/",
     authroutes.authenticateToken,
-    async (req, res) => {
+    async (req, res,next) => {
         try {
             let body = (req.body);
             let history = [];

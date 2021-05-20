@@ -32,7 +32,7 @@ app.use(cors());
 
 //middleware to store the logs
 app.use(function (req, res, next) {
-    logger.info(req);
+    logger.infoLogger.info(req);
     return next();
 });
 
@@ -46,7 +46,7 @@ app.use('/api/sprints', sprintroutes);
 app.use('/api/userstories', userstoryroutes);
 
 app.use((error, req, res, next) => {
-    return res.status(500).send({ msg: error.message });
+    return res.status(error.status).send({ msg: error.message });
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
