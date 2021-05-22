@@ -30,14 +30,6 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-//middleware to store the logs
-app.use(function (req, res, next) {
-    if(req.method !== "GET"){
-    logger.infoLogger.info(req);
-    }
-    return next();
-});
-
 //declare routes
 app.use('/auth', authroutes.router);
 app.use('/gitauth', gitauthroutes);

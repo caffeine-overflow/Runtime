@@ -19,7 +19,7 @@ const infoLogger = winston.createLogger({
             if (message.hasOwnProperty('password')) {
                 message.password = undefined;
             }
-            return `\nTimestamp : ${info.timestamp}\nURL : ${info.message.originalUrl}\nMethod : ${info.message.method}\nbody : ${JSON.stringify(message)}`
+            return `\nTimestamp : ${info.timestamp}\nURL : ${info.message.originalUrl}\nMethod : ${info.message.method}\nUser Name : ${info.message.user.firstname + " " + info.message.user.lastname}\nEmail : ${info.message.user.email}${ info.message.method === "GET" ? "" : "\nbody : " + JSON.stringify(message)}`
         })
     ),
 });
@@ -37,7 +37,7 @@ const errorLogger = winston.createLogger({
         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         format.json(),
         winston.format.printf(info => {
-            return `\nTimestamp : ${info.timestamp}\nLevel : ${info.level}\nURL : ${info.url}\nMethod : ${info.method}\nError : ${info.message}`;
+            return `\nTimestamp : ${info.timestamp}\nUser Name : ${info.user_name}\nEmail : ${info.email}\nURL : ${info.url}\nMethod : ${info.method}\n${info.stack}`;
            
         })
     ),
