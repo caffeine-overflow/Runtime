@@ -32,7 +32,9 @@ app.use(cors());
 
 //middleware to store the logs
 app.use(function (req, res, next) {
+    if(req.method !== "GET"){
     logger.infoLogger.info(req);
+    }
     return next();
 });
 
