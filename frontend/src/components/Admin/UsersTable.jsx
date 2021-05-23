@@ -123,34 +123,10 @@ export default function UsersTable(props) {
 		);
 	};
 
-	// const updateUser = async () => {
-	// 	let token = sessionStorage.getItem("sprintCompassToken");
-	// 	const requestOptions = {
-	// 		method: "PUT",
-	// 		headers: {
-	// 			"Content-Type": "application/json",
-	// 			Authorization: `Bearer ${token}`,
-	// 		},
-	// 		body: JSON.stringify({ id: selectedUser._id, role: selectedRole, disabled: userStatus }),
-	// 	};
-	// 	const response = await fetch(`http://localhost:5000/api/users/updateUserById`, requestOptions);
-	// 	//if updated
-	// 	if (response.ok) {
-	// 		Notification.success({
-	// 			title: "User Has Been Updated",
-	// 			description: <div style={{ width: 220 }} rows={3} />,
-	// 			placement: "topEnd",
-	// 		});
-	// 		setOpenDrawer(false);
-	// 		getUsers();
-	// 	}
-	// };
-
-
 	const updateUser = async () => {
 		let message = "User Has Been Updated"
-		let body = JSON.stringify({ id: selectedUser._id, role: selectedRole, disabled: userStatus });
-		await util.PUT_DATA(`http://localhost:5000/api/users/updateUserById`, body, message);
+		let body = { id: selectedUser._id, role: selectedRole, disabled: userStatus };
+		await util.PUT_DATA(`api/users/updateUserById`, body, message);
 		setOpenDrawer(false);
 		getUsers();
 	};

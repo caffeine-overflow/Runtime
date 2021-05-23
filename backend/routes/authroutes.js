@@ -81,6 +81,7 @@ let authAdmin = (req, res, next) => {
             return res.status(403).send({ msg: "Not Authorized." });
 
         req.user = tempUser;
+        logger.infoLogger.info(req);
         //move on from the middleware
         next();
     });
