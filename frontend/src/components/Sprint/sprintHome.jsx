@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import homeImg from "../../assets/sprintHome.svg";
-import FETCH_DATA from "../../utility/utils";
+import util from "../../utility/utils";
 import Clipboard from 'react-clipboard.js';
 import {
     IconButton, Icon, Button} from 'rsuite';
@@ -10,7 +10,7 @@ function SprintHome(props) {
     const [repo, setrepo] = useState(null);
 
     const getRepo = async () => {
-        let response = await FETCH_DATA(`api/git/getRepo/${props.project.repo}`);
+        let response = await util.FETCH_DATA(`api/git/getRepo/${props.project.repo}`);
         setrepo(response.data.repo.data);
     }
 
