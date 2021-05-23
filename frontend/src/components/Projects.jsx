@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import '../App.css';
 import Navbar from './Navbar'
+import util from "../utility/utils";
 
 const { StringType } = Schema.Types;
 
@@ -59,22 +60,12 @@ function Projects(props) {
 
     let getProjects = async () => {
         setloading(true);
-        let currentUser = sessionStorage.getItem('sprintCompassUser');
-        let token = sessionStorage.getItem('sprintCompassToken');
         setUserRole(sessionStorage.getItem('sprintCompassUserRole'));
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/projects`, requestOptions);
-        let data = await response.json();
-        setuserProjects(data.projects);
+        const response = await util.FETCH_DATA(`api/projects`);
+        setuserProjects(response.data.projects);
         setloading(false);
     }
-
+    
     let close = () => {
         setcreateProjectDrawer(false);
         setprojectName("");
@@ -83,31 +74,9 @@ function Projects(props) {
 
     let createProject = async (status) => {
         if (status) {
-            let token = sessionStorage.getItem('sprintCompassToken');
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ 'name': projectName, 'description': description })
-            };
-            const response = await fetch(`http://localhost:5000/api/projects`, requestOptions);
-            if (response.status === 200) {
-                Notification.success({
-                    title: 'Project Has Been Created',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-            else {
-                let data = await response.json()
-                Notification.error({
-                    title: data.msg ?? 'Server error, Try again later',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
+            let message = "Project Has Been Created";
+            let body = { 'name': projectName, 'description': description };
+                await util.POST_DATA(`api/projects`, body,message);
             close();
             getProjects();
         }

@@ -8,18 +8,16 @@ const mongoose = require("mongoose");
 mongoose.set('useFindAndModify', false);
 const errorHandler = require('../utils/errorhandler');
 
-router.get("/allByProjectId/:project_id", authroutes.authenticateToken, async (req, res) => {
+router.get("/allByProjectId/:project_id", authroutes.authenticateToken, async (req, res,next) => {
 	try {
 		let sprints = await Sprint.find({ project_id: req.params.project_id }).populate("created_by");
 		return res.status(200).send({ sprints });
 	} catch (err) {
-		// console.error(err.stack);
-		// return res.status(500).send({ msg: "Something went wrong. Please try again" });
 		next(errorHandler(err,req,500));
 	}
 });
 
-router.post("/", authroutes.authenticateToken, async (req, res) => {
+router.post("/", authroutes.authenticateToken, async (req, res,next) => {
 	try {
 		let body = req.body;
 		let history = [];

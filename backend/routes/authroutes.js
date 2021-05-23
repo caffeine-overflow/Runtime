@@ -7,7 +7,7 @@ const { User } = require("../models/user.js");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
 const errorHandler = require('../utils/errorhandler');
-
+const logger = require('../utils/logger');
 //function to authenticate the token, act as a middleware
 let authenticateToken = (req, res, next) => {
     //get the token
@@ -31,6 +31,7 @@ let authenticateToken = (req, res, next) => {
         }
         req.user = tempUser;
 
+        logger.infoLogger.info(req);
         //move on from the middleware
         next();
     });
@@ -59,6 +60,7 @@ let authRenewToken = (req, res, next) => {
         }
         req.user = tempUser;
 
+        logger.infoLogger.info(req);
         //move on from the middleware
         next();
     });
@@ -79,6 +81,7 @@ let authAdmin = (req, res, next) => {
             return res.status(403).send({ msg: "Not Authorized." });
 
         req.user = tempUser;
+        logger.infoLogger.info(req);
         //move on from the middleware
         next();
     });
@@ -97,6 +100,7 @@ let gitAuthMiddleware = (req, res, next) => {
         let tempUser = await User.findById(user.id).populate("client_id");
         req.user = tempUser;
 
+        logger.infoLogger.info(req);
         //move on from the middleware
         next();
     });
@@ -126,6 +130,7 @@ router.post("/login", async (req, res,next) => {
             }
         });
 
+        req.user = user
         if (user && await bcrypt.compare(password, user.password)) {
             //create the json web tokens
             const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted };

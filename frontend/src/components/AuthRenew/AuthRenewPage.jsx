@@ -5,7 +5,7 @@ import BioSvg from '../../assets/bio.svg';
 import Gitsvg from '../../assets/git.svg';
 import OrganizationSvg from '../../assets/organization.svg';
 import './authrenew.css';
-import FETCH_DATA from "../../utility/utils";
+import util from "../../utility/utils";
 import {
     Form, FormControl, FormGroup, ControlLabel, Schema,
     Notification, Steps, Panel, Button, InputPicker, Message
@@ -36,7 +36,7 @@ export default function AuthRenewPage(props) {
     const [gitOrganization, setgitOrganization] = useState(null);
 
     const getUserData = async () => {
-        let response = await FETCH_DATA(`api/users/getUserById/${sessionStorage.getItem('sprintCompassUser')}`);
+        let response = await util.FETCH_DATA(`api/users/getUserById/${sessionStorage.getItem('sprintCompassUser')}`);
         if (response.status === 200) {
             let user = response.data.user;
             if (!!user.first_login) setStep(0);
@@ -142,7 +142,7 @@ export default function AuthRenewPage(props) {
         }
         let code = getQueryVariable("code");
         if (code) {
-            const response = await FETCH_DATA(`gitauth/get_token?code=${code}`);
+            const response = await util.FETCH_DATA(`gitauth/get_token?code=${code}`);
             if (response.status === 200) {
                 Notification.success({
                     title: "Successfully authorized github",
@@ -165,12 +165,12 @@ export default function AuthRenewPage(props) {
     };
 
     let getOrganizations = async () => {
-        const response = await FETCH_DATA(`api/git/getOrganizations`);
+        const response = await util.FETCH_DATA(`api/git/getOrganizations`);
         setorganizations(response.data.organizations);
     }
 
     let validateInvite = async () => {
-        const response = await FETCH_DATA(`gitauth/validateInvite`);
+        const response = await util.FETCH_DATA(`gitauth/validateInvite`);
         if (response.status === 200) {
             Notification.success({
                 title: "Congratulations!",
