@@ -40,17 +40,19 @@ const POST_DATA = async (api, body, message) => {
     };
 
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
-    console.log(await response.json());
+
+    let data = response.json();
+
     if (!response.ok) {
         Notification.error({
-            title: 'Server error, Try again later',
+            title: data.msg ?? 'Server error, Try again later',
             description: <div style={{ width: 220 }} rows={3} />,
             placement: 'topEnd'
         });
     }
     else{
         Notification.success({
-            title: message,
+            title: data.msg ?? message,
             description: <div style={{ width: 220 }} rows={3} />,
             placement: 'topEnd'
         })
@@ -73,15 +75,17 @@ const PUT_DATA = async (api, body, message) => {
     };
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
 
+    let data = response.json();
+
     if (!response.ok) {
         Notification.error({
-            title: 'Server error, Try again later',
+            title: data.msg ?? 'Server error, Try again later',
             description: <div style={{ width: 220 }} rows={3} />,
             placement: 'topEnd'
         });
     }else{
         Notification.success({
-            title: message,
+            title: data.msg ?? message,
             description: <div style={{ width: 220 }} rows={3} />,
             placement: 'topEnd'
         })

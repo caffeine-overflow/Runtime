@@ -60,21 +60,17 @@ function Projects(props) {
 
     let getProjects = async () => {
         setloading(true);
-        let currentUser = sessionStorage.getItem('sprintCompassUser');
         setUserRole(sessionStorage.getItem('sprintCompassUserRole'));
         const response = await util.FETCH_DATA(`api/projects`);
         setuserProjects(response.data.projects);
         setloading(false);
     }
-
     
-
     let close = () => {
         setcreateProjectDrawer(false);
         setprojectName("");
         setdescription("");
     }
-
 
     let createProject = async (status) => {
         if (status) {
