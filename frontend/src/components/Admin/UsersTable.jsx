@@ -6,7 +6,6 @@ import './userTable.css';
 const { Column, HeaderCell, Cell } = Table;
 const UserRoles = [
 	{ label: "Admin", value: "admin" },
-	{ label: "Manager", value: "manager" },
 	{ label: "Member", value: "member" },
 ];
 export default function UsersTable(props) {
@@ -133,6 +132,7 @@ export default function UsersTable(props) {
 			body: JSON.stringify({ id: selectedUser._id, role: selectedRole, disabled: userStatus }),
 		};
 		const response = await fetch(`http://localhost:5000/api/users/updateUserById`, requestOptions);
+		let data = await response.json()
 		//if updated
 		if (response.ok) {
 			Notification.success({
@@ -140,9 +140,16 @@ export default function UsersTable(props) {
 				description: <div style={{ width: 220 }} rows={3} />,
 				placement: "topEnd",
 			});
-			setOpenDrawer(false);
-			getUsers();
 		}
+		else {
+			Notification.error({
+				title: data.msg ?? "Server Error! Please try again.",
+				description: <div style={{ width: 220 }} rows={3} />,
+				placement: "topEnd",
+			});
+		}
+		setOpenDrawer(false);
+		getUsers();
 	};
 
 	return (
