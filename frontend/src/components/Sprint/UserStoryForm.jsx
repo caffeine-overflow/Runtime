@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { InputNumber, Button, Form, InputPicker, Schema, FormGroup, ControlLabel, FormControl, Notification } from 'rsuite';
+import { InputNumber, Button, Form, InputPicker, Schema, FormGroup, ControlLabel, FormControl } from 'rsuite';
+import  util  from '../../utility/utils';
 
 export default function UserStoryForm(props) {
 
@@ -12,35 +13,17 @@ export default function UserStoryForm(props) {
 
     let createUserStory = async (status) => {
         if (status) {
-            let token = sessionStorage.getItem('sprintCompassToken');
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Access-Control-Expose-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    'title': title,
-                    'description': description,
-                    'assigned_to': selectedCollaborator,
-                    'estimated_time': `${estimatedHours},${estimatedMinutes}`,
-                    'sprint_id': selectedSprint === -1 ? null : selectedSprint,
-                    'project_id': props.project_id
-                })
-            };
-
-            const response = await fetch('http://localhost:5000/api/userstories', requestOptions);
-
-            if (response.status === 200) {
-
-                Notification.success({
-                    title: 'User Story Has Been Created',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-
+    
+        let message = "User Story Has Been Created";
+        let body = {
+            'title': title,
+            'description': description,
+            'assigned_to': selectedCollaborator,
+            'estimated_time': `${estimatedHours},${estimatedMinutes}`,
+            'sprint_id': selectedSprint === -1 ? null : selectedSprint,
+            'project_id': props.project_id
+        };
+            await util.POST_DATA('api/userstories', body,message);
                 //clear the fields
                 setselectedCollaborator(null);
                 setestimatedHours(1);
@@ -48,14 +31,6 @@ export default function UserStoryForm(props) {
                 settitle("");
                 setdescription("");
                 setselectedSprint(null);
-            }
-            else {
-                Notification.error({
-                    title: 'Server error, Try again later',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
         }
     }
 

@@ -8,7 +8,7 @@ import ImageUploader from 'react-images-upload';
 import Resizer from "react-image-file-resizer";
 import Loader from "react-loader-spinner";
 import ImagePlaceHolder from "../assets/imagePlaceHolder.svg";
-import FETCH_DATA from "../utility/utils";
+import util from "../utility/utils";
 
 const { StringType } = Schema.Types;
 
@@ -47,7 +47,7 @@ export default function Profile(props) {
     };
 
     const getUserData = async (id) => {
-        let response = await FETCH_DATA(`api/users/getById/${id}`);
+        let response = await util.FETCH_DATA(`api/users/getById/${id}`);
         if (response.status === 200) {
             setuser(response.data.user);
         }
@@ -55,78 +55,34 @@ export default function Profile(props) {
 
     const updateUserData = async (status) => {
         if (status) {
+            console.log("Here we go");
             setloading(true);
             setopenDrawer(false);
-            let token = sessionStorage.getItem('sprintCompassToken');
-            const requestOptions = {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ [changeAttribute.toLowerCase()]: user[changeAttribute.toLowerCase()] })
-            };
+            let body = { [changeAttribute.toLowerCase()]: user[changeAttribute.toLowerCase()]}
+            let message = `${changeAttribute} Has Been Updated`;
+              await util.PUT_DATA(`api/users`, body,message);
+              setChangeAttribute(null);
+              getUserData(id);
+              setloading(false);
+              setvalidImage(false);
+        }
+    }
+    
+    const changePassword = async (status) => {
+        if (status) {
 
-            const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
-            if (response.status === 200) {
-                Notification.success({
-                    title: `${changeAttribute} Has Been Updated`,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-            else {
-                Notification.error({
-                    title: 'Server error, Try again later',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-
+        let message = `Password Has Been Updated`;
+        let body ={
+                    old_password: currentPassord,
+                    new_password: newpassword
+                }
+            await util.PUT_DATA(`api/users/change_password`, body,message);
+             
+            setopenDrawer(false);
             setChangeAttribute(null);
             getUserData(id);
             setloading(false);
             setvalidImage(false);
-        }
-    }
-
-    const changePassword = async (status) => {
-        if (status) {
-            let token = sessionStorage.getItem('sprintCompassToken');
-            const requestOptions = {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    old_password: currentPassord,
-                    new_password: newpassword
-                })
-            };
-
-            let response = await fetch(`http://localhost:5000/api/users/change_password`, requestOptions);
-            let message = await response.json();
-            console.log(response.status);
-            if (response.status === 200) {
-                Notification.success({
-                    title: `Password Has Been Updated`,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-                setopenDrawer(false);
-                setChangeAttribute(null);
-                getUserData(id);
-                setloading(false);
-                setvalidImage(false);
-            }
-            else {
-                Notification.error({
-                    title: message.msg,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
         }
     }
 

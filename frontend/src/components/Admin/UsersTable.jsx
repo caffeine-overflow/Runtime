@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Tag, Avatar, Progress, Icon, InputPicker, Notification, Drawer, Button } from "rsuite";
 import Loader from "react-loader-spinner";
 import './userTable.css';
+import util from '../../utility/utils';
 
 const { Column, HeaderCell, Cell } = Table;
 const UserRoles = [
@@ -122,27 +123,36 @@ export default function UsersTable(props) {
 		);
 	};
 
+	// const updateUser = async () => {
+	// 	let token = sessionStorage.getItem("sprintCompassToken");
+	// 	const requestOptions = {
+	// 		method: "PUT",
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 			Authorization: `Bearer ${token}`,
+	// 		},
+	// 		body: JSON.stringify({ id: selectedUser._id, role: selectedRole, disabled: userStatus }),
+	// 	};
+	// 	const response = await fetch(`http://localhost:5000/api/users/updateUserById`, requestOptions);
+	// 	//if updated
+	// 	if (response.ok) {
+	// 		Notification.success({
+	// 			title: "User Has Been Updated",
+	// 			description: <div style={{ width: 220 }} rows={3} />,
+	// 			placement: "topEnd",
+	// 		});
+	// 		setOpenDrawer(false);
+	// 		getUsers();
+	// 	}
+	// };
+
+
 	const updateUser = async () => {
-		let token = sessionStorage.getItem("sprintCompassToken");
-		const requestOptions = {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify({ id: selectedUser._id, role: selectedRole, disabled: userStatus }),
-		};
-		const response = await fetch(`http://localhost:5000/api/users/updateUserById`, requestOptions);
-		//if updated
-		if (response.ok) {
-			Notification.success({
-				title: "User Has Been Updated",
-				description: <div style={{ width: 220 }} rows={3} />,
-				placement: "topEnd",
-			});
-			setOpenDrawer(false);
-			getUsers();
-		}
+		let message = "User Has Been Updated"
+		let body = JSON.stringify({ id: selectedUser._id, role: selectedRole, disabled: userStatus });
+		 await util.PUT_DATA(`http://localhost:5000/api/users/updateUserById`, body,message);
+		setOpenDrawer(false);
+		getUsers();
 	};
 
 	return (
