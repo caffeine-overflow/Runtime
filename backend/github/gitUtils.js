@@ -68,6 +68,11 @@ const getRepo = async (token, organization, repo) => {
     });
 }
 
+const getAllRepo = async (token) => {
+    let octo = octokit(token);
+    return await octo.request('GET /user/repos')
+}
+
 const removeUserFromOrganization = async (token, organization, username) => {
     let octo = octokit(token);
     try {
@@ -108,4 +113,4 @@ const changeRole = async (token, organization, username, role) => {
 	}
 };
 
-module.exports = { getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization, changeRole };
+module.exports = { getAllRepo, getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization, changeRole };
