@@ -60,6 +60,35 @@ const createRepo = async (token, organization, repoName) => {
     });
 }
 
+const addMember = async (token, organization, repo, username) => {
+    let octo = octokit(token);
+    return await octo.request('PUT /repos/{owner}/{repo}/collaborators/{username}', {
+        owner: organization,
+        repo: repo,
+        username: username,
+        permission: 'triage'
+    });
+}
+
+const removeMember = async (token, organization, repo, username) => {
+    let octo = octokit(token);
+    return await octo.request('DELETE /repos/{owner}/{repo}/collaborators/{username}', {
+        owner: organization,
+        repo: repo,
+        username: username
+    });
+}
+
+const getAllMembers = async (token, organization, repo, username) => {
+    let octo = octokit(token);
+    let members = await octo.request('GET /repos/{owner}/{repo}/collaborators', {
+        owner: organization,
+        repo: repo
+    });
+    members = members.data.map(member => member.login)
+    return members
+}
+
 const getRepo = async (token, organization, repo) => {
     let octo = octokit(token);
     return await octo.request('GET /repos/{owner}/{repo}', {
@@ -113,4 +142,4 @@ const changeRole = async (token, organization, username, role) => {
 	}
 };
 
-module.exports = { getAllRepo, getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization, changeRole };
+module.exports = { getAllRepo, addMember, removeMember, getAllMembers, getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization, changeRole };

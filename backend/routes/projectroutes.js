@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { Project } = require("../models/project.js");
+const { User } = require("../models/user.js");
 const authroutes = require("./authroutes");
 const mongoose = require("mongoose");
-const { createRepo, getAllRepo } = require("../github/gitUtils");
+const { createRepo, getAllRepo, addMember, removeMember, getAllMembers } = require("../github/gitUtils");
 const errorHandler = require('../utils/errorhandler');
 
 router.get("/", authroutes.authenticateToken, async (req, res, next) => {
@@ -15,6 +16,21 @@ router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 
 		let projects = await Project.find({ repo: { $in: allRepoAccess } }).populate("project_lead");
 		return res.status(200).send({ projects });
+	} catch (err) {
+		next(errorHandler(err,req,500));
+	}
+});
+
+router.get("/members/:project_id", authroutes.authenticateToken, async (req, res, next) => {
+	try {
+		let project = await Project.findById(req.params.project_id)
+		let owner = await User.findOne({client_id: req.user.client_id._id, role:'owner'})
+		let members = await getAllMembers(owner.git_token, req.user.client_id.organization, project.repo)
+		let membersIn = await User.find({ client_id: req.user.client_id._id, git_username: { $in: members } });		
+		let membersNotIn = await User.find({ client_id: req.user.client_id._id, git_username: { $nin: members }, invitation_accepted: true });
+		membersIn.forEach(user => user.password = undefined)
+		membersNotIn.forEach(user => user.password = undefined)
+		return res.status(200).send({ membersIn, membersNotIn });
 	} catch (err) {
 		next(errorHandler(err,req,500));
 	}
@@ -32,7 +48,7 @@ router.get("/byProjectId/:project_id", authroutes.authenticateToken, async (req,
 	}
 });
 
-router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req, res,next) => {
+router.post("/", authroutes.authAdmin, async (req, res,next) => {
 	let repoError = true;
 	try {
 		let body = req.body;
@@ -57,6 +73,30 @@ router.post("/", authroutes.authenticateToken, authroutes.authAdmin, async (req,
 			.catch((err) => {
 				next(errorHandler(err,req,500));
 			});
+	} catch (err) {
+		next(errorHandler(err,req,500));
+	}
+});
+
+router.put("/addMember", authroutes.authAdmin, async (req, res, next) => {
+	try {
+		let body = req.body;
+		let project = await Project.findById(body.project_id)
+		let user = await User.findById(body.user_id)
+		await addMember(req.user.git_token, req.user.client_id.organization, project.repo, user.git_username)
+		return res.status(200).send({msg: "Successfully added the member" });
+	} catch (err) {
+		next(errorHandler(err,req,500));
+	}
+});
+
+router.delete("/removeMember", authroutes.authAdmin, async (req, res, next) => {
+	try {
+		let body = req.body;
+		let project = await Project.findById(body.project_id)
+		let user = await User.findById(body.user_id)
+		await removeMember(req.user.git_token, req.user.client_id.organization, project.repo, user.git_username)
+		return res.status(200).send({msg: "Successfully removed the member" });
 	} catch (err) {
 		next(errorHandler(err,req,500));
 	}
