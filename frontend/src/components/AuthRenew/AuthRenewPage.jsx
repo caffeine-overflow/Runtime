@@ -39,13 +39,22 @@ export default function AuthRenewPage(props) {
         let response = await util.FETCH_DATA(`api/users/getUserById/${sessionStorage.getItem('sprintCompassUser')}`);
         if (response.status === 200) {
             let user = response.data.user;
-            if (!!user.first_login) setStep(0);
-            else if (!!user.git_token) setStep(3);
-            else {
-                console.log(user);
-                setStep(2);
+            if (user.disabled) {
+                sessionStorage.removeItem('sprintCompassToken');
+                sessionStorage.removeItem('sprintCompassUser');
+                sessionStorage.removeItem('sprintCompassUserName');
+                sessionStorage.removeItem('sprintCompassUserRole');
+                window.open('/login', '_self');
             }
-            setuser(response.data.user);
+            else {
+                if (!!user.first_login) setStep(0);
+                else if (!!user.git_token) setStep(3);
+                else {
+                    console.log(user);
+                    setStep(2);
+                }
+                setuser(response.data.user);
+            }
         }
     };
 
