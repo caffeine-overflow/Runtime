@@ -126,7 +126,7 @@ export default function UsersTable(props) {
 	const updateUser = async () => {
 		let message = "User Has Been Updated"
 		let body = { id: selectedUser._id, role: selectedRole, disabled: userStatus };
-		await util.PUT_DATA(`api/users/updateUserById`, body, message);
+		await util.UPDATE_DATA(`api/users/updateUserById`, body, message);
 		setOpenDrawer(false);
 		getUsers();
 	};

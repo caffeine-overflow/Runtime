@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from "../Navbar";
+import utils from "../../utility/utils"
 import {
     Form, FormGroup, ControlLabel, Icon, Button, FormControl, Schema, Message, Notification
 } from 'rsuite';
@@ -91,38 +92,15 @@ let AddUserCard = () => {
 
     const addUser = async (status) => {
         if (status) {
-            console.log(status)
-            let token = sessionStorage.getItem('sprintCompassToken');
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    firstname, lastname, email
-                })
-            };
-            const response = await fetch('http://localhost:5000/api/users/create', requestOptions);
-            const data = await response.json();
-
-            if (response.ok) {
+            let message = "Successfully Created the User";
+            let body = {firstname, lastname, email};
+            const response = await utils.POST_DATA('api/users/create', body, message);
+            if (response === 200) {
                 setfirstname('');
                 setlastname('');
                 setemail('');
-
-                Notification.success({
-                    title: "Successfully Created the User",
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-            else {
-                Notification.error({
-                    title: data.msg,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
+            }else{
+                setemail('');
             }
         }
     };

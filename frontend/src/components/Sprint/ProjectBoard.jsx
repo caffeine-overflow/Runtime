@@ -16,7 +16,8 @@ import UserStoryForm from "./UserStoryForm";
 import SprintForm from "./SprintForm";
 import NotFound from "../NotFound";
 import SprintHome from "./sprintHome";
-import util from "../../utility/utils";
+import utils from "../../utility/utils";
+
 
 const NavToggle = ({ expand, onChange }) => {
     return (
@@ -53,16 +54,9 @@ function ProjectBoard() {
     let { url } = useRouteMatch();
 
     let getSprints = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/sprints/allByProjectId/${url.split('/')[2]}`, requestOptions);
-        let data = await response.json();
+
+        const response = await utils.FETCH_DATA(`api/sprints/allByProjectId/${url.split('/')[2]}`);
+        let data = await response.data;
 
         let currentSprint = data.sprints.find(d => !d.is_done);
         setActiveSprint(currentSprint);
@@ -70,16 +64,8 @@ function ProjectBoard() {
     }
 
     let getProjectById = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/projects/byProjectId/${url.split('/')[2]}`, requestOptions);
-        let data = await response.json();
+        const response = await utils.FETCH_DATA(`api/projects/byProjectId/${url.split('/')[2]}`);
+        let data = await response.data;
         setproject(data.project);
     }
 
@@ -99,16 +85,9 @@ function ProjectBoard() {
     };
 
     const getAllUsers = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
-        let data = await response.json();
+
+        const response = await utils.FETCH_DATA(`api/users`);
+        let data = await response.data;
         setcollaborators(data.users);
     }
 

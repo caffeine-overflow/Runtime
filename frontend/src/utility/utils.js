@@ -42,7 +42,7 @@ const POST_DATA = async (api, body, message) => {
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
 
     let data = response.json();
-
+    
     if (!response.ok) {
         Notification.error({
             title: data.msg ?? 'Server error, Try again later',
@@ -63,7 +63,7 @@ const POST_DATA = async (api, body, message) => {
     }
 }
 
-const PUT_DATA = async (api, body, message) => {
+const UPDATE_DATA = async (api, body, message) => {
     let token = sessionStorage.getItem('sprintCompassToken');
     const requestOptions = {
         method: 'PUT',
@@ -127,4 +127,4 @@ const DELETE_DATA = async (api, message) => {
 
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { FETCH_DATA, POST_DATA, PUT_DATA, DELETE_DATA };
+export default { FETCH_DATA, POST_DATA, UPDATE_DATA, DELETE_DATA };

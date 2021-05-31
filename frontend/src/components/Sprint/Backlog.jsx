@@ -3,23 +3,16 @@ import React, { useState, useEffect } from 'react'
 import { Button, FlexboxGrid, Notification, PanelGroup, Panel } from 'rsuite';
 import NotFound from "../NotFound";
 import NoBacklog from "../../assets/nobacklog.svg";
+import utils from "../../utility/utils"
+
 
 export default function Backlog(props) {
 
     const [backlogs, setbacklogs] = useState([]);
 
     const getBacklogs = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/userstories/backlogs/${props.project_id}`, requestOptions);
-        let data = await response.json();
-
+        const response = await utils.FETCH_DATA(`api/userstories/backlogs/${props.project_id}`);
+        let data = await response.data;
         setbacklogs(data.userstories);
     }
 
@@ -27,24 +20,11 @@ export default function Backlog(props) {
         let body = {};
         body._id = userstory._id;
         body.sprint_id = props.acitveSprint._id;
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(body)
-        };
-        const response = await fetch(`http://localhost:5000/api/userstories`, requestOptions);
-
+        let message ='User Story Has Been Moved to the Active Sprint';
+        let _body = body;
+        const response = await utils.UPDATE_DATA(`api/userstories`, _body, message);
         //if updated
         if (response.ok) {
-            Notification.success({
-                title: 'User Story Has Been Moved to the Active Sprint',
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
             getBacklogs();
         }
     }
