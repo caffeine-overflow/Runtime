@@ -57,7 +57,6 @@ function ProjectBoard() {
 
         const response = await utils.FETCH_DATA(`api/sprints/allByProjectId/${url.split('/')[2]}`);
         let data = await response.data;
-
         let currentSprint = data.sprints.find(d => !d.is_done);
         setActiveSprint(currentSprint);
         setsprints(data.sprints);

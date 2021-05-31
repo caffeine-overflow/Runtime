@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Loader from "react-loader-spinner";
+import utils from "../../utility/utils";
 import {
     Drawer, Icon, InputNumber, Button, Notification, Toggle, Tag,
     Input, InputPicker, FlexboxGrid, Modal} from 'rsuite';
@@ -124,31 +125,16 @@ function Sprint(props) {
     }
 
     const changeStoryState = async (id, state) => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ _id: id, state })
-        };
-        const response = await fetch(`http://localhost:5000/api/userstories`, requestOptions);
+        
+        let body = { _id: id, state };
+        const response = await utils.UPDATE_DATA(`api/userstories`,body);
         if (response.ok) getUserStories();
     }
 
     const getUserStories = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/userstories/bySprint/${props.sprint._id}`, requestOptions);
+        const response = await utils.FETCH_DATA(`api/userstories/bySprint/${props.sprint._id}`);
         if (response.ok) {
-            let data = await response.json();
+            let data = await response.data;
             generateTableCards(data.userstories)
             setuserStories(data.userstories);
         }
@@ -200,28 +186,13 @@ function Sprint(props) {
         }
 
         body['_id'] = selectedUserStory._id;
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(body)
-        };
-        const response = await fetch(`http://localhost:5000/api/userstories`, requestOptions);
+        let message = 'User Story Has Been Updated';
+        let _body = body;
 
-        //if updated
-        if (response.ok) {
-            Notification.success({
-                title: 'User Story Has Been Updated',
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
+        await utils.UPDATE_DATA(`api/userstories`,_body,message);
 
             setshowdrawer(false);
             getUserStories();
-        }
     }
 
     let parseHistory = async (histories) => {

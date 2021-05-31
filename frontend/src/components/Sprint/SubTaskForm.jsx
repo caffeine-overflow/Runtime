@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { InputNumber, Button, Form, InputPicker, Schema, FormGroup, ControlLabel, FormControl, Notification } from 'rsuite';
+import utils from "../../utility/utils";
 
 export default function SubTaskForm(props) {
 
@@ -11,7 +12,7 @@ export default function SubTaskForm(props) {
 
     let createUserStory = async (status) => {
         if (status) {
-            let token = sessionStorage.getItem('sprintCompassToken');
+      
             let body = {
                 'title': title,
                 'description': description,
@@ -22,27 +23,11 @@ export default function SubTaskForm(props) {
                 'parent_task': props.parentId
             };
 
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Access-Control-Expose-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(body)
-            };
+            let message = 'Subtask Has Been Created';
 
-            const response = await fetch('http://localhost:5000/api/userstories', requestOptions);
+            const response = await utils.POST_DATA('api/userstories',body,message);
 
             if (response.status === 200) {
-
-                Notification.success({
-                    title: 'Subtask Has Been Created',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-
                 //clear the fields
                 setselectedCollaborator(null);
                 setestimatedHours(1);
@@ -51,13 +36,6 @@ export default function SubTaskForm(props) {
                 setdescription("");
 
                 props.close();
-            }
-            else {
-                Notification.error({
-                    title: 'Server error, Try again later',
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
             }
         }
     }

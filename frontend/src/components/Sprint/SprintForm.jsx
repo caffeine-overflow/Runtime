@@ -18,16 +18,8 @@ export default function SprintForm(props) {
     }, []);
 
     const getUserStoriesDone = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/userstories/unfinishedTask/${props.acitveSprint._id}`, requestOptions);
-        let data = await response.json();
+        const response = await utils.FETCH_DATA(`api/userstories/unfinishedTask/${props.acitveSprint._id}`);
+        let data = await response.data;
         let tableData = [];
         data.userstories.forEach((d, i) => {
             let estimated = d.estimated_time.split(',');
