@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { token_secret } = require("../config");
+const { token_secret, client_domain } = require("../config");
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user.js");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
+const { resetPassword } = require("../utils/email_templates/resetPassword");
 const errorHandler = require('../utils/errorhandler');
 const logger = require('../utils/logger');
 //function to authenticate the token, act as a middleware
@@ -148,6 +149,30 @@ router.post("/login", async (req, res,next) => {
         } else return res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
         next(errorHandler(err,req,500));
+    }
+});
+
+//reset password
+router.get("/reset_password/:email", async (req, res, next) => {
+    try {
+        let user = await User.findOne({ email: req.params.email })
+        req.user = user
+        console.log(user)
+        if (!user) {
+            return res.status(400).send({ msg: "User does not exist" });
+        }
+        else {
+            //create the json web tokens
+            const userToken = { id: user._id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted };
+            const access_token = jwt.sign(userToken, token_secret);
+            let link = client_domain + `ResetPassword?token=${access_token}`
+            let htmlTemplate = resetPassword(`${user.firstname} ${user.lastname}`, link);
+            sendEmail(htmlTemplate, user.email, "Runtime: Reset Password").catch(console.error);
+            return res.status(200).send({});
+        }
+    }
+    catch (err) {
+        next(errorHandler(err, req, 500));
     }
 });
 
