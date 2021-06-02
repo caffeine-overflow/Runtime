@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const { User } = require("../models/user.js");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
-//const { resetPassword } = require("../utils/email_templates/resetPassword");
+const { resetPassword } = require("../utils/email_templates/resetPassword");
 const errorHandler = require('../utils/errorhandler');
 const logger = require('../utils/logger');
 //function to authenticate the token, act as a middleware
