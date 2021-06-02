@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Loader from "react-loader-spinner";
 import {
     Drawer, Icon, InputNumber, Button, Notification, Toggle, Tag,
-    Input, InputPicker, FlexboxGrid, Modal} from 'rsuite';
+    Input, InputPicker, FlexboxGrid, Modal
+} from 'rsuite';
 import { withRouter } from 'react-router-dom';
 import '../../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -10,6 +11,8 @@ import SubTaskForm from "./SubTaskForm";
 import NotFound from "../NotFound";
 import NoUserStories from "../../assets/noactivesprint.svg";
 import Editor from "../utilitycomponents/Editor";
+import utils from "../../utility/utils";
+import UserStoryTab from "./UserStoryTab";
 
 //four states of the stories, has to match the db
 const STORY_STATES = ["To Do", "In Progress", "Testing", "Done"];
@@ -73,6 +76,8 @@ function Sprint(props) {
     const [history, setHistory] = useState([]);
 
     const [showModal, setshowModal] = useState(false);
+
+    const [gitBranches, setgitBranches] = useState([]);
 
     function onDragEnd(result) {
 
@@ -151,6 +156,9 @@ function Sprint(props) {
             let data = await response.json();
             generateTableCards(data.userstories)
             setuserStories(data.userstories);
+            if (!!selectedUserStory) {
+                setselectedUserStory(data.userstories.find(u => u._id === selectedUserStory._id));
+            }
         }
     }
 
@@ -264,8 +272,17 @@ function Sprint(props) {
         setHistory(parsedHisotry);
     }
 
+    const getGitBranches = async () => {
+        let response = await utils.FETCH_DATA(`api/git/getAllBranches/${props.project.repo}`);
+        if (response.status === 200) {
+            let data = response.data.branches.data;
+            setgitBranches(data);
+        }
+    }
+
     useEffect(() => {
         getUserStories();
+        getGitBranches();
     }, []);
 
     return (
@@ -395,7 +412,7 @@ function Sprint(props) {
                     setshowdrawer(false);
                     setselectedUserStory(null);
                 }}
-                full
+                style={{ width: '100%' }}
             >
                 <Drawer.Header>
                 </Drawer.Header>
@@ -448,6 +465,12 @@ function Sprint(props) {
                                                 value={assignedTo}
                                                 onChange={(value) => setassignedTo(value)}
                                             />
+                                        </div>
+                                        <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Github Branch</p>
+                                        <div
+                                            style={{ margin: "0 15px" }}
+                                        >
+                                            {selectedUserStory.git_branch}
                                         </div>
                                         <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Move to Backlog</p>
                                         <Toggle
@@ -520,7 +543,12 @@ function Sprint(props) {
                                 </div>
                             </div>
                             <div style={{ width: '55%', borderLeft: '1px solid #e6e6e6' }}>
-
+                                <UserStoryTab
+                                    gitBranches={gitBranches}
+                                    project={props.project}
+                                    userStory={selectedUserStory}
+                                    refresh={() => getUserStories()}
+                                />
                             </div>
                         </div>
                     }

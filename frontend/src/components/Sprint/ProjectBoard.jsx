@@ -230,6 +230,7 @@ function ProjectBoard() {
                                                 sprint={acitveSprint}
                                                 collaborators={collaborators}
                                                 project_id={url.split('/')[2]}
+                                                project={project}
                                             /> :
                                             <NotFound
                                                 image={NoActiveSprint}

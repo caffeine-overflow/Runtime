@@ -1,0 +1,19 @@
+.us__tabs {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  height: 10%;
+}
+
+.us__tabs > div {
+  flex: 1;
+  margin: 0 2px;
+  text-align: center;
+  height: 70px;
+  line-height: 70px;
+  cursor: pointer;
+}
+
+.us__tabs > div:hover {
+  font-weight: bold;
+}

@@ -50,7 +50,7 @@ const POST_DATA = async (api, body, message) => {
             placement: 'topEnd'
         });
     }
-    else{
+    else {
         Notification.success({
             title: data.msg ?? message,
             description: <div style={{ width: 220 }} rows={3} />,
@@ -59,7 +59,7 @@ const POST_DATA = async (api, body, message) => {
     }
 
     return {
-        status: response.status 
+        status: response.status
     }
 }
 
@@ -83,7 +83,7 @@ const PUT_DATA = async (api, body, message) => {
             description: <div style={{ width: 220 }} rows={3} />,
             placement: 'topEnd'
         });
-    }else{
+    } else {
         Notification.success({
             title: data.msg ?? message,
             description: <div style={{ width: 220 }} rows={3} />,

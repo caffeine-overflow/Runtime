@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const { User } = require("../models/user.js");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
-const { resetPassword } = require("../utils/email_templates/resetPassword");
+//const { resetPassword } = require("../utils/email_templates/resetPassword");
 const errorHandler = require('../utils/errorhandler');
 const logger = require('../utils/logger');
 //function to authenticate the token, act as a middleware
@@ -117,7 +117,7 @@ router.get("/authrenew_validate", authRenewToken, async (req, res) => {
 });
 
 //login function
-router.post("/login", async (req, res,next) => {
+router.post("/login", async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const query = User.where({ email: email, disabled: false });
@@ -148,7 +148,7 @@ router.post("/login", async (req, res,next) => {
             );
         } else return res.status(403).send({ msg: "Invalid Email or password" });
     } catch (err) {
-        next(errorHandler(err,req,500));
+        next(errorHandler(err, req, 500));
     }
 });
 
@@ -177,7 +177,7 @@ router.get("/reset_password/:email", async (req, res, next) => {
 });
 
 //register function
-router.post("/register", authenticateToken, async (req, res,next) => {
+router.post("/register", authenticateToken, async (req, res, next) => {
     try {
         const { firstname, lastname, email, phone, location, image } = req.body;
 
@@ -212,7 +212,7 @@ router.post("/register", authenticateToken, async (req, res,next) => {
             }
         });
     } catch (err) {
-        next(errorHandler(err,req,500));
+        next(errorHandler(err, req, 500));
     }
 });
 

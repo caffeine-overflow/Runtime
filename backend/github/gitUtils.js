@@ -110,7 +110,7 @@ const removeUserFromOrganization = async (token, organization, username) => {
             username: username,
         });
 
-        if(userStatus.data.state === "active")
+        if (userStatus.data.state === "active")
             return await octo.request('DELETE /orgs/{org}/memberships/{username}', {
                 org: organization,
                 username: username
@@ -124,22 +124,98 @@ const removeUserFromOrganization = async (token, organization, username) => {
 
 
 const changeRole = async (token, organization, username, role) => {
-	let octo = octokit(token);
-	try {
-		let userStatus = await octo.request("GET /orgs/{org}/memberships/{username}", {
-			org: organization,
-			username: username,
-		});
+    let octo = octokit(token);
+    try {
+        let userStatus = await octo.request("GET /orgs/{org}/memberships/{username}", {
+            org: organization,
+            username: username,
+        });
         if (userStatus.data.state === "active")
-			return await octo.request("PUT /orgs/{org}/memberships/{username}", {
-				org: organization,
-				username: username,
-				role: role,
+            return await octo.request("PUT /orgs/{org}/memberships/{username}", {
+                org: organization,
+                username: username,
+                role: role,
             });
-	} catch (err) {
-		console.log(err);
-		return err;
-	}
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
 };
 
-module.exports = { getAllRepo, addMember, removeMember, getAllMembers, getOrganizationsByUser, sendOrganizationInvite, getUser, checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization, changeRole };
+const getAllBranches = async (token, organization, repo) => {
+    let octo = octokit(token);
+    try {
+        return await octo.request('GET /repos/{owner}/{repo}/branches', {
+            owner: organization,
+            repo: repo
+        })
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+const createBranch = async (token, organization, repo, newBranch, sha) => {
+    let octo = octokit(token);
+    try {
+        return await octo.rest.git.createRef({
+            owner: organization,
+            repo: repo,
+            ref: `refs/heads/${newBranch}`,
+            sha: sha
+        });
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+const addComment = async (token, organization, repo, comment, sha) => {
+    let octo = octokit(token);
+    try {
+        return await octo.request('POST /repos/{owner}/{repo}/commits/{commit_sha}/comments', {
+            owner: organization,
+            repo: repo,
+            commit_sha: sha,
+            body: comment
+        });
+    }
+    catch (err) {
+        console.log(err)
+        return err;
+    }
+}
+
+const getBranchComments = async (token, organization, repo, sha) => {
+    let octo = octokit(token);
+    try {
+        return await octo.request('GET /repos/{owner}/{repo}/commits/{commit_sha}/comments', {
+            owner: organization,
+            repo: repo,
+            commit_sha: sha
+        })
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+const getBranchCommits = async (token, organization, repo, branch) => {
+    let octo = octokit(token);
+    try {
+        return await octo.request('GET /repos/{owner}/{repo}/commits', {
+            owner: organization,
+            repo: repo,
+            sha: branch
+        })
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+module.exports = {
+    getOrganizationsByUser, sendOrganizationInvite, getUser, getAllBranches, createBranch, addComment,
+    checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization,
+    getBranchComments, getBranchCommits, getAllRepo, changeRole, removeMember, getAllMembers, addMember
+};
