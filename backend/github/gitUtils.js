@@ -56,6 +56,7 @@ const createRepo = async (token, organization, repoName) => {
     return await octo.request('POST /orgs/{org}/repos', {
         org: organization,
         name: repoName,
+        auto_init: true,
         private: true,
     });
 }
