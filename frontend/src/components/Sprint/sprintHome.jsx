@@ -48,34 +48,72 @@ function SprintHome(props) {
 				<section style={{ width: "50%", display: "flex", justifyContent: "center", height: "100%", alignContent: "center", flexWrap: "wrap" }}>
 					<div style={{ width: "100%", textAlign: "center", fontSize: "30px", fontWeight: "bold" }}>{props.project.name}</div>
 					<div style={{ width: "100%", textAlign: "center", marginTop: "10px" }}>{props.project.description}</div>
-					<div style={{ width: "100%", textAlign: "center", fontSize: "22px", marginTop: "10px", fontWeight: "bold" }}>Contributors</div>
+					<div style={{ width: "100%", textAlign: "center", fontSize: "20px", marginTop: "40px", fontWeight: "bold" }}>
+						Contributors
+					</div>
 					<div className="avatar-group" style={{ justifyContent: "center", display: "flex", width: "50%", margin: "auto", flexWrap: "wrap" }}>
 						{membersIn.map((t, i) => {
 							return (
-								<Whisper key={i} trigger="hover" placement={"top"} speaker={<Popover title={`${t.firstname} ${t.lastname}`}></Popover>}>
-									<Avatar circle style={{ background: "#828282", cursor: "pointer", margin: "10px" }} src={t.git_avatar} />
+								<Whisper
+									key={i}
+									trigger="hover"
+									placement={"top"}
+									speaker={<Popover title={`${t.firstname} ${t.lastname}`}></Popover>}
+								>
+									<Avatar
+										circle
+										style={{ background: "#828282", cursor: "pointer", margin: "10px" }}
+										src={t.git_avatar}
+									/>
 								</Whisper>
 							);
 						})}
 					</div>
 					<div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "40px" }}>
 						{["owner", "admin"].includes(sessionStorage.getItem("sprintCompassUserRole").toLowerCase()) && (
-							<Button style={{ marginRight: "10px" }} onClick={() => setAddMemberDrawer(true)}>
+							<IconButton
+								icon={<Icon icon="user-plus" />} placement="left"
+								size="md"
+								style={{ marginRight: "10px" }}
+								onClick={() => setAddMemberDrawer(true)}
+							>
 								Add Member
-							</Button>
+							</IconButton>
 						)}
-						<div>
-							<Icon style={{ padding: "4px 10px" }} icon="github" size="2x" />
-						</div>
-						<Button onClick={() => window.open(repo.html_url, "_blank")}>Open with Github</Button>
+						<IconButton
+							size="md"
+							icon={<Icon icon="github" />} placement="left"
+							onClick={() => window.open(repo.html_url, "_blank")}
+						>
+							Open with Github
+      					</IconButton>
 					</div>
 					{repo && (
 						<div style={{ marginTop: "40px", display: "flex" }}>
-							<Clipboard data-clipboard-text={repo.clone_url} style={{ background: "none", display: "flex" }}>
-								<div style={{ background: "#e6e6e6", padding: "7px", border: "1px solid #e6e6e6" }}>Clone Url</div>
-								<div style={{ background: "#f5f5f5", padding: "7px", border: "1px solid #e6e6e6" }}>{repo.clone_url}</div>
+							<div
+								data-div-text={repo.clone_url}
+								style={{ display: "flex" }}
+							>
+								<div
+									style={{ background: "#e6e6e6", padding: "8px", border: "1px solid #e6e6e6", borderRadius: '5px 0 0 5px' }}>
+									Clone Url
+								</div>
+								<div
+									style={{ background: "#f5f5f5", padding: "8px", border: "1px solid #e6e6e6", borderRadius: '0 5px 5px 0' }}
+								>
+									{repo.clone_url}
+								</div>
+							</div>
+							<Clipboard
+								data-clipboard-text={repo.clone_url}
+								style={{ background: 'none' }}
+							>
+								<IconButton
+									style={{ background: '#134069', marginLeft: "10px", color: '#f5f5f5' }}
+									icon={<Icon icon="copy" />}
+								/>
 							</Clipboard>
-							<IconButton style={{ marginLeft: "10px" }} icon={<Icon icon="copy" />} />
+
 						</div>
 					)}
 				</section>
