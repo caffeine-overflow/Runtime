@@ -3,6 +3,7 @@ import homeImg from "../../assets/sprintHome.svg";
 import util from "../../utility/utils";
 import Clipboard from 'react-clipboard.js';
 import { IconButton, Icon, Button, Avatar, Drawer, Form, InputPicker, ButtonToolbar, Whisper, Popover } from "rsuite";
+import Loader from "react-loader-spinner";
 
 function SprintHome(props) {
 	const [repo, setrepo] = useState(null);
@@ -45,79 +46,83 @@ function SprintHome(props) {
 				<section style={{ width: "50%", display: "flex", alignItems: "center" }}>
 					<img style={{ maxWidth: "700px", display: "block", margin: "auto" }} src={homeImg} alt="homeimg" />
 				</section>
-				<section style={{ width: "50%", display: "flex", justifyContent: "center", height: "100%", alignContent: "center", flexWrap: "wrap" }}>
-					<div style={{ width: "100%", textAlign: "center", fontSize: "30px", fontWeight: "bold" }}>{props.project.name}</div>
-					<div style={{ width: "100%", textAlign: "center", marginTop: "10px" }}>{props.project.description}</div>
-					<div style={{ width: "100%", textAlign: "center", fontSize: "20px", marginTop: "40px", fontWeight: "bold" }}>
-						Contributors
-					</div>
-					<div className="avatar-group" style={{ justifyContent: "center", display: "flex", width: "50%", margin: "auto", flexWrap: "wrap" }}>
-						{membersIn.map((t, i) => {
-							return (
-								<Whisper
-									key={i}
-									trigger="hover"
-									placement={"top"}
-									speaker={<Popover title={`${t.firstname} ${t.lastname}`}></Popover>}
-								>
-									<Avatar
-										circle
-										style={{ background: "#828282", cursor: "pointer", margin: "10px" }}
-										src={t.git_avatar}
-									/>
-								</Whisper>
-							);
-						})}
-					</div>
-					<div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "40px" }}>
-						{["owner", "admin"].includes(sessionStorage.getItem("sprintCompassUserRole").toLowerCase()) && (
-							<IconButton
-								icon={<Icon icon="user-plus" />} placement="left"
-								size="md"
-								style={{ marginRight: "10px", border: "1px solid #e6e6e6", }}
-								onClick={() => setAddMemberDrawer(true)}
-							>
-								Add Member
-							</IconButton>
-						)}
-						<IconButton
-							size="md"
-							style={{ border: "1px solid #e6e6e6", }}
-							icon={<Icon icon="github" />} placement="left"
-							onClick={() => window.open(repo.html_url, "_blank")}
-						>
-							Open with Github
-      					</IconButton>
-					</div>
-					{repo && (
-						<div style={{ marginTop: "40px", display: "flex" }}>
-							<div
-								data-div-text={repo.clone_url}
-								style={{ display: "flex" }}
-							>
-								<div
-									style={{ background: "#e6e6e6", padding: "8px", border: "1px solid #e6e6e6", borderRadius: '5px 0 0 5px' }}>
-									Clone Url
-								</div>
-								<div
-									style={{ background: "#f5f5f5", padding: "8px", border: "1px solid #e6e6e6", borderRadius: '0 5px 5px 0' }}
-								>
-									{repo.clone_url}
-								</div>
+				{
+					(repo && membersIn.length > 0) ?
+						<section style={{ width: "50%", display: "flex", justifyContent: "center", height: "100%", alignContent: "center", flexWrap: "wrap" }}>
+							<div style={{ width: "100%", textAlign: "center", fontSize: "30px", fontWeight: "bold" }}>{props.project.name}</div>
+							<div style={{ width: "100%", textAlign: "center", marginTop: "10px" }}>{props.project.description}</div>
+							<div style={{ width: "100%", textAlign: "center", fontSize: "20px", marginTop: "40px", fontWeight: "bold" }}>
+								Contributors
 							</div>
-							<Clipboard
-								data-clipboard-text={repo.clone_url}
-								style={{ background: 'none' }}
-							>
+							<div className="avatar-group" style={{ justifyContent: "center", display: "flex", width: "50%", margin: "auto", flexWrap: "wrap" }}>
+								{membersIn.map((t, i) => {
+									return (
+										<Whisper
+											key={i}
+											trigger="hover"
+											placement={"top"}
+											speaker={<Popover title={`${t.firstname} ${t.lastname}`}></Popover>}
+										>
+											<Avatar
+												circle
+												style={{ background: "#828282", cursor: "pointer", margin: "10px" }}
+												src={t.git_avatar}
+											/>
+										</Whisper>
+									);
+								})}
+							</div>
+							<div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "40px" }}>
+								{["owner", "admin"].includes(sessionStorage.getItem("sprintCompassUserRole").toLowerCase()) && (
+									<IconButton
+										icon={<Icon icon="user-plus" />} placement="left"
+										size="md"
+										style={{ marginRight: "10px", border: "1px solid #e6e6e6", }}
+										onClick={() => setAddMemberDrawer(true)}
+									>
+										Add Member
+									</IconButton>
+								)}
 								<IconButton
-									style={{ background: '#134069', marginLeft: "10px", color: '#f5f5f5' }}
-									icon={<Icon icon="copy" />}
-								/>
-							</Clipboard>
-
-						</div>
-					)}
-				</section>
+									size="md"
+									style={{ border: "1px solid #e6e6e6", }}
+									icon={<Icon icon="github" />} placement="left"
+									onClick={() => window.open(repo.html_url, "_blank")}
+								>
+									Open with Github
+      						</IconButton>
+							</div>
+							<div style={{ marginTop: "40px", display: "flex" }}>
+								<div
+									data-div-text={repo.clone_url}
+									style={{ display: "flex" }}
+								>
+									<div
+										style={{ background: "#e6e6e6", padding: "8px", border: "1px solid #e6e6e6", borderRadius: '5px 0 0 5px' }}>
+										Clone Url
+								</div>
+									<div
+										style={{ background: "#f5f5f5", padding: "8px", border: "1px solid #e6e6e6", borderRadius: '0 5px 5px 0' }}
+									>
+										{repo.clone_url}
+									</div>
+								</div>
+								<Clipboard
+									data-clipboard-text={repo.clone_url}
+									style={{ background: '#134069', color: '#f5f5f5', width: '60px', borderRadius: '0 5px 5px 0' }}
+								>
+									copy
+								</Clipboard>
+							</div>
+						</section> :
+						<Loader
+							style={{ width: "50%", display: "flex", justifyContent: "center", height: "100%", alignItems: "center" }}
+							type="ThreeDots"
+							color="#134069"
+							height={50}
+							width={50}
+						/>
+				}
 			</section>
 			<Drawer
 				show={addMemberDrawer}
