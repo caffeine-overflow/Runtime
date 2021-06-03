@@ -98,9 +98,11 @@ const getRepo = async (token, organization, repo) => {
     });
 }
 
-const getAllRepo = async (token) => {
+const getAllRepo = async (token, organization) => {
     let octo = octokit(token);
-    return await octo.request('GET /user/repos')
+    return await octo.request('GET /orgs/{org}/repos', {
+        org: organization
+    });
 }
 
 const removeUserFromOrganization = async (token, organization, username) => {
