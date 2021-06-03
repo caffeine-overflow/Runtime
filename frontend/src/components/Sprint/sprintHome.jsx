@@ -9,18 +9,10 @@ function SprintHome(props) {
 	const [repo, setrepo] = useState(null);
 	const [selectedUser, setselectedUser] = useState(null);
 	const [addMemberDrawer, setAddMemberDrawer] = useState(false);
-	const [membersIn, setMembersIn] = useState([]);
-	const [membersNotIn, setMembersNotIn] = useState([]);
 
 	const getRepo = async () => {
 		let response = await util.FETCH_DATA(`api/git/getRepo/${props.project.repo}`);
 		setrepo(response.data.repo.data);
-	};
-
-	const getMembers = async () => {
-		let response = await util.FETCH_DATA(`api/projects/members/${props.project._id}`);
-		setMembersIn(response.data.membersIn);
-		setMembersNotIn(response.data.membersNotIn);
 	};
 
 	const addMember = async () => {
@@ -31,12 +23,11 @@ function SprintHome(props) {
 		let successMessage = "Successfully added the user";
 		await util.PUT_DATA(`api/projects/addMember`, body, successMessage);
 		setAddMemberDrawer(false);
-		getMembers();
+		props.getMembers(props.project._id);
 		getRepo();
 	};
 
 	useEffect(() => {
-		getMembers();
 		getRepo();
 	}, []);
 
@@ -47,7 +38,7 @@ function SprintHome(props) {
 					<img style={{ maxWidth: "700px", display: "block", margin: "auto" }} src={homeImg} alt="homeimg" />
 				</section>
 				{
-					(repo && membersIn.length > 0) ?
+					(repo && props.membersIn && props.membersIn.length > 0) ?
 						<section style={{ width: "50%", display: "flex", justifyContent: "center", height: "100%", alignContent: "center", flexWrap: "wrap" }}>
 							<div style={{ width: "100%", textAlign: "center", fontSize: "30px", fontWeight: "bold" }}>{props.project.name}</div>
 							<div style={{ width: "100%", textAlign: "center", marginTop: "10px" }}>{props.project.description}</div>
@@ -55,7 +46,7 @@ function SprintHome(props) {
 								Contributors
 							</div>
 							<div className="avatar-group" style={{ justifyContent: "center", display: "flex", width: "50%", margin: "auto", flexWrap: "wrap" }}>
-								{membersIn.map((t, i) => {
+								{props.membersIn.map((t, i) => {
 									return (
 										<Whisper
 											key={i}
@@ -139,11 +130,11 @@ function SprintHome(props) {
 							}}
 						>
 							<h5 style={{ textAlign: "center", marginBottom: "50px" }}>Add a Member</h5>
-							{membersNotIn && membersNotIn.length === 0 && <div style={{ textAlign: "center" }}>No new members to add</div>}
-							{membersNotIn && membersNotIn.length > 0 && (
+							{props.membersNotIn && props.membersNotIn.length === 0 && <div style={{ textAlign: "center" }}>No new members to add</div>}
+							{props.membersNotIn && props.membersNotIn.length > 0 && (
 								<div>
 									<InputPicker
-										data={membersNotIn.map((m) => {
+										data={props.membersNotIn.map((m) => {
 											return { label: m.firstname + " " + m.lastname, value: m._id };
 										})}
 										style={{ width: 224 }}

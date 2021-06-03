@@ -37,6 +37,7 @@ const NavToggle = ({ expand, onChange }) => {
 
 function ProjectBoard() {
     const [collaborators, setcollaborators] = useState([]);
+    const [membersNotIn, setMembersNotIn] = useState([]);
     const [project, setproject] = useState(null);
     const [sprints, setsprints] = useState([]);
 
@@ -80,6 +81,7 @@ function ProjectBoard() {
         };
         const response = await fetch(`http://localhost:5000/api/projects/byProjectId/${url.split('/')[2]}`, requestOptions);
         let data = await response.json();
+        getAllUsers(data.project._id)
         setproject(data.project);
     }
 
@@ -98,22 +100,13 @@ function ProjectBoard() {
         toggleFunction(true);
     };
 
-    const getAllUsers = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
-        let data = await response.json();
-        setcollaborators(data.users);
+    const getAllUsers = async (project_id) => {
+        let response = await util.FETCH_DATA(`api/projects/members/${project_id}`);		
+        setcollaborators(response.data.membersIn);
+        setMembersNotIn(response.data.membersNotIn);
     }
 
     useEffect(() => {
-        getAllUsers();
         getSprints();
         getProjectById();
     }, []);
@@ -218,6 +211,9 @@ function ProjectBoard() {
                                 homeToggle && !!project &&
                                 <SprintHome
                                     project={project}
+                                    membersIn={collaborators}
+                                    membersNotIn={membersNotIn}
+                                    getMembers={getAllUsers}
                                 />
                             }
                             {
