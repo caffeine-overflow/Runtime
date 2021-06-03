@@ -74,7 +74,7 @@ function SprintHome(props) {
 							<IconButton
 								icon={<Icon icon="user-plus" />} placement="left"
 								size="md"
-								style={{ marginRight: "10px" }}
+								style={{ marginRight: "10px", border: "1px solid #e6e6e6", }}
 								onClick={() => setAddMemberDrawer(true)}
 							>
 								Add Member
@@ -82,6 +82,7 @@ function SprintHome(props) {
 						)}
 						<IconButton
 							size="md"
+							style={{ border: "1px solid #e6e6e6", }}
 							icon={<Icon icon="github" />} placement="left"
 							onClick={() => window.open(repo.html_url, "_blank")}
 						>
