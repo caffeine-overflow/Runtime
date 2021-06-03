@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Avatar, Progress, Icon, InputPicker, Notification, Drawer, Button } from "rsuite";
+import { Table, Tag, Avatar, Progress, Icon, InputPicker, Toggle, Drawer, Button } from "rsuite";
 import Loader from "react-loader-spinner";
 import './userTable.css';
 import util from '../../utility/utils';
@@ -188,45 +188,60 @@ export default function UsersTable(props) {
 					close();
 				}}
 			>
+				<Drawer.Header>
+					<Drawer.Title>User Information</Drawer.Title>
+				</Drawer.Header>
 				<Drawer.Body>
-					<div style={{ marginTop: "50%" }}>
-						<p style={{ textAlign: "center", marginBottom: "50px", fontWeight: "800", fontSize: 32 }}>User Info</p>
-						<p style={{ fontWeight: "600", fontSize: 24, marginTop: 20 }}>
-							Name: {selectedUser?.firstname} {selectedUser?.lastname}
-						</p>
-						<p style={{ fontWeight: "600", fontSize: 24, display: "flex", marginTop: 20 }}>
-							Account Activated: {PassFailIcon(!selectedUser?.first_login)}
-						</p>
-						<p style={{ fontWeight: "600", fontSize: 24, display: "flex", marginTop: 20 }}>
-							Github Authorized: {PassFailIcon(selectedUser?.git_token)}
-						</p>
-						<p style={{ fontWeight: "600", fontSize: 24, display: "flex", marginTop: 20 }}>
-							Joined Organization: {PassFailIcon(selectedUser?.invitation_accepted)}
-						</p>
-						<label style={{ fontWeight: "600", fontSize: 24, marginTop: 20 }} className="rs-control-label">
-							User Role:
-						</label>
-						<InputPicker
-							data={UserRoles}
-							placeholder="User Role"
-							style={{ width: 200, height: 40, marginLeft: 5 }}
-							value={selectedRole}
-							cleanable={false}
-							onChange={(value) => setSelectedRole(value)}
-						/>
-						<br />
-						<label style={{ fontWeight: "600", fontSize: 24, marginTop: 20 }}>User Status: </label>
+					<div className='user__info__container'>
+						<div>
+							<div>User Name</div>
+							<div>{selectedUser?.firstname} {selectedUser?.lastname}</div>
+						</div>
+						<div>
+							<div>Account Activated</div>
+							<div>{PassFailIcon(!selectedUser?.first_login)}</div>
+						</div>
+						<div>
+							<div>Github Authorized</div>
+							<div>{PassFailIcon(selectedUser?.git_token)}</div>
+						</div>
+						<div>
+							<div>Joined Organization</div>
+							<div>{PassFailIcon(selectedUser?.invitation_accepted)}</div>
+						</div>
+						<div>
+							<label className="rs-control-label">User Role</label>
+							<section>
+								<InputPicker
+									style={{ width: '150px' }}
+									data={UserRoles}
+									placeholder="User Role"
+									value={selectedRole}
+									cleanable={false}
+									onChange={(value) => setSelectedRole(value)}
+								/>
+							</section>
+						</div>
+						<div>
+							<label>User Enabled</label>
+							<div style={{ textAlign: 'center' }}>
+								<Toggle
+									style={{ width: '30px', textAlign: 'center' }}
+									size="lg"
+									checked={!userStatus}
+									onChange={() => setUserStatus(!userStatus)}
+								/>
+							</div>
+						</div>
+					</div>
+					<div style={{ textAlign: 'center' }}>
 						<Button
-							appearance={"primary"}
-							color={userStatus ? "cyan" : "green"}
-							style={{ width: "100px", marginLeft: 10 }}
-							onClick={() => setUserStatus(!userStatus)}
+							appearance="primary"
+							onClick={() => updateUser()}
+							style={{ width: 250 }}
 						>
-							{userStatus ? "Disabled" : "Active"}
-						</Button>
-						<Button appearance="primary" style={{ width: "250px", position: "fixed", bottom: 20 }} onClick={() => updateUser()}>
 							Update User
-						</Button>
+					</Button>
 					</div>
 				</Drawer.Body>
 			</Drawer>

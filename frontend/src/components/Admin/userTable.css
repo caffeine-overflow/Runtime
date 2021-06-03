@@ -12,7 +12,7 @@
   font-size: 17px !important;
 }
 
-.rs-table-cell-header-icon-sort{
+.rs-table-cell-header-icon-sort {
   height: revert !important;
   width: revert !important;
   font-size: 20px !important;
@@ -34,4 +34,35 @@
 
 [role='row']:nth-child(even) {
   background: #f7f7f7 !important;
+}
+
+.user__info__container {
+  display: flex;
+  height: 90%;
+  width: 100%;
+  flex-wrap: wrap;
+  align-content: center;
+}
+
+.user__info__container > div {
+  display: flex;
+  height: 70px;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.user__info__container > div > :first-child {
+  width: 40%;
+  text-align: right;
+  font-weight: 600;
+}
+
+.user__info__container > div > :nth-child(2) {
+  width: 150px;
+  margin-left: 10%;
+}
+
+.user__info__container > div > div:nth-child(2) {
+  text-align: center;
 }

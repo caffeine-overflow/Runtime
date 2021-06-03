@@ -183,7 +183,7 @@ export default function AuthRenewPage(props) {
         if (response.status === 200) {
             Notification.success({
                 title: "Congratulations!",
-                description: <div style={{ width: 220 }} rows={3} > Welocome to Runtime </div>,
+                description: <div style={{ width: 220 }} rows={3} > Welcome to Runtime </div>,
                 placement: "topEnd",
             });
             props.history.push('/projects');

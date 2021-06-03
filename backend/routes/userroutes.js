@@ -15,7 +15,7 @@ router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 		users.forEach(user => user.password = undefined)
 		return res.status(200).send({ users });
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -26,7 +26,7 @@ router.get("/getById/:id", authroutes.authenticateToken, async (req, res, next) 
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -38,7 +38,7 @@ router.get("/getUserById/:id", authroutes.authRenewToken, async (req, res, next)
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -83,13 +83,13 @@ router.put("/updateUserById", authroutes.authAdmin, async (req, res, next) => {
 						}
 						return res.status(200).send({ msg: "User Updated Successfully" });
 					})
-					.catch((err) => {						
-						next(errorHandler(err,req,500));
+					.catch((err) => {
+						next(errorHandler(err, req, 500));
 					});
 			}
 		}
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -110,10 +110,10 @@ router.put("/", authroutes.authenticateToken, async (req, res, next) => {
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -135,17 +135,17 @@ router.put("/update_user", authroutes.authRenewToken, async (req, res, next) => 
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
 
 
 //Change Password
-router.put("/change_password", authroutes.authenticateToken, async (req, res,next) => {
+router.put("/change_password", authroutes.authenticateToken, async (req, res, next) => {
 	try {
 		const { old_password, new_password } = req.body;
 		const user = await User.findById(req.user.id);
@@ -164,7 +164,7 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res,nex
 			}
 		});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -182,19 +182,19 @@ router.put("/update_password", authroutes.authRenewToken, async (req, res, next)
 
 		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword, first_login: false } }, function (err, result) {
 			if (err) {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			} else {
 				return res.status(200).send({ msg: "Password Updated Successfully" });
 			}
 		});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
 
 //register function
-router.post("/create", authroutes.authAdmin, async (req, res,next) => {
+router.post("/create", authroutes.authAdmin, async (req, res, next) => {
 	try {
 		const { firstname, lastname, email, phone, location, image } = req.body;
 
@@ -223,7 +223,7 @@ router.post("/create", authroutes.authAdmin, async (req, res,next) => {
 
 		newUser.save(function (err) {
 			if (err) {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			}
 			else {
 				let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
@@ -232,11 +232,11 @@ router.post("/create", authroutes.authAdmin, async (req, res,next) => {
 			}
 		});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
-router.post("/addClient", authroutes.authAdmin, async (req, res,next) => {
+router.post("/addClient", authroutes.authAdmin, async (req, res, next) => {
 
 	const client = await new Client({
 		'name': req.body.name,
@@ -244,12 +244,12 @@ router.post("/addClient", authroutes.authAdmin, async (req, res,next) => {
 	}).save();
 
 	if (!client) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 
 	await User.findByIdAndUpdate(req.user.id, { $set: { client_id: client._id } }, function (err, result) {
 		if (err) {
-			next(errorHandler(err,req,500));
+			next(errorHandler(err, req, 500));
 		} else {
 			return res.status(200).send({ msg: "Successfully added Organization" });
 		}
