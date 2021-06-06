@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GitBranchImg from '../../assets/gitBranch.svg';
-import { InputPicker, Input, Button, Notification } from 'rsuite';
+import { InputPicker, Input, Button, Notification, Message } from 'rsuite';
 import './userstorytab.css';
 import utils from "../../utility/utils";
 import moment from 'moment';
@@ -203,8 +203,19 @@ function UserStoryTab(props) {
             {
                 activetab === 1 &&
                 <section style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', height: '90%', flexWrap: 'wrap', overflowY: 'hidden' }}>
+
                     {
-                        !props.userStory.git_branch &&
+                        props.gitBranches.length === 0 &&
+                        <Message
+                            type="info"
+                            title="Empty Repository"
+                            description={
+                                <p>You cannot create branch for an empty repo </p>
+                            }
+                        />
+                    }
+                    {
+                        !props.userStory.git_branch && props.gitBranches.length > 0 &&
                         <>
                             <div style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold', width: '100%', marginBottom: '100px' }}>
                                 Create Github Branch

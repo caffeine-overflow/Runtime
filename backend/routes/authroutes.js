@@ -120,18 +120,15 @@ router.get("/authrenew_validate", authRenewToken, async (req, res) => {
 router.post("/login", async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const query = User.where({ email: email, disabled: false });
-        let user = await query.findOne(function (
-            err,
-            user
-        ) {
-            if (err) return handleError(err);
-            if (user) {
-                return user;
-            }
-        });
+        let user = await User.where({ email: email, disabled: false }).findOne(
+            function (err, result) {
+                if (err) return handleError(err);
+                if (result) {
+                    req.user = result;
+                    return result;
+                }
+            });
 
-        req.user = user
         if (user && await bcrypt.compare(password, user.password)) {
             //create the json web tokens
             const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted };
@@ -146,7 +143,9 @@ router.post("/login", async (req, res, next) => {
                     invitationAccepted: user.invitation_accepted
                 }
             );
-        } else return res.status(403).send({ msg: "Invalid Email or password" });
+        }
+        else return res.status(403).send({ msg: "Invalid Email or password" });
+
     } catch (err) {
         next(errorHandler(err, req, 500));
     }
