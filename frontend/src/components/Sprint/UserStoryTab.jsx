@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GitBranchImg from '../../assets/gitBranch.svg';
-import { InputPicker, Input, Button, Notification, Message } from 'rsuite';
+import { InputPicker, Input, Button, Notification, Message, Timeline, Icon } from 'rsuite';
 import './userstorytab.css';
 import utils from "../../utility/utils";
 import moment from 'moment';
@@ -98,13 +98,11 @@ function UserStoryTab(props) {
     useEffect(() => {
         let tabs = document.querySelectorAll('.us__tabs>div');
         tabs.forEach(t => {
-            let [background, color] = ['#e6e6e6', '#193A5A'];
+            let [background] = ['#e6e6e6'];
             if (activetab === Number(t.getAttribute('data-index'))) {
                 background = '#193A5A';
-                color = '#f5f5f5';
             }
-            t.style.background = background;
-            t.style.color = color;
+            t.style['border-bottom'] = `3px solid ${background}`;
         })
 
         activetab === 0 && scrollToBottom();
@@ -264,6 +262,34 @@ function UserStoryTab(props) {
                 </section>
             }
             {
+                activetab === 2 &&
+                <section
+                    style={{ width: '100%', height: '90%', padding: '30px', overflowY: 'auto', overflowX: 'hidden' }}
+                    className="scrollable"
+                >
+                    <Timeline endless className="custom-timeline" >
+                        {
+                            props.history.map(h => {
+                                return <Timeline.Item
+                                    dot={
+                                        <Icon
+                                            icon="check"
+                                            size="2x"
+                                            style={{ background: '#1A3B5A', color: '#fff' }}
+                                        />
+                                    }
+                                >
+                                    <p>{h.timestamp}</p>
+                                    <p>{h.user}</p>
+                                    <p style={{ fontWeight: 600 }}>{h.content}</p>
+                                </Timeline.Item>
+                            })
+                        }
+                    </Timeline>
+                </section>
+
+            }
+            {
                 activetab === 3 &&
                 <section style={{ width: '100%', height: '90%', padding: '30px' }}>
                     <section
@@ -314,7 +340,7 @@ function UserStoryTab(props) {
                     </section>
                 </section>
             }
-        </section>
+        </section >
     )
 }
 

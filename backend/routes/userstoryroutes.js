@@ -27,7 +27,7 @@ router.get(
                 .populate("parent_task")
                 .populate("sprint_id")
                 .populate("project_id")
-                .populate("history");
+                .populate({ path: 'history', options: { sort: { 'timestamp': -1 } } })
             return res.status(200).send({ userstories });
         } catch (err) {
             next(errorHandler(err, req, 500));
@@ -64,7 +64,7 @@ router.get(
 router.get(
     "/backlogs/:project_id",
     authroutes.authenticateToken,
-    async (req, res,next) => {
+    async (req, res, next) => {
         try {
             let project_id = req.params.project_id;
             let userstories = await UserStory.find({ project_id: project_id, sprint_id: null })
@@ -80,7 +80,7 @@ router.get(
     }
 );
 
-router.post("/", authroutes.authenticateToken, async (req, res,next) => {
+router.post("/", authroutes.authenticateToken, async (req, res, next) => {
     try {
         let body = req.body;
 
@@ -140,7 +140,7 @@ router.post("/", authroutes.authenticateToken, async (req, res,next) => {
 router.put(
     "/",
     authroutes.authenticateToken,
-    async (req, res,next) => {
+    async (req, res, next) => {
         try {
             let body = (req.body);
             let history = [];

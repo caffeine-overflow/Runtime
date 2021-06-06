@@ -266,9 +266,11 @@ function Sprint(props) {
             else if (history.attribute === "sprint_id")
                 returnContent = `Moved task to sprint ${history.new_value}`
 
-            let user = props.collaborators.find(element => element._id == history.updated_by);
-            return <div><p style={{ fontWeight: 500 }}>{history.timestamp}</p><p style={{ marginTop: -3 }}>{returnContent}</p><p style={{ marginTop: -1, fontWeight: 400 }}>By: {user?.firstname} {user?.lastname}</p></div>
+            let user = props.collaborators.find(element => element._id === history.updated_by);
+
+            return { 'timestamp': history.timestamp, 'content': returnContent, 'user': `${user?.firstname} ${user?.lastname}` };
         })
+
         setHistory(parsedHisotry);
     }
 
@@ -484,11 +486,6 @@ function Sprint(props) {
                                     <FlexboxGrid.Item
                                         colspan={12}
                                     >
-                                        {/* <Timeline endless style={{ margin: '40px 0px 0 30px', maxHeight: '300px', overflowY: 'auto' }}>
-                                            {history.map((h, i) => {
-                                                return <Timeline.Item key={i} style={{ width: '90%' }}>{h}</Timeline.Item>
-                                            })}
-                                        </Timeline> */}
                                         <p style={{ width: '100%', margin: '0px 0 5px 15px', fontWeight: '600' }}>Estimated Time</p>
                                         <div style={{ display: 'flex', marginLeft: '12px' }}>
                                             <InputNumber
@@ -548,6 +545,7 @@ function Sprint(props) {
                                     project={props.project}
                                     userStory={selectedUserStory}
                                     refresh={() => getUserStories()}
+                                    history={history}
                                 />
                             </div>
                         </div>
