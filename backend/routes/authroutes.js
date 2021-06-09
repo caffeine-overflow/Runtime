@@ -107,9 +107,37 @@ let gitAuthMiddleware = (req, res, next) => {
     });
 };
 
+
+let authToken = (req, res, next) => {
+    //get the token
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    //return 403 if no token
+    if (!token) return res.status(403).send({ msg: "Invalid Token" });
+
+    jwt.verify(token, token_secret, async (err, user) => {
+        if (!user || err) return res.status(403).send({ msg: "Invalid Token" });
+        let tempUser = await User.findById(user.id).populate('client_id');
+        if(tempUser.disabled) return res.status(403).send({ msg: "Not Authorized" });
+        if(user.password !== tempUser.password) return res.status(403).send({ msg: "Expired Token" });
+        
+        req.user = tempUser;
+
+        logger.infoLogger.info(req);
+        //move on from the middleware
+        next();
+    });
+};
+
 //route for authentication check
 router.get("/validate", authenticateToken, async (req, res) => {
     return res.status(200).send({ msg: "Token validated." });
+});
+
+//route for authentication check
+router.get("/validate_url", authToken, async (req, res) => {
+    return res.status(200).send({});
 });
 
 router.get("/authrenew_validate", authRenewToken, async (req, res) => {
@@ -156,13 +184,12 @@ router.get("/reset_password/:email", async (req, res, next) => {
     try {
         let user = await User.findOne({ email: req.params.email })
         req.user = user
-        console.log(user)
         if (!user) {
             return res.status(400).send({ msg: "User does not exist" });
         }
         else {
             //create the json web tokens
-            const userToken = { id: user._id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted };
+            const userToken = { id: user._id, email: user.email, password: user.password, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted };
             const access_token = jwt.sign(userToken, token_secret);
             let link = client_domain + `ResetPassword?token=${access_token}`
             let htmlTemplate = resetPassword(`${user.firstname} ${user.lastname}`, link);

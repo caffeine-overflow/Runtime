@@ -168,6 +168,26 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res, ne
 	}
 });
 
+
+//Reset Password
+router.put("/reset_password", authroutes.authenticateToken, async (req, res, next) => {
+	try {
+		const { new_password } = req.body;
+		const salt = await bcrypt.genSalt();
+		const hashedPassword = await bcrypt.hash(new_password, salt);
+
+		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword, first_login: false } }, function (err, result) {
+			if (err) {
+				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+			} else {
+				return res.status(200).send({ msg: "Password Updated Successfully" });
+			}
+		});
+	} catch (err) {
+		next(errorHandler(err, req, 500));
+	}
+});
+
 //same as the function above but with a different middleware auth
 router.put("/update_password", authroutes.authRenewToken, async (req, res, next) => {
 	try {

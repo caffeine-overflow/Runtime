@@ -4,7 +4,7 @@ import util from "../utility/utils";
 import {
     Modal, Button, Form, FormGroup, FormControl, ControlLabel, Schema, Notification, Divider, Input
 } from 'rsuite';
-import { useReducer } from 'react';
+import { useReducer, useEffect } from 'react';
 import { withRouter } from 'react-router-dom'
 const { StringType } = Schema.Types;
 
@@ -101,6 +101,29 @@ function Login(props) {
         setState({ show: false, resetEmail: "" })
     };
 
+    useEffect(() => {
+        
+        let msg = util.getQueryVariable("msg");
+        let error = util.getQueryVariable("error");
+        let success = util.getQueryVariable("success");
+        let newUrl = window.location.origin + '/login';
+        window.history.pushState({}, null, newUrl);
+        if(msg) msg = decodeURI(msg)
+        if(error){
+            Notification.error({
+                title: msg ? msg : "Invalid Url",
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+        }
+        else if(success){
+            Notification.success({
+                title: "Password Updated Successfully",
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+        }
+    })
     return (
         <div className="App">
             <div
