@@ -126,5 +126,17 @@ const DELETE_DATA = async (api, message) => {
 }
 
 
+const getQueryVariable = (variable) => {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] === variable) {
+            return pair[1];
+        }
+    }
+    return false;
+};
+
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { FETCH_DATA, POST_DATA, PUT_DATA, DELETE_DATA };
+export default { FETCH_DATA, POST_DATA, PUT_DATA, DELETE_DATA, getQueryVariable, ADDRESS };

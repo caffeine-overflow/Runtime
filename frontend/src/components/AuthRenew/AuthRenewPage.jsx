@@ -129,27 +129,15 @@ export default function AuthRenewPage(props) {
         }
     }
 
-    const getQueryVariable = (variable) => {
-        var query = window.location.search.substring(1);
-        var vars = query.split("&");
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split("=");
-            if (pair[0] === variable) {
-                return pair[1];
-            }
-        }
-        return false;
-    };
-
     const checkAuthorization = async () => {
-        if (getQueryVariable("error") === "access_denied") {
+        if (util.getQueryVariable("error") === "access_denied") {
             Notification.error({
                 title: `Authorization Failed`,
                 description: <div style={{ width: 220 }} rows={3} />,
                 placement: "topEnd",
             });
         }
-        let code = getQueryVariable("code");
+        let code = util.getQueryVariable("code");
         if (code) {
             const response = await util.FETCH_DATA(`gitauth/get_token?code=${code}`);
             if (response.status === 200) {

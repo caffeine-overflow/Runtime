@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
+import ResetPassword from './components/ResetPassword';
 import 'rsuite/dist/styles/rsuite-default.css';
 import PrivateRoute from './components/PrivateRoute';
 import AuthRenewRoute from './components/AuthRenew/AuthRenewRoute';
@@ -23,6 +24,7 @@ export default function App() {
       <Switch>
         <PrivateRoute exact path="/" component={Projects} />
         <Route path="/login" render={() => <Login />} />
+        <Route path="/ResetPassword" render={() => <ResetPassword />} />
         <PrivateRoute path="/myprojects" component={aaa} />
         <PrivateRoute exact path="/projects" component={Projects} />
         <PrivateRoute exact path="/project/:id" component={ProjectBoard} />
