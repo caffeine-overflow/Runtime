@@ -55,7 +55,6 @@ export default function Profile(props) {
 
     const updateUserData = async (status) => {
         if (status) {
-            console.log("Here we go");
             setloading(true);
             setopenDrawer(false);
             let body = { [changeAttribute.toLowerCase()]: user[changeAttribute.toLowerCase()]}

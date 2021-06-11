@@ -369,7 +369,6 @@ function UserStoryTab(props) {
                                     <div style={{ marginTop: '30px', width: '100%' }}>
                                         {
                                             pullRequests.map((pr, i) => {
-                                                console.log(pr);
                                                 return <section key={i}
                                                     style={{
                                                         display: 'flex', justifyContent: 'center', alignItems: 'center',

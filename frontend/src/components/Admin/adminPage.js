@@ -90,7 +90,6 @@ let AddUserCard = () => {
 
     const addUser = async (status) => {
         if (status) {
-            console.log(status)
             let token = sessionStorage.getItem('sprintCompassToken');
             const requestOptions = {
                 method: 'POST',

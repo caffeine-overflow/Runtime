@@ -50,7 +50,6 @@ export default function AuthRenewPage(props) {
                 if (!!user.first_login) setStep(0);
                 else if (!!user.git_token) setStep(3);
                 else {
-                    console.log(user);
                     setStep(2);
                 }
                 setuser(response.data.user);
