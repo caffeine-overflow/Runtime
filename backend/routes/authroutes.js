@@ -171,7 +171,7 @@ router.post("/login", async (req, res, next) => {
                     validGitToken: !!user.git_token,
                     userRole: user.role,
                     invitationAccepted: user.invitation_accepted,
-                    organization: user.client_id.name
+                    organization: user.client_id.organization
                 }
             );
         }
