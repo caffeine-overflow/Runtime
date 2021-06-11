@@ -217,8 +217,24 @@ const getBranchCommits = async (token, organization, repo, branch) => {
     }
 }
 
+const getPullRequestsByBranch = async (token, organization, repo, head) => {
+    let octo = octokit(token);
+    try {
+        return await octo.request('GET /repos/{owner}/{repo}/pulls', {
+            owner: organization,
+            repo: repo,
+            head: `${organization}:${head}`,
+            state: 'all'
+        })
+    }
+    catch (err) {
+        return err;
+    }
+}
+
 module.exports = {
     getOrganizationsByUser, sendOrganizationInvite, getUser, getAllBranches, createBranch, addComment,
     checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization,
-    getBranchComments, getBranchCommits, getAllRepo, changeRole, removeMember, getAllMembers, addMember
+    getBranchComments, getBranchCommits, getAllRepo, changeRole, removeMember, getAllMembers, addMember,
+    getPullRequestsByBranch
 };

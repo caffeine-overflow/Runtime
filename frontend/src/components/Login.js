@@ -58,11 +58,11 @@ function Login(props) {
                 });
             }
             else if (response.status === 200) {
-
                 sessionStorage.setItem('sprintCompassToken', data.access_token);
                 sessionStorage.setItem('sprintCompassUser', data.user);
                 sessionStorage.setItem('sprintCompassUserName', data.name);
                 sessionStorage.setItem('sprintCompassUserRole', data.userRole);
+                sessionStorage.setItem('organization', data.organization);
 
                 const { from } = props.location.state || { from: { pathname: '/projects' } }
                 if (data.firstLogin || !data.validGitToken) {
@@ -88,7 +88,6 @@ function Login(props) {
         }
         else {
             let response = await util.FETCH_DATA(`auth/reset_password/${state.resetEmail}`);
-            console.log(response);
             if (response.status === 200) {
                 Notification.success({
                     title: `Reset Email Sent`,
@@ -183,53 +182,53 @@ function Login(props) {
                                 </Button>
                             </Form>
                         }
-						<div
-							style={{
-								textAlign: "center",
-								color: "blue",
-								textDecoration: "underline",
-								fontSize: "15px",
-								cursor: "pointer",
-								marginTop: 20,
-								marginLeft: "30%",
-								width: "29%",
-							}}
-							onClick={() => setState({ show: true })}
-						>
-							Forgot Password?
+                        <div
+                            style={{
+                                textAlign: "center",
+                                color: "blue",
+                                textDecoration: "underline",
+                                fontSize: "15px",
+                                cursor: "pointer",
+                                marginTop: 20,
+                                marginLeft: "30%",
+                                width: "29%",
+                            }}
+                            onClick={() => setState({ show: true })}
+                        >
+                            Forgot Password?
 						</div>
-					</div>
-				</div>
-			</div>
-			<Modal backdrop={true} size="xs" show={state.show} onHide={() => setState({ show: false, resetEmail: "" })}>
-				<Modal.Header >
+                    </div>
+                </div>
+            </div>
+            <Modal backdrop={true} size="xs" show={state.show} onHide={() => setState({ show: false, resetEmail: "" })}>
+                <Modal.Header >
                     <Modal.Title>Reset Your Password</Modal.Title>
-                    <Divider style={{marginBottom:-10, marginTop:0}} />
-				</Modal.Header>
-				<Modal.Body>
-					<p>Please enter your email to receive a password reset link.</p>
-					<Input
-						style={{ width: "90%", marginTop: 10 }}
-						name="resetemail"
-						value={state.resetEmail}
-						onChange={(value) => setState({ resetEmail: value })}
-					/>
-				</Modal.Body>
-				<Modal.Footer>
-                    <Divider style={{marginBottom:-5, marginTop:0}} />
-					<Button
-						disabled={state.resetEmail?.trim() === ""}
-						appearance="primary"
-						style={{ marginLeft: "25%", width: "50%", marginTop: 10 }}
-						onClick={() => resetPassword()}
-					>
-						Reset Password
+                    <Divider style={{ marginBottom: -10, marginTop: 0 }} />
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Please enter your email to receive a password reset link.</p>
+                    <Input
+                        style={{ width: "90%", marginTop: 10 }}
+                        name="resetemail"
+                        value={state.resetEmail}
+                        onChange={(value) => setState({ resetEmail: value })}
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Divider style={{ marginBottom: -5, marginTop: 0 }} />
+                    <Button
+                        disabled={state.resetEmail?.trim() === ""}
+                        appearance="primary"
+                        style={{ marginLeft: "25%", width: "50%", marginTop: 10 }}
+                        onClick={() => resetPassword()}
+                    >
+                        Reset Password
 					</Button>
-					<Button onClick={() => setState({ show: false, resetEmail: "" })} appearance="subtle">
-						Cancel
+                    <Button onClick={() => setState({ show: false, resetEmail: "" })} appearance="subtle">
+                        Cancel
 					</Button>
-				</Modal.Footer>
-			</Modal>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

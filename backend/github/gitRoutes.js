@@ -2,7 +2,7 @@ const express = require("express");
 const { UserStory } = require("../models/userstory.js");
 const authroutes = require("../routes/authroutes");
 const router = express.Router();
-const { getOrganizationsByUser, getRepo, getAllBranches, createBranch, getBranchCommits } = require("./gitUtils");
+const { getOrganizationsByUser, getRepo, getAllBranches, createBranch, getBranchCommits, getPullRequestsByBranch } = require("./gitUtils");
 
 router.get("/getOrganizations", authroutes.authAdmin, async (req, res) => {
     let token = req.user.git_token;
@@ -86,6 +86,20 @@ router.get("/getCommitsByBranch", authroutes.authenticateToken, async (req, res)
         return res.status(500).send({ msg: "Something went wrong. Please try again" });
     }
 })
+
+router.get("/getPullRequestByBranch", authroutes.authenticateToken, async (req, res) => {
+    let token = req.user.git_token;
+    if (!token) return res.status(500).send({ msg: "Something went wrong." });
+    try {
+        let { repo, head } = req.query;
+        let pullrequests = await getPullRequestsByBranch(token, req.user.client_id.organization, repo, head);
+        return res.status(200).send({ pullrequests });
+    }
+    catch (err) {
+        return res.status(500).send({ msg: "Something went wrong. Please try again" });
+    }
+})
+
 
 module.exports = router;
 

@@ -1,21 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GitBranchImg from '../../assets/gitBranch.svg';
+import PullRequestImg from '../../assets/pullrequest.svg';
 import { InputPicker, Input, Button, Notification, Message, Timeline, Icon } from 'rsuite';
 import './userstorytab.css';
 import utils from "../../utility/utils";
 import moment from 'moment';
 
 function UserStoryTab(props) {
-    const [activetab, setactivetab] = useState(0);
 
+    const [activetab, setactivetab] = useState(0);
     const [newBranchName, setnewBranchName] = useState(props.userStory.identifier);
     const [branchFrom, setbranchFrom] = useState(null);
-
     const [comments, setcomments] = useState([]);
     const [comment, setcomment] = useState('');
     const messagesEndRef = useRef(null)
-
     const [commits, setcommits] = useState([]);
+    const [base, setBase] = useState(null);
+    const [pullRequests, setpullRequests] = useState([]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView(true);
@@ -68,6 +69,14 @@ function UserStoryTab(props) {
         }
     }
 
+    const getPullRequests = async () => {
+        let response = await utils.FETCH_DATA(`api/git/getPullRequestByBranch?repo=${props.project.repo}&head=${props.userStory.git_branch}`);
+        if (response.status === 200) {
+            setpullRequests(response.data.pullrequests.data);
+        }
+    }
+
+
     const addComment = async () => {
         let token = sessionStorage.getItem('sprintCompassToken');
         const requestOptions = {
@@ -107,19 +116,19 @@ function UserStoryTab(props) {
 
         activetab === 0 && scrollToBottom();
 
-    }, [activetab])
+    }, [activetab, commits])
 
     useEffect(() => {
         getComments();
+        if (props.userStory.git_branch_sha) {
+            getBranchCommits();
+            getPullRequests();
+        }
     }, []);
 
     useEffect(() => {
         scrollToBottom();
     }, [comments])
-
-    useEffect(() => {
-        props.userStory.git_branch_sha && getBranchCommits();
-    }, [props.userStory])
 
     return (
         <section style={{ height: '100%', background: '#f9f9f9' }}>
@@ -131,7 +140,9 @@ function UserStoryTab(props) {
                 }
                 <div data-index='2' onClick={() => setactivetab(2)}>History</div>
                 <div data-index='3' onClick={() => setactivetab(3)}>Commits</div>
-                <div data-index='4' onClick={() => setactivetab(4)}>Pull Request</div>
+                {
+                    props.userStory.git_branch && <div data-index='4' onClick={() => setactivetab(4)}>Pull Request</div>
+                }
             </section>
             {
                 activetab === 0 &&
@@ -254,7 +265,7 @@ function UserStoryTab(props) {
                                         onClick={() => createBranch()}
                                     >
                                         Create Branch
-                            </Button>
+                                    </Button>
                                 </section>
                             </section>
                         </>
@@ -340,7 +351,103 @@ function UserStoryTab(props) {
                     </section>
                 </section>
             }
-        </section >
+            {
+                activetab === 4 &&
+                <section style={{ display: 'flex', justifyContent: 'center', width: '100%', flexWrap: 'wrap' }}>
+                    <section style={{ width: '100%', height: '40vh', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                        <img
+                            style={{ height: '80%' }}
+                            src={PullRequestImg}
+                            alt="gitbranch"
+                        />
+                    </section>
+                    {
+                        commits.length > 0 ?
+                            <>
+                                {
+                                    pullRequests.length > 0 &&
+                                    <div style={{ marginTop: '30px', width: '100%' }}>
+                                        {
+                                            pullRequests.map((pr, i) => {
+                                                console.log(pr);
+                                                return <section key={i}
+                                                    style={{
+                                                        display: 'flex', justifyContent: 'center', alignItems: 'center',
+                                                        width: '90%', margin: 'auto', textAlign: 'left', borderTop: '1px solid #e6e6e6',
+                                                        borderBottom: '1px solid #e6e6e6', padding: '20px 0'
+                                                    }}>
+                                                    <section style={{ flex: '.5' }}>
+                                                        <img src={pr.user.avatar_url} alt='git_avatar' style={{ width: '50px', borderRadius: '50%' }} />
+                                                    </section>
+                                                    <section style={{ flex: 1 }}>
+                                                        <div style={{ fontSize: '12px' }}>Created By</div>
+                                                        <div style={{ fontSize: '14px', fontWeight: '600', marginTop: '10px' }}>
+                                                            {pr.user.login}
+                                                        </div>
+                                                    </section>
+                                                    <section style={{ flex: 1 }}>
+                                                        <div style={{ fontSize: '12px' }}>Pull Request</div>
+                                                        <div style={{ fontSize: '14px', fontWeight: '600', marginTop: '10px' }}>{pr.title}</div>
+                                                    </section>
+                                                    <section style={{ flex: 1 }}>
+                                                        <div style={{ fontSize: '12px' }}>Pull Request to</div>
+                                                        <div style={{ fontSize: '14px', fontWeight: '600', marginTop: '10px' }}>{pr.base.ref}</div>
+                                                    </section>
+                                                    <section style={{ flex: '.75' }}>
+                                                        <div style={{ fontSize: '12px' }}>Status</div>
+                                                        <div style={{ fontSize: '14px', fontWeight: '600', marginTop: '10px' }}>{pr.state}</div>
+                                                    </section>
+                                                    <section style={{ flex: '.5' }}>
+                                                        <div
+                                                            style={{ cursor: 'pointer', color: '#134069' }}
+                                                            onClick={() => window.open(pr.html_url, '_blank')}
+                                                        >
+                                                            View
+                                                    </div>
+                                                    </section>
+                                                </section>
+                                            })
+                                        }
+                                    </div>
+                                }
+                                {
+                                    pullRequests.length === 0 &&
+                                    <section style={{ width: '100%', padding: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                                        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                            <div style={{ width: '100%', textAlign: 'center', margin: '5px 0' }}>Base Branch</div>
+                                            <InputPicker
+                                                data={
+                                                    props.gitBranches.filter(gb => gb.name !== props.userStory.git_branch)
+                                                        .map((b, i) => {
+                                                            return { 'role': b.commit.sha, 'label': b.name, 'value': b.name }
+                                                        })
+                                                }
+                                                style={{ width: 224 }}
+                                                placeholder='Base Branch'
+                                                onChange={(value) => setBase(value)}
+                                            />
+                                        </div>
+                                        <Button
+                                            style={{ marginTop: '20px', width: 224 }}
+                                            appearance="primary"
+                                            disabled={!!!base}
+                                            onClick={() => {
+                                                let org = sessionStorage.getItem("organization");
+                                                let repo = props.project.repo;
+                                                let head = props.userStory.git_branch;
+                                                window.open(`https://github.com/${org}/${repo}/compare/${base}...${head}`, '_blank')
+                                            }}
+                                        >
+                                            Create Pull Request
+                                        </Button>
+                                    </section>
+                                }
+                            </>
+                            : <div>No commits found to make a pull request</div>
+                    }
+                </section>
+            }
+        </section>
     )
 }
 
