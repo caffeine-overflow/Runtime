@@ -66,8 +66,7 @@ const addMember = async (token, organization, repo, username) => {
     return await octo.request('PUT /repos/{owner}/{repo}/collaborators/{username}', {
         owner: organization,
         repo: repo,
-        username: username,
-        permission: 'admin'
+        username: username
     });
 }
 
