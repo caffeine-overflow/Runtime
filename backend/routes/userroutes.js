@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
 const errorHandler = require('../utils/errorhandler');
-const { removeUserFromOrganization } = require("../github/gitUtils");
+const { removeUserFromOrganization, changeRole } = require("../github/gitUtils");
 
 router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 	try {
@@ -15,7 +15,7 @@ router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 		users.forEach(user => user.password = undefined)
 		return res.status(200).send({ users });
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -26,7 +26,7 @@ router.get("/getById/:id", authroutes.authenticateToken, async (req, res, next) 
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -38,49 +38,58 @@ router.get("/getUserById/:id", authroutes.authRenewToken, async (req, res, next)
 		if (!user) return res.status(404).send({ msg: "Cannot find the user" });
 		else return res.status(200).send({ user });
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
 router.put("/updateUserById", authroutes.authAdmin, async (req, res, next) => {
-	let userRemoveError = false;
 	try {
+		let error = false;
 		let body = req.body;
 		let renewedUser = false;
-		let password = ""
+		let password = "";
 		let user = await User.findById(body.id);
-		if (user.disabled && !body.disabled) {
-			renewedUser = true
-			password = Math.random().toString(36).substring(2, 8) + (Math.random() * 100).toFixed();
-			const salt = await bcrypt.genSalt();
-			user.password = await bcrypt.hash(password, salt);
-		}
-		if (body.disabled && !user.disabled) {
-			user.git_token = ""
-			user.first_login = true
-			user.invitation_accepted = false
-			await removeUserFromOrganization(req.user.git_token, req.user.client_id.organization, user.git_username)
-			userRemoveError = true;
-
-		}		
-		user.disabled = body.disabled;
-		user.role = body.role;
-		user.save()
-			.then((data) => {
-				if (renewedUser) {
-					let htmlTemplate = welcomeEmail(`${data.firstname} ${data.lastname}`, data.email, password);
-					sendEmail(htmlTemplate, data.email, "Welcome").catch(console.error);
+		if (user.disabled && user.role != body.role) {
+			return res.status(400).send({ msg: "Can't change role of disabled user" });
+		} else {
+			if (user.disabled && !body.disabled) {
+				renewedUser = true;
+				password = Math.random().toString(36).substring(2, 8) + (Math.random() * 100).toFixed();
+				const salt = await bcrypt.genSalt();
+				user.password = await bcrypt.hash(password, salt);
+			}
+			if (body.disabled && !user.disabled) {
+				user.git_token = "";
+				user.first_login = true;
+				user.invitation_accepted = false;
+				user.role = "member";
+				await removeUserFromOrganization(req.user.git_token, req.user.client_id.organization, user.git_username);
+			}
+			user.disabled = body.disabled;
+			if (!user.disabled && user.role != body.role) {
+				let roleChange = await changeRole(req.user.git_token, req.user.client_id.organization, user.git_username, body.role);
+				if (roleChange.status !== 200) {
+					error = true;
+					return res.status(500).send({ msg: "User hasn't authorized their Github yet." });
 				}
-				return res.status(200).send({ msg: "User Updated Successfully" });
-			})
-			.catch((err) => {
-				next(errorHandler(err,req,500));
-			});
+				user.role = body.role;
+			}
+			if (!error) {
+				user.save()
+					.then((data) => {
+						if (renewedUser) {
+							let htmlTemplate = welcomeEmail(`${data.firstname} ${data.lastname}`, data.email, password);
+							sendEmail(htmlTemplate, data.email, "Welcome").catch(console.error);
+						}
+						return res.status(200).send({ msg: "User Updated Successfully" });
+					})
+					.catch((err) => {
+						next(errorHandler(err, req, 500));
+					});
+			}
+		}
 	} catch (err) {
-		if(userRemoveError) 
-				next(errorHandler(err,req,500));
-		else
-			return res.status(500).send({ msg: err.stack });
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -101,10 +110,10 @@ router.put("/", authroutes.authenticateToken, async (req, res, next) => {
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -126,17 +135,17 @@ router.put("/update_user", authroutes.authRenewToken, async (req, res, next) => 
 				return res.status(200).send({ msg: "User Updated Successfully", user });
 			})
 			.catch((err) => {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
 
 
 //Change Password
-router.put("/change_password", authroutes.authenticateToken, async (req, res,next) => {
+router.put("/change_password", authroutes.authenticateToken, async (req, res, next) => {
 	try {
 		const { old_password, new_password } = req.body;
 		const user = await User.findById(req.user.id);
@@ -155,7 +164,27 @@ router.put("/change_password", authroutes.authenticateToken, async (req, res,nex
 			}
 		});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
+	}
+});
+
+
+//Reset Password
+router.put("/reset_password", authroutes.authenticateToken, async (req, res, next) => {
+	try {
+		const { new_password } = req.body;
+		const salt = await bcrypt.genSalt();
+		const hashedPassword = await bcrypt.hash(new_password, salt);
+
+		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword, first_login: false } }, function (err, result) {
+			if (err) {
+				return res.status(500).send({ msg: "Something went wrong. Please try again!" });
+			} else {
+				return res.status(200).send({ msg: "Password Updated Successfully" });
+			}
+		});
+	} catch (err) {
+		next(errorHandler(err, req, 500));
 	}
 });
 
@@ -173,19 +202,19 @@ router.put("/update_password", authroutes.authRenewToken, async (req, res, next)
 
 		await User.findByIdAndUpdate(req.user.id, { $set: { password: hashedPassword, first_login: false } }, function (err, result) {
 			if (err) {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			} else {
 				return res.status(200).send({ msg: "Password Updated Successfully" });
 			}
 		});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
 
 //register function
-router.post("/create", authroutes.authAdmin, async (req, res,next) => {
+router.post("/create", authroutes.authAdmin, async (req, res, next) => {
 	try {
 		const { firstname, lastname, email, phone, location, image } = req.body;
 
@@ -208,12 +237,13 @@ router.post("/create", authroutes.authAdmin, async (req, res,next) => {
 			first_login: true,
 			git_token: null,
 			client_id: req.user.client_id._id,
+			disabled: false,
 			role: "member"
 		});
 
 		newUser.save(function (err) {
 			if (err) {
-				next(errorHandler(err,req,500));
+				next(errorHandler(err, req, 500));
 			}
 			else {
 				let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
@@ -222,11 +252,11 @@ router.post("/create", authroutes.authAdmin, async (req, res,next) => {
 			}
 		});
 	} catch (err) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 });
 
-router.post("/addClient", authroutes.authAdmin, async (req, res,next) => {
+router.post("/addClient", authroutes.authAdmin, async (req, res, next) => {
 
 	const client = await new Client({
 		'name': req.body.name,
@@ -234,12 +264,12 @@ router.post("/addClient", authroutes.authAdmin, async (req, res,next) => {
 	}).save();
 
 	if (!client) {
-		next(errorHandler(err,req,500));
+		next(errorHandler(err, req, 500));
 	}
 
 	await User.findByIdAndUpdate(req.user.id, { $set: { client_id: client._id } }, function (err, result) {
 		if (err) {
-			next(errorHandler(err,req,500));
+			next(errorHandler(err, req, 500));
 		} else {
 			return res.status(200).send({ msg: "Successfully added Organization" });
 		}

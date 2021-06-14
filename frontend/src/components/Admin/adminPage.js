@@ -11,7 +11,6 @@ import AdminSvg from '../../assets/admin.svg';
 const { StringType } = Schema.Types;
 const adminFunctions = [
     { key: 1, name: 'Create User', icon: 'user-plus' },
-    { key: 2, name: 'Create Project', icon: 'task' },
     { key: 3, name: 'Manage Users', icon: 'setting' },
     { key: 4, name: 'App Settings', icon: 'laptop' },
     { key: 5, name: 'Github Settings', icon: 'github' },
@@ -58,7 +57,7 @@ export default function AdminPage() {
                     {
                         activeKey === 3 &&
                         <div>
-                            < UsersTable />
+                            <UsersTable />
                         </div>
                     }
                 </section>
@@ -95,7 +94,7 @@ let AddUserCard = () => {
             let message = "Successfully Created the User";
             let body = {firstname, lastname, email};
             const response = await utils.POST_DATA('api/users/create', body, message);
-            if (response === 200) {
+            if (response.status === 200) {
                 setfirstname('');
                 setlastname('');
                 setemail('');

@@ -1,12 +1,13 @@
 {
+  "homepage": "https://runtimeapp.herokuapp.com/",
   "name": "time_tracker",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "npm install && node server.js",
     "react": "cd ../frontend && npm start",
-    "dev": "concurrently \"npm start\" \"npm run react\" "
+    "dev": "concurrently \"nodemon server.js\" \"npm run react\" "
   },
   "author": "Danish Davis, Brian Hache, Prabin Gyawali",
   "license": "ISC",
@@ -22,10 +23,10 @@
     "nodemailer": "^6.6.0",
     "superagent": "^6.1.0",
     "winston": "^3.3.3",
-    "winston-daily-rotate-file": "^4.5.5"
+    "winston-daily-rotate-file": "^4.5.5",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0",
     "nodemon": "^2.0.7"
   }
 }

@@ -3,7 +3,8 @@ import Loader from "react-loader-spinner";
 import utils from "../../utility/utils";
 import {
     Drawer, Icon, InputNumber, Button, Toggle, Tag,
-    Input, InputPicker, FlexboxGrid, Modal} from 'rsuite';
+    Input, InputPicker, FlexboxGrid, Modal
+} from 'rsuite';
 import { withRouter } from 'react-router-dom';
 import '../../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -11,6 +12,7 @@ import SubTaskForm from "./SubTaskForm";
 import NotFound from "../NotFound";
 import NoUserStories from "../../assets/noactivesprint.svg";
 import Editor from "../utilitycomponents/Editor";
+import UserStoryTab from "./UserStoryTab";
 
 //four states of the stories, has to match the db
 const STORY_STATES = ["To Do", "In Progress", "Testing", "Done"];
@@ -75,6 +77,8 @@ function Sprint(props) {
 
     const [showModal, setshowModal] = useState(false);
 
+    const [gitBranches, setgitBranches] = useState([]);
+
     function onDragEnd(result) {
 
         const { source, destination } = result;
@@ -137,6 +141,9 @@ function Sprint(props) {
             let data = response.data;
             generateTableCards(data.userstories)
             setuserStories(data.userstories);
+            if (!!selectedUserStory) {
+                setselectedUserStory(data.userstories.find(u => u._id === selectedUserStory._id));
+            }
         }
     }
 
@@ -190,9 +197,8 @@ function Sprint(props) {
         let _body = body;
 
         await utils.UPDATE_DATA(`api/userstories`,_body,message);
-
-            setshowdrawer(false);
-            getUserStories();
+        setshowdrawer(false);
+        getUserStories();
     }
 
     let parseHistory = async (histories) => {
@@ -229,14 +235,25 @@ function Sprint(props) {
             else if (history.attribute === "sprint_id")
                 returnContent = `Moved task to sprint ${history.new_value}`
 
-            let user = props.collaborators.find(element => element._id == history.updated_by);
-            return <div><p style={{ fontWeight: 500 }}>{history.timestamp}</p><p style={{ marginTop: -3 }}>{returnContent}</p><p style={{ marginTop: -1, fontWeight: 400 }}>By: {user?.firstname} {user?.lastname}</p></div>
+            let user = props.collaborators.find(element => element._id === history.updated_by);
+
+            return { 'timestamp': history.timestamp, 'content': returnContent, 'user': `${user?.firstname} ${user?.lastname}` };
         })
+
         setHistory(parsedHisotry);
+    }
+
+    const getGitBranches = async () => {
+        let response = await utils.FETCH_DATA(`api/git/getAllBranches/${props.project.repo}`);
+        if (response.status === 200) {
+            let data = response.data.branches.data;
+            setgitBranches(data);
+        }
     }
 
     useEffect(() => {
         getUserStories();
+        getGitBranches();
     }, []);
 
     return (
@@ -366,7 +383,7 @@ function Sprint(props) {
                     setshowdrawer(false);
                     setselectedUserStory(null);
                 }}
-                full
+                style={{ width: '100%' }}
             >
                 <Drawer.Header>
                 </Drawer.Header>
@@ -420,6 +437,12 @@ function Sprint(props) {
                                                 onChange={(value) => setassignedTo(value)}
                                             />
                                         </div>
+                                        <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Github Branch</p>
+                                        <div
+                                            style={{ margin: "0 15px" }}
+                                        >
+                                            {selectedUserStory.git_branch}
+                                        </div>
                                         <p style={{ width: '100%', margin: '20px 0 5px 15px', fontWeight: '600' }}>Move to Backlog</p>
                                         <Toggle
                                             style={{ margin: "0 12px" }}
@@ -432,11 +455,6 @@ function Sprint(props) {
                                     <FlexboxGrid.Item
                                         colspan={12}
                                     >
-                                        {/* <Timeline endless style={{ margin: '40px 0px 0 30px', maxHeight: '300px', overflowY: 'auto' }}>
-                                            {history.map((h, i) => {
-                                                return <Timeline.Item key={i} style={{ width: '90%' }}>{h}</Timeline.Item>
-                                            })}
-                                        </Timeline> */}
                                         <p style={{ width: '100%', margin: '0px 0 5px 15px', fontWeight: '600' }}>Estimated Time</p>
                                         <div style={{ display: 'flex', marginLeft: '12px' }}>
                                             <InputNumber
@@ -491,7 +509,13 @@ function Sprint(props) {
                                 </div>
                             </div>
                             <div style={{ width: '55%', borderLeft: '1px solid #e6e6e6' }}>
-
+                                <UserStoryTab
+                                    gitBranches={gitBranches}
+                                    project={props.project}
+                                    userStory={selectedUserStory}
+                                    refresh={() => getUserStories()}
+                                    history={history}
+                                />
                             </div>
                         </div>
                     }

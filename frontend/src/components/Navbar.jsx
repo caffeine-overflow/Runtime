@@ -13,16 +13,16 @@ const CustomNav = ({ active, onSelect, ...props }) => {
     return (
         <Nav {...props} activeKey={active} onSelect={onSelect}>
             <Nav.Item style={{ margin: '0 50px' }}>
-                <img style={{ width: '80px' }} src={Logo} alt="logo" onClick={()=>{window.location.reload();}} />
+                <img style={{ width: '80px' }} src={Logo} alt="logo" onClick={() => { window.open('/', '_self') }} />
             </Nav.Item>
             <Nav.Item className="navHeader" eventKey="projects">Projects</Nav.Item>
             <Nav.Item className="navHeader" eventKey="solutions">Solutions</Nav.Item>
             <Nav.Item className="navHeader" eventKey="products">Products</Nav.Item>
             {(sessionStorage.getItem('sprintCompassUserRole') === "owner" || sessionStorage.getItem('sprintCompassUserRole') === "admin") && (
-				<Nav.Item className="navHeader" eventKey="admin">
-					Administrator
-				</Nav.Item>
-			)}
+                <Nav.Item className="navHeader" eventKey="admin">
+                    Administrator
+                </Nav.Item>
+            )}
             <Dropdown
                 style={{ float: 'right', marginRight: '30px' }}
                 className="navHeader"

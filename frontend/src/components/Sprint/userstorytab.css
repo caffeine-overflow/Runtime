@@ -1,0 +1,42 @@
+.us__tabs {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  height: 10%;
+}
+
+.us__tabs > div {
+  flex: 1;
+  margin: 0 2px;
+  text-align: center;
+  height: 70px;
+  line-height: 70px;
+  cursor: pointer;
+}
+
+.us__tabs > div:hover {
+  font-weight: bold;
+}
+
+.custom-timeline {
+  margin-left: 20px;
+}
+
+.custom-timeline .rs-timeline-item-custom-dot .rs-icon {
+  position: absolute;
+  background: #fff;
+  top: 0;
+  left: -2px;
+  border: 2px solid #ddd;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  padding-top: 9px;
+  color: #999;
+  margin-left: -13px;
+}
+
+.custom-timeline .rs-timeline-item-content {
+  margin-left: 24px;
+}

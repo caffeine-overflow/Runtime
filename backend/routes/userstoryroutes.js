@@ -8,6 +8,8 @@ const authroutes = require("./authroutes");
 const mongoose = require("mongoose");
 mongoose.set('useFindAndModify', false);
 const errorHandler = require('../utils/errorhandler');
+const { Comment } = require("../models/comment.js");
+
 router.get(
     "/bySprint/:sprint_id",
     authroutes.authenticateToken,
@@ -25,10 +27,10 @@ router.get(
                 .populate("parent_task")
                 .populate("sprint_id")
                 .populate("project_id")
-                .populate("history");
+                .populate({ path: 'history', options: { sort: { 'timestamp': -1 } } })
             return res.status(200).send({ userstories });
         } catch (err) {
-            next(errorHandler(err,req,500));
+            next(errorHandler(err, req, 500));
         }
     }
 );
@@ -54,7 +56,7 @@ router.get(
                 .populate("history");
             return res.status(200).send({ userstories });
         } catch (err) {
-            next(errorHandler(err,req,500));
+            next(errorHandler(err, req, 500));
         }
     }
 );
@@ -62,7 +64,7 @@ router.get(
 router.get(
     "/backlogs/:project_id",
     authroutes.authenticateToken,
-    async (req, res,next) => {
+    async (req, res, next) => {
         try {
             let project_id = req.params.project_id;
             let userstories = await UserStory.find({ project_id: project_id, sprint_id: null })
@@ -73,12 +75,12 @@ router.get(
 
             return res.status(200).send({ userstories });
         } catch (err) {
-            next(errorHandler(err,req,500));
+            next(errorHandler(err, req, 500));
         }
     }
 );
 
-router.post("/", authroutes.authenticateToken, async (req, res,next) => {
+router.post("/", authroutes.authenticateToken, async (req, res, next) => {
     try {
         let body = req.body;
 
@@ -92,12 +94,12 @@ router.post("/", authroutes.authenticateToken, async (req, res,next) => {
 
         let project = await Project.findById(body.project_id);
         let identifierAcronym = project.name
-			.split(/[\s_]/)
-			.reduce((response, word) => (response += word.slice(0, 1) + word.slice(1, word.length).replace(/[^A-Z]/g, "")), "")
-			.toUpperCase();
+            .split(/[\s_]/)
+            .reduce((response, word) => (response += word.slice(0, 1) + word.slice(1, word.length).replace(/[^A-Z]/g, "")), "")
+            .toUpperCase();
 
         //find the last instance to get the unique identifier
-        let lastStory = (await UserStory.find({project_id: body.project_id}).sort({ _id: -1 }).limit(1))[0];
+        let lastStory = (await UserStory.find({ project_id: body.project_id }).sort({ _id: -1 }).limit(1))[0];
         let lastStoryIdentifier = 0;
         if (lastStory) {
             lastStoryIdentifier = Number(lastStory.identifier.split("-")[1]) + 1;
@@ -127,10 +129,10 @@ router.post("/", authroutes.authenticateToken, async (req, res,next) => {
                 return res.status(200).send(data);
             })
             .catch((err) => {
-                next(errorHandler(err,req,500));
+                next(errorHandler(err, req, 500));
             });
     } catch (err) {
-        next(errorHandler(err,req,500));
+        next(errorHandler(err, req, 500));
     }
 });
 
@@ -138,7 +140,7 @@ router.post("/", authroutes.authenticateToken, async (req, res,next) => {
 router.put(
     "/",
     authroutes.authenticateToken,
-    async (req, res,next) => {
+    async (req, res, next) => {
         try {
             let body = (req.body);
             let history = [];
@@ -195,12 +197,54 @@ router.put(
                     return res.status(200).send(data);
                 })
                 .catch((err) => {
-                    next(errorHandler(err,req,500));
+                    next(errorHandler(err, req, 500));
                 });
         } catch (err) {
-            next(errorHandler(err,req,500));
+            next(errorHandler(err, req, 500));
         }
     }
+);
+
+router.post("/addComment", authroutes.authenticateToken, async (req, res, next) => {
+    try {
+        let body = req.body;
+        let m = new Date();
+        var dateString = m.getUTCFullYear() + "/" + (m.getUTCMonth() + 1) +
+            "/" + m.getUTCDate() + " " + m.getUTCHours() + ":" + m.getUTCMinutes() +
+            ":" + m.getUTCSeconds();
+
+        const comment = new Comment({
+            body: body.body,
+            user: body.user,
+            userstory: body.userStoryId,
+            created_at: dateString
+        });
+
+        comment
+            .save()
+            .then(async (data) => {
+                let comments = await Comment.find({ userstory: body.userStoryId }).populate("user");
+                return res.status(200).send({ comments });
+            })
+            .catch((err) => {
+                next(errorHandler(err, req, 500));
+            });
+    } catch (err) {
+        next(errorHandler(err, req, 500));
+    }
+});
+
+router.get("/comments/:userstoryid", authroutes.authenticateToken, async (req, res, next) => {
+    try {
+
+        let userstoryid = req.params.userstoryid;
+        let comments = await Comment.find({ userstory: userstoryid }).populate("user");
+        return res.status(200).send({ comments });
+
+    } catch (err) {
+        next(errorHandler(err, req, 500));
+    }
+}
 );
 
 module.exports = router;

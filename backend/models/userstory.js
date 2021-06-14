@@ -15,7 +15,9 @@ const userstory = mongoose.Schema({
     history: [{ type: ObjectId, ref: 'userstory_history' }],
     state: { type: String, required: true },
     project_id: { type: ObjectId, ref: 'projects', required: true },
-    sprint_id: { type: ObjectId, ref: 'sprints' }
+    sprint_id: { type: ObjectId, ref: 'sprints' },
+    git_branch: { type: String },
+    git_branch_sha: { type: String }
 },
     { strict: true });
 

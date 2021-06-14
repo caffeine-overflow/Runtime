@@ -39,13 +39,21 @@ export default function AuthRenewPage(props) {
         let response = await util.FETCH_DATA(`api/users/getUserById/${sessionStorage.getItem('sprintCompassUser')}`);
         if (response.status === 200) {
             let user = response.data.user;
-            if (!!user.first_login) setStep(0);
-            else if (!!user.git_token) setStep(3);
-            else {
-                console.log(user);
-                setStep(2);
+            if (user.disabled) {
+                sessionStorage.removeItem('sprintCompassToken');
+                sessionStorage.removeItem('sprintCompassUser');
+                sessionStorage.removeItem('sprintCompassUserName');
+                sessionStorage.removeItem('sprintCompassUserRole');
+                window.open('/login', '_self');
             }
-            setuser(response.data.user);
+            else {
+                if (!!user.first_login) setStep(0);
+                else if (!!user.git_token) setStep(3);
+                else {
+                    setStep(2);
+                }
+                setuser(response.data.user);
+            }
         }
     };
 
@@ -75,27 +83,15 @@ export default function AuthRenewPage(props) {
         }
     }
 
-    const getQueryVariable = (variable) => {
-        var query = window.location.search.substring(1);
-        var vars = query.split("&");
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split("=");
-            if (pair[0] === variable) {
-                return pair[1];
-            }
-        }
-        return false;
-    };
-
     const checkAuthorization = async () => {
-        if (getQueryVariable("error") === "access_denied") {
+        if (util.getQueryVariable("error") === "access_denied") {
             Notification.error({
                 title: `Authorization Failed`,
                 description: <div style={{ width: 220 }} rows={3} />,
                 placement: "topEnd",
             });
         }
-        let code = getQueryVariable("code");
+        let code = util.getQueryVariable("code");
         if (code) {
             const response = await util.FETCH_DATA(`gitauth/get_token?code=${code}`, "Successfully authorized github");
             if (response.status === 200) {

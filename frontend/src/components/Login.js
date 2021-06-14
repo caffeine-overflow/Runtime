@@ -1,11 +1,11 @@
 import Homeimg from "../assets/loginPage.svg";
 import "../App.css";
-import {
-    Button, Form, FormGroup, FormControl, ControlLabel, Schema
-} from 'rsuite';
-import { useReducer } from 'react';
-import { withRouter } from 'react-router-dom'
 import util from "../utility/utils";
+import {
+    Modal, Button, Form, FormGroup, FormControl, ControlLabel, Schema, Notification, Divider, Input
+} from 'rsuite';
+import { useReducer, useEffect } from 'react';
+import { withRouter } from 'react-router-dom'
 const { StringType } = Schema.Types;
 
 
@@ -33,6 +33,8 @@ function Login(props) {
         userLogin: "",
         userPass: "",
         firstname: "",
+        resetEmail: "",
+        show: false,
         lastname: ""
     };
 
@@ -48,7 +50,7 @@ function Login(props) {
                 sessionStorage.setItem('sprintCompassUser', response.data.user);
                 sessionStorage.setItem('sprintCompassUserName', response.data.name);
                 sessionStorage.setItem('sprintCompassUserRole', response.data.userRole);
-
+                sessionStorage.setItem('organization', response.data.organization);
                 const { from } = props.location.state || { from: { pathname: '/projects' } }
                 if (response.data.firstLogin || !response.data.validGitToken) {
                     window.open("/auth", '_self');
@@ -60,6 +62,54 @@ function Login(props) {
         }
     };
 
+    const resetPassword = async () => {
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let resetEmail = state.resetEmail.match(/.{1,29}/g);
+        resetEmail = resetEmail.join(' ')
+        if (!emailRegex.test(String(state.resetEmail).toLowerCase())) {
+            Notification.error({
+                title: `Invalid Email`,
+                description: <div style={{ width: 220 }} rows={4}> <strong>{resetEmail}</strong> is not a valid email</div>,
+                placement: 'topEnd'
+            });
+        }
+        else {
+            let response = await util.FETCH_DATA(`auth/reset_password/${state.resetEmail}`);
+            if (response.status === 200) {
+                Notification.success({
+                    title: `Reset Email Sent`,
+                    description: <div style={{ width: 220 }} rows={4}> A reset email has been sent to <br /><strong>{resetEmail}</strong>.</div>,
+                    placement: 'topEnd'
+                });
+            }
+        }
+
+        setState({ show: false, resetEmail: "" })
+    };
+
+    useEffect(() => {
+        
+        let msg = util.getQueryVariable("msg");
+        let error = util.getQueryVariable("error");
+        let success = util.getQueryVariable("success");
+        let newUrl = window.location.origin + '/login';
+        window.history.pushState({}, null, newUrl);
+        if(msg) msg = decodeURI(msg)
+        if(error){
+            Notification.error({
+                title: msg ? msg : "Invalid Url",
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+        }
+        else if(success){
+            Notification.success({
+                title: "Password Updated Successfully",
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: "topEnd",
+            });
+        }
+    })
     return (
         <div className="App">
             <div
@@ -142,9 +192,53 @@ function Login(props) {
                                 </Button>
                             </Form>
                         }
+                        <div
+                            style={{
+                                textAlign: "center",
+                                color: "blue",
+                                textDecoration: "underline",
+                                fontSize: "15px",
+                                cursor: "pointer",
+                                marginTop: 20,
+                                marginLeft: "30%",
+                                width: "29%",
+                            }}
+                            onClick={() => setState({ show: true })}
+                        >
+                            Forgot Password?
+						</div>
                     </div>
                 </div>
             </div>
+            <Modal backdrop={true} size="xs" show={state.show} onHide={() => setState({ show: false, resetEmail: "" })}>
+                <Modal.Header >
+                    <Modal.Title>Reset Your Password</Modal.Title>
+                    <Divider style={{ marginBottom: -10, marginTop: 0 }} />
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Please enter your email to receive a password reset link.</p>
+                    <Input
+                        style={{ width: "90%", marginTop: 10 }}
+                        name="resetemail"
+                        value={state.resetEmail}
+                        onChange={(value) => setState({ resetEmail: value })}
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Divider style={{ marginBottom: -5, marginTop: 0 }} />
+                    <Button
+                        disabled={state.resetEmail?.trim() === ""}
+                        appearance="primary"
+                        style={{ marginLeft: "25%", width: "50%", marginTop: 10 }}
+                        onClick={() => resetPassword()}
+                    >
+                        Reset Password
+					</Button>
+                    <Button onClick={() => setState({ show: false, resetEmail: "" })} appearance="subtle">
+                        Cancel
+					</Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

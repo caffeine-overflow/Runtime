@@ -38,6 +38,7 @@ const NavToggle = ({ expand, onChange }) => {
 
 function ProjectBoard() {
     const [collaborators, setcollaborators] = useState([]);
+    const [membersNotIn, setMembersNotIn] = useState([]);
     const [project, setproject] = useState(null);
     const [sprints, setsprints] = useState([]);
 
@@ -65,6 +66,7 @@ function ProjectBoard() {
     let getProjectById = async () => {
         const response = await utils.FETCH_DATA(`api/projects/byProjectId/${url.split('/')[2]}`);
         let data = response.data;
+        getAllUsers(data.project._id)
         setproject(data.project);
     }
 
@@ -83,15 +85,13 @@ function ProjectBoard() {
         toggleFunction(true);
     };
 
-    const getAllUsers = async () => {
-
-        const response = await utils.FETCH_DATA(`api/users`);
-        let data = response.data;
-        setcollaborators(data.users);
+    const getAllUsers = async (project_id) => {
+        let response = await utils.FETCH_DATA(`api/projects/members/${project_id}`);		
+        setcollaborators(response.data.membersIn);
+        setMembersNotIn(response.data.membersNotIn);
     }
 
     useEffect(() => {
-        getAllUsers();
         getSprints();
         getProjectById();
     }, []);
@@ -196,6 +196,9 @@ function ProjectBoard() {
                                 homeToggle && !!project &&
                                 <SprintHome
                                     project={project}
+                                    membersIn={collaborators}
+                                    membersNotIn={membersNotIn}
+                                    getMembers={getAllUsers}
                                 />
                             }
                             {
@@ -208,6 +211,7 @@ function ProjectBoard() {
                                                 sprint={acitveSprint}
                                                 collaborators={collaborators}
                                                 project_id={url.split('/')[2]}
+                                                project={project}
                                             /> :
                                             <NotFound
                                                 image={NoActiveSprint}
