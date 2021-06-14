@@ -22,7 +22,6 @@ export default function App() {
   return (
     <Router>
       <Switch>
-        <PrivateRoute exact path="/" component={Projects} />
         <Route path="/login" render={() => <Login />} />
         <Route path="/ResetPassword" render={() => <ResetPassword />} />
         <PrivateRoute path="/myprojects" component={aaa} />
