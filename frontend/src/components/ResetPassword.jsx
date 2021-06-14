@@ -25,21 +25,8 @@ export default function ResetPasswordPage(props) {
     const changePassword = async (status) => {
         if (status) {
             setloading(true);
-
-            let token = sessionStorage.getItem("sprintCompassToken");
-            const requestOptions = {
-              method: "PUT",
-              headers: {
-                "Access-Control-Expose-Headers": "*",
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({ new_password: newpassword }),
-            };
-
-            const response = await fetch(`${util.ADDRESS}api/users/reset_password`, requestOptions);
-
+            let body = { new_password: newpassword }
+            let response = await util.UPDATE_DATA(`api/users/reset_password`, body, "No Notification");
             if (response.status === 200) {
               window.open("/login?success=true", "_self");
             } else {

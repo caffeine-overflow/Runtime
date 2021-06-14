@@ -22,17 +22,8 @@ export default function UsersTable(props) {
 
 	const getUsers = async () => {
 		setloading(true);
-		let token = sessionStorage.getItem("sprintCompassToken");
-		const requestOptions = {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			},
-		};
-		const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
-		let data = await response.json();
-		let filteredUsers = data.users.filter((user) => {
+		const response = await util.FETCH_DATA(`api/users`, "No Notification");
+		let filteredUsers = response.data.users.filter((user) => {
 			if (user.role.toLowerCase() !== "owner") return user;
 			return undefined;
 		});
@@ -125,7 +116,7 @@ export default function UsersTable(props) {
 	const updateUser = async () => {
 		let message = "User Has Been Updated"
 		let body = { id: selectedUser._id, role: selectedRole, disabled: userStatus };
-		await util.PUT_DATA(`api/users/updateUserById`, body, message);
+		await util.UPDATE_DATA(`api/users/updateUserById`, body, message);
 		setOpenDrawer(false);
 		getUsers();
 	};
