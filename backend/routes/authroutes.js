@@ -161,7 +161,7 @@ router.post("/login", async (req, res, next) => {
             //create the json web tokens
             const userToken = { id: user._id, email: email, firstname: user.firstname, lastname: user.lastname, role: user.role, invitationAccepted: user.invitation_accepted };
             const access_token = jwt.sign(userToken, token_secret);
-            console.log(user)
+
             return res.status(200).send(
                 {
                     access_token,
