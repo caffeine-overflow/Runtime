@@ -56,7 +56,7 @@ function ProjectBoard() {
     let getSprints = async () => {
 
         const response = await utils.FETCH_DATA(`api/sprints/allByProjectId/${url.split('/')[2]}`);
-        let data = await response.data;
+        let data = response.data;
         let currentSprint = data.sprints.find(d => !d.is_done);
         setActiveSprint(currentSprint);
         setsprints(data.sprints);
@@ -64,7 +64,7 @@ function ProjectBoard() {
 
     let getProjectById = async () => {
         const response = await utils.FETCH_DATA(`api/projects/byProjectId/${url.split('/')[2]}`);
-        let data = await response.data;
+        let data = response.data;
         setproject(data.project);
     }
 
@@ -86,7 +86,7 @@ function ProjectBoard() {
     const getAllUsers = async () => {
 
         const response = await utils.FETCH_DATA(`api/users`);
-        let data = await response.data;
+        let data = response.data;
         setcollaborators(data.users);
     }
 

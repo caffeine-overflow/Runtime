@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
-import { Button, FlexboxGrid, Notification, PanelGroup, Panel } from 'rsuite';
+import { Button, FlexboxGrid, PanelGroup, Panel } from 'rsuite';
 import NotFound from "../NotFound";
 import NoBacklog from "../../assets/nobacklog.svg";
 import utils from "../../utility/utils"
@@ -24,7 +24,7 @@ export default function Backlog(props) {
         let _body = body;
         const response = await utils.UPDATE_DATA(`api/userstories`, _body, message);
         //if updated
-        if (response.ok) {
+        if (response.status === 200) {
             getBacklogs();
         }
     }

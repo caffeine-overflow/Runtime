@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Navbar from "../Navbar";
 import utils from "../../utility/utils"
 import {
-    Form, FormGroup, ControlLabel, Icon, Button, FormControl, Schema, Message, Notification
+    Form, FormGroup, ControlLabel, Icon, Button, FormControl, Schema, Message
 } from 'rsuite';
 import './adminPage.css';
 import UsersTable from './UsersTable';

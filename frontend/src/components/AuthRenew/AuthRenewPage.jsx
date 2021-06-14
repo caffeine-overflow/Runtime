@@ -52,36 +52,11 @@ export default function AuthRenewPage(props) {
     const changePassword = async (status) => {
         if (status) {
             setloading(true);
-            let token = sessionStorage.getItem('sprintCompassToken');
-            const requestOptions = {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    old_password: currentPassord,
-                    new_password: newpassword
-                })
-            };
-
-            let response = await fetch(`http://localhost:5000/api/users/update_password`, requestOptions);
-            let message = await response.json();
-
+            let message = "Password Has Been Updated";
+            let body = { old_password: currentPassord, new_password: newpassword };
+            let response = await util.UPDATE_DATA(`api/users/update_password`, body, message);
             if (response.status === 200) {
-                Notification.success({
-                    title: `Password Has Been Updated`,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
                 setStep(1);
-            }
-            else {
-                Notification.error({
-                    title: message.msg,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
             }
             setloading(false);
         }
@@ -92,31 +67,11 @@ export default function AuthRenewPage(props) {
             setStep(2);
             return;
         }
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ position, phone, location })
-        };
-
-        const response = await fetch(`http://localhost:5000/api/users/update_user`, requestOptions);
+        let message = "Profile Has Been Updated";
+        let body = { position, phone, location };
+        let response = await util.UPDATE_DATA(`api/users/update_user`, body, message);
         if (response.status === 200) {
-            Notification.success({
-                title: `Profile Has Been Updated`,
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
             setStep(2);
-        }
-        else {
-            Notification.error({
-                title: 'Server error, Try again later',
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
         }
     }
 
@@ -142,41 +97,25 @@ export default function AuthRenewPage(props) {
         }
         let code = getQueryVariable("code");
         if (code) {
-            const response = await util.FETCH_DATA(`gitauth/get_token?code=${code}`);
+            const response = await util.FETCH_DATA(`gitauth/get_token?code=${code}`, "Successfully authorized github");
             if (response.status === 200) {
-                Notification.success({
-                    title: "Successfully authorized github",
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: "topEnd",
-                });
                 setStep(3);
 
                 //remove code from the url withour reloading
                 let newUrl = window.location.origin + '/auth';
                 window.history.pushState({}, null, newUrl);
-            } else {
-                Notification.error({
-                    title: "Failed to Authorize with GitHub",
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: "topEnd",
-                });
             }
         }
     };
 
     let getOrganizations = async () => {
-        const response = await util.FETCH_DATA(`api/git/getOrganizations`);
+        const response = await util.FETCH_DATA(`api/git/getOrganizations`, "No Notification");
         setorganizations(response.data.organizations);
     }
 
     let validateInvite = async () => {
-        const response = await util.FETCH_DATA(`gitauth/validateInvite`);
+        const response = await util.FETCH_DATA(`gitauth/validateInvite`, "Congratulations!");
         if (response.status === 200) {
-            Notification.success({
-                title: "Congratulations!",
-                description: <div style={{ width: 220 }} rows={3} > Welocome to Runtime </div>,
-                placement: "topEnd",
-            });
             props.history.push('/projects');
         }
     }
@@ -191,33 +130,11 @@ export default function AuthRenewPage(props) {
             return;
         }
 
-        let token = sessionStorage.getItem("sprintCompassToken");
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ name: companyName, organization: gitOrganization })
-        };
-
-        let response = await fetch(`http://localhost:5000/api/users/addClient`, requestOptions);
-        let res = await response.json();
+        let body = { name: companyName, organization: gitOrganization };
+        let response = await util.POST_DATA(`api/users/addClient`, body);
 
         if (response.status === 200) {
-            Notification.success({
-                title: res.msg,
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: "topEnd",
-            });
             props.history.push('/projects');
-        }
-        else {
-            Notification.error({
-                title: res.msg,
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: "topEnd",
-            });
         }
     }
 

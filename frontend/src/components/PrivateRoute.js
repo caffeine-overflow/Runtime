@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
 import Loader from "react-loader-spinner";
+import util from "../utility/utils";
 
 function PrivateRoute({ component: Component, ...rest }) {
 	const [Validated, setValidated] = useState(false);
@@ -8,14 +9,8 @@ function PrivateRoute({ component: Component, ...rest }) {
 	const [isAuthorized, setIsAuthorized] = useState(true);
 
 	useEffect(() => {
-		let token = sessionStorage.getItem("sprintCompassToken");
-
 		async function fetchData() {
-			const requestOptions = {
-				method: "GET",
-				headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-			};
-			const response = await fetch("http://localhost:5000/auth/validate", requestOptions);
+			const response = await util.FETCH_DATA(`auth/validate`, "No Notification");
 
 			if (response.status === 403) {
 				setIsAuthorized(false);

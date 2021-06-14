@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Loader from "react-loader-spinner";
 import utils from "../../utility/utils";
 import {
-    Drawer, Icon, InputNumber, Button, Notification, Toggle, Tag,
+    Drawer, Icon, InputNumber, Button, Toggle, Tag,
     Input, InputPicker, FlexboxGrid, Modal} from 'rsuite';
 import { withRouter } from 'react-router-dom';
 import '../../App.css';
@@ -127,14 +127,14 @@ function Sprint(props) {
     const changeStoryState = async (id, state) => {
         
         let body = { _id: id, state };
-        const response = await utils.UPDATE_DATA(`api/userstories`,body);
-        if (response.ok) getUserStories();
+        const response = await utils.UPDATE_DATA(`api/userstories`, body);
+        if (response.status === 200) getUserStories();
     }
 
     const getUserStories = async () => {
         const response = await utils.FETCH_DATA(`api/userstories/bySprint/${props.sprint._id}`);
-        if (response.ok) {
-            let data = await response.data;
+        if (response.status === 200) {
+            let data = response.data;
             generateTableCards(data.userstories)
             setuserStories(data.userstories);
         }

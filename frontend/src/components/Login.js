@@ -1,10 +1,11 @@
 import Homeimg from "../assets/loginPage.svg";
 import "../App.css";
 import {
-    Button, Form, FormGroup, FormControl, ControlLabel, Schema, Notification
+    Button, Form, FormGroup, FormControl, ControlLabel, Schema
 } from 'rsuite';
 import { useReducer } from 'react';
 import { withRouter } from 'react-router-dom'
+import util from "../utility/utils";
 const { StringType } = Schema.Types;
 
 
@@ -40,29 +41,16 @@ function Login(props) {
 
     const login = async (status) => {
         if (status) {
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: state.userLogin, password: state.userPass })
-            };
-            const response = await fetch('http://localhost:5000/auth/login', requestOptions);
-            const data = await response.json();
-            if (response.status === 403) {
-                Notification.error({
-                    title: data.msg,
-                    description: <div style={{ width: 220 }} rows={3} />,
-                    placement: 'topEnd'
-                });
-            }
-            else if (response.status === 200) {
-
-                sessionStorage.setItem('sprintCompassToken', data.access_token);
-                sessionStorage.setItem('sprintCompassUser', data.user);
-                sessionStorage.setItem('sprintCompassUserName', data.name);
-                sessionStorage.setItem('sprintCompassUserRole', data.userRole);
+            let body = { email: state.userLogin, password: state.userPass };
+            let response = await util.POST_DATA(`auth/login`, body);
+            if (response.status === 200) {
+                sessionStorage.setItem('sprintCompassToken', response.data.access_token);
+                sessionStorage.setItem('sprintCompassUser', response.data.user);
+                sessionStorage.setItem('sprintCompassUserName', response.data.name);
+                sessionStorage.setItem('sprintCompassUserRole', response.data.userRole);
 
                 const { from } = props.location.state || { from: { pathname: '/projects' } }
-                if (data.firstLogin || !data.validGitToken) {
+                if (response.data.firstLogin || !response.data.validGitToken) {
                     window.open("/auth", '_self');
                 }
                 else {

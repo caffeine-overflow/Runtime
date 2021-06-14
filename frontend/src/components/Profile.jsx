@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import {
     Icon, IconButton, Drawer, Button, Schema,
-    Form, FormControl, FormGroup, ControlLabel, Notification
+    Form, FormControl, FormGroup, ControlLabel
 } from 'rsuite';
 import ImageUploader from 'react-images-upload';
 import Resizer from "react-image-file-resizer";
@@ -55,16 +55,15 @@ export default function Profile(props) {
 
     const updateUserData = async (status) => {
         if (status) {
-            console.log("Here we go");
             setloading(true);
             setopenDrawer(false);
             let body = { [changeAttribute.toLowerCase()]: user[changeAttribute.toLowerCase()]}
             let message = `${changeAttribute} Has Been Updated`;
-              await util.PUT_DATA(`api/users`, body,message);
-              setChangeAttribute(null);
-              getUserData(id);
-              setloading(false);
-              setvalidImage(false);
+            await util.UPDATE_DATA(`api/users`, body,message);
+            setChangeAttribute(null);
+            getUserData(id);
+            setloading(false);
+            setvalidImage(false);
         }
     }
     
@@ -76,7 +75,7 @@ export default function Profile(props) {
                     old_password: currentPassord,
                     new_password: newpassword
                 }
-            await util.PUT_DATA(`api/users/change_password`, body,message);
+            await util.UPDATE_DATA(`api/users/change_password`, body,message);
              
             setopenDrawer(false);
             setChangeAttribute(null);

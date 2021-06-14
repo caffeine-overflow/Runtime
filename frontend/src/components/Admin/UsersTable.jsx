@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Avatar, Progress, Icon, InputPicker, Notification, Drawer, Button } from "rsuite";
+import { Table, Tag, Avatar, Progress, Icon, InputPicker, Drawer, Button } from "rsuite";
 import Loader from "react-loader-spinner";
 import './userTable.css';
 import util from '../../utility/utils';
@@ -23,17 +23,8 @@ export default function UsersTable(props) {
 
 	const getUsers = async () => {
 		setloading(true);
-		let token = sessionStorage.getItem("sprintCompassToken");
-		const requestOptions = {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			},
-		};
-		const response = await fetch(`http://localhost:5000/api/users`, requestOptions);
-		let data = await response.json();
-		let filteredUsers = data.users.filter((user) => {
+		const response = await util.FETCH_DATA(`api/users`, "No Notification");
+		let filteredUsers = response.data.users.filter((user) => {
 			if (user.role.toLowerCase() !== "owner") return user;
 			return undefined;
 		});
