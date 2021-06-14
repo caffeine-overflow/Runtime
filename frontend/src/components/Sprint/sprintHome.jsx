@@ -21,7 +21,7 @@ function SprintHome(props) {
 			user_id: selectedUser,
 		};
 		let successMessage = "Successfully added the user";
-		await util.PUT_DATA(`api/projects/addMember`, body, successMessage);
+		await util.UPDATE_DATA(`api/projects/addMember`, body, successMessage);
 		setAddMemberDrawer(false);
 		props.getMembers(props.project._id);
 		getRepo();

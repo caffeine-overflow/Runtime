@@ -2,7 +2,7 @@ import { Notification } from 'rsuite';
 
 const ADDRESS = 'http://localhost:5000/';
 
-const FETCH_DATA = async (api) => {
+const FETCH_DATA = async (api, message) => {
     let token = sessionStorage.getItem('sprintCompassToken');
     const requestOptions = {
         method: 'GET',
@@ -12,16 +12,7 @@ const FETCH_DATA = async (api) => {
         },
     };
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
-
-    let data = await response.json();
-
-    if (!response.ok) {
-        Notification.error({
-            title: data.msg ?? 'Server error, Try again later',
-            description: <div style={{ width: 220 }} rows={3} />,
-            placement: 'topEnd'
-        });
-    }
+    let data = await showNotification(response, message);
 
     return { status: response.status, data }
 }
@@ -40,30 +31,14 @@ const POST_DATA = async (api, body, message) => {
     };
 
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
-
-    let data = await response.json();
-
-    if (!response.ok) {
-        Notification.error({
-            title: data.msg ?? 'Server error, Try again later',
-            description: <div style={{ width: 220 }} rows={3} />,
-            placement: 'topEnd'
-        });
-    }
-    else {
-        Notification.success({
-            title: data.msg ?? message,
-            description: <div style={{ width: 220 }} rows={3} />,
-            placement: 'topEnd'
-        })
-    }
+    let data = await showNotification(response, message);
 
     return {
-        status: response.status
+        status: response.status, data
     }
 }
 
-const PUT_DATA = async (api, body, message) => {
+const UPDATE_DATA = async (api, body, message) => {
     let token = sessionStorage.getItem('sprintCompassToken');
     const requestOptions = {
         method: 'PUT',
@@ -74,24 +49,10 @@ const PUT_DATA = async (api, body, message) => {
         body: JSON.stringify(body)
     };
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
+    let data = await showNotification(response, message);
 
-    let data = await response.json();
-
-    if (!response.ok) {
-        Notification.error({
-            title: data.msg ?? 'Server error, Try again later',
-            description: <div style={{ width: 220 }} rows={3} />,
-            placement: 'topEnd'
-        });
-    } else {
-        Notification.success({
-            title: data.msg ?? message,
-            description: <div style={{ width: 220 }} rows={3} />,
-            placement: 'topEnd'
-        })
-    }
     return {
-        status: response.status
+        status: response.status, data
     }
 }
 
@@ -105,26 +66,40 @@ const DELETE_DATA = async (api, message) => {
         }
     };
     const response = await fetch(`${ADDRESS}${api}`, requestOptions);
+    let data = await showNotification(response, message);
 
-    if (!response.ok) {
-        Notification.error({
-            title: 'Server error, Try again later',
-            description: <div style={{ width: 220 }} rows={3} />,
-            placement: 'topEnd'
-        });
-    }
-    else {
-        Notification.success({
-            title: message,
-            description: <div style={{ width: 220 }} rows={3} />,
-            placement: 'topEnd'
-        })
-    }
     return {
-        status: response.status
+        status: response.status, data
     }
 }
 
+const showNotification = async (response, message) => {
+
+    let data;
+    if(response.statusText === "Not Found")
+        data = {msg: "Invalid Request"};
+    else
+        data = await response.json();
+
+    if(message !== "No Notification"){
+        if (!response.ok) {
+            Notification.error({
+                title: data.msg ?? 'Server error, Try again later',
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: 'topEnd'
+            });
+        }
+        else if(data.msg || (message && message.trim() !== "")){
+            Notification.success({
+                title: data.msg ?? message,
+                description: <div style={{ width: 220 }} rows={3} />,
+                placement: 'topEnd'
+            })
+        }
+    }
+
+    return data;
+}
 
 const getQueryVariable = (variable) => {
     var query = window.location.search.substring(1);
@@ -139,4 +114,4 @@ const getQueryVariable = (variable) => {
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { FETCH_DATA, POST_DATA, PUT_DATA, DELETE_DATA, getQueryVariable, ADDRESS };
+export default { FETCH_DATA, POST_DATA, UPDATE_DATA, DELETE_DATA, getQueryVariable, ADDRESS };

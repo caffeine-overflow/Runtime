@@ -16,7 +16,8 @@ import UserStoryForm from "./UserStoryForm";
 import SprintForm from "./SprintForm";
 import NotFound from "../NotFound";
 import SprintHome from "./sprintHome";
-import util from "../../utility/utils";
+import utils from "../../utility/utils";
+
 
 const NavToggle = ({ expand, onChange }) => {
     return (
@@ -54,33 +55,17 @@ function ProjectBoard() {
     let { url } = useRouteMatch();
 
     let getSprints = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/sprints/allByProjectId/${url.split('/')[2]}`, requestOptions);
-        let data = await response.json();
 
+        const response = await utils.FETCH_DATA(`api/sprints/allByProjectId/${url.split('/')[2]}`);
+        let data = response.data;
         let currentSprint = data.sprints.find(d => !d.is_done);
         setActiveSprint(currentSprint);
         setsprints(data.sprints);
     }
 
     let getProjectById = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/projects/byProjectId/${url.split('/')[2]}`, requestOptions);
-        let data = await response.json();
+        const response = await utils.FETCH_DATA(`api/projects/byProjectId/${url.split('/')[2]}`);
+        let data = response.data;
         getAllUsers(data.project._id)
         setproject(data.project);
     }
@@ -101,7 +86,7 @@ function ProjectBoard() {
     };
 
     const getAllUsers = async (project_id) => {
-        let response = await util.FETCH_DATA(`api/projects/members/${project_id}`);		
+        let response = await utils.FETCH_DATA(`api/projects/members/${project_id}`);		
         setcollaborators(response.data.membersIn);
         setMembersNotIn(response.data.membersNotIn);
     }

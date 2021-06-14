@@ -3,7 +3,7 @@ import ProjectSvg from "../assets/teamsHome.svg";
 import Loader from "react-loader-spinner";
 import {
     Drawer, Icon, Button, Form, FormGroup, FormControl, ControlLabel,
-    ButtonToolbar, Schema, Notification, List, FlexboxGrid
+    ButtonToolbar, Schema, List, FlexboxGrid
 } from 'rsuite';
 import {
     withRouter
@@ -76,7 +76,7 @@ function Projects(props) {
         if (status) {
             let message = "Project Has Been Created";
             let body = { 'name': projectName, 'description': description };
-                await util.POST_DATA(`api/projects`, body,message);
+            await util.POST_DATA(`api/projects`, body,message);
             close();
             getProjects();
         }

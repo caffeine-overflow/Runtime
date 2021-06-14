@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import utils from "../../utility/utils";
 import {
-    InputNumber, Button, Form, FormGroup, ControlLabel, FormControl, Notification,
+    InputNumber, Button, Form, FormGroup, ControlLabel, FormControl,
     Table, Toggle, Steps, Panel, ButtonGroup
 } from 'rsuite';
 
@@ -17,16 +18,8 @@ export default function SprintForm(props) {
     }, []);
 
     const getUserStoriesDone = async () => {
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        const response = await fetch(`http://localhost:5000/api/userstories/unfinishedTask/${props.acitveSprint._id}`, requestOptions);
-        let data = await response.json();
+        const response = await utils.FETCH_DATA(`api/userstories/unfinishedTask/${props.acitveSprint._id}`);
+        let data = await response.data;
         let tableData = [];
         data.userstories.forEach((d, i) => {
             let estimated = d.estimated_time.split(',');
@@ -95,46 +88,24 @@ export default function SprintForm(props) {
             });
         });
 
-
         if (props.acitveSprint) {
             await generateReport();
         }
+        
+        let message = "Sprint Created Successfully";
+        let body = { 
+                    'name': title,
+                    'description': description,
+                    'project_id': props.project_id,
+                    'sprint_id': props.acitveSprint ? props.acitveSprint._id : null,
+                     user_stories
+                    };
 
-        let token = sessionStorage.getItem('sprintCompassToken');
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Access-Control-Expose-Headers': '*',
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                'name': title,
-                'description': description,
-                'project_id': props.project_id,
-                'sprint_id': props.acitveSprint ? props.acitveSprint._id : null,
-                user_stories
-            })
-        };
-
-        const response = await fetch('http://localhost:5000/api/sprints', requestOptions);
-        let res = await response.json();
+        const response = await utils.POST_DATA('api/sprints',body ,message);
         if (response.status === 200) {
-            Notification.success({
-                title: 'Sprint Created Successfully',
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
             props.refresh();
         }
-        else {
-            Notification.error({
-                title: res.msg ?? 'Server error',
-                description: <div style={{ width: 220 }} rows={3} />,
-                placement: 'topEnd'
-            });
-        }
+       
     }
     return (
         <div>
