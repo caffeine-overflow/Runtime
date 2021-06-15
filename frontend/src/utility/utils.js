@@ -1,6 +1,7 @@
 import { Notification } from 'rsuite';
 
-const ADDRESS = 'http://localhost:5000/';
+//const ADDRESS = 'http://localhost:5000/';
+const ADDRESS = '/';
 
 const FETCH_DATA = async (api, message) => {
     let token = sessionStorage.getItem('sprintCompassToken');
@@ -76,12 +77,12 @@ const DELETE_DATA = async (api, message) => {
 const showNotification = async (response, message) => {
 
     let data;
-    if(response.statusText === "Not Found")
-        data = {msg: "Invalid Request"};
+    if (response.statusText === "Not Found")
+        data = { msg: "Invalid Request" };
     else
         data = await response.json();
 
-    if(message !== "No Notification"){
+    if (message !== "No Notification") {
         if (!response.ok) {
             Notification.error({
                 title: data.msg ?? 'Server error, Try again later',
@@ -89,7 +90,7 @@ const showNotification = async (response, message) => {
                 placement: 'topEnd'
             });
         }
-        else if(data.msg || (message && message.trim() !== "")){
+        else if (data.msg || (message && message.trim() !== "")) {
             Notification.success({
                 title: data.msg ?? message,
                 description: <div style={{ width: 220 }} rows={3} />,
