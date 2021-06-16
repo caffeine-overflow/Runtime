@@ -13,7 +13,11 @@ const CustomNav = ({ active, onSelect, ...props }) => {
     return (
         <Nav {...props} activeKey={active} onSelect={onSelect}>
             <Nav.Item style={{ margin: '0 50px' }}>
-                <img style={{ width: '80px' }} src={Logo} alt="logo" onClick={() => { window.open('/projects', '_self') }} />
+                <img
+                    style={{ marginTop: '10px' }}
+                    src={Logo} alt="logo"
+                    onClick={() => { window.open('/projects', '_self') }}
+                />
             </Nav.Item>
             <Nav.Item className="navHeader" eventKey="projects">Projects</Nav.Item>
             <Nav.Item className="navHeader" eventKey="solutions">Solutions</Nav.Item>

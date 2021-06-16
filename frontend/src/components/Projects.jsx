@@ -65,7 +65,7 @@ function Projects(props) {
         setuserProjects(response.data.projects);
         setloading(false);
     }
-    
+
     let close = () => {
         setcreateProjectDrawer(false);
         setprojectName("");
@@ -76,7 +76,7 @@ function Projects(props) {
         if (status) {
             let message = "Project Has Been Created";
             let body = { 'name': projectName, 'description': description };
-            await util.POST_DATA(`api/projects`, body,message);
+            await util.POST_DATA(`api/projects`, body, message);
             close();
             getProjects();
         }
@@ -109,22 +109,19 @@ function Projects(props) {
                         }}
                     >
                         Welcome to
-                            <br />
+                        <br />
                         <span
-                            style={{
-                                color: "#2D56B3",
-                                fontWeight: 600
-                            }}
+                            style={{ color: "#2D56B3" }}
                         >
                             Run
-                            </span>
+                        </span>
                         <span style={{ color: "#515B60" }}>time</span>
                     </div>
                     {(userRole === "owner" || userRole === "admin") && (
                         <div style={{ width: "100%" }}>
                             <div className="teamButtons" onClick={() => setcreateProjectDrawer(true)}>
                                 Create a Project
-							</div>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -184,7 +181,7 @@ function Projects(props) {
                                         onClick={() => props.history.push(`project/${item._id}`)}
                                     >
                                         View
-                                        </div>
+                                    </div>
                                 </FlexboxGrid.Item>
                             </FlexboxGrid>
                         </List.Item>
