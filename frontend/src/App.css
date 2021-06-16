@@ -103,6 +103,7 @@ li {
 
 .loginForm {
   max-width: 400px;
+  margin: auto;
 }
 .loginForm .rs-form-control-wrapper {
   width: 100% !important;

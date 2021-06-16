@@ -88,21 +88,21 @@ function Login(props) {
     };
 
     useEffect(() => {
-        
+
         let msg = util.getQueryVariable("msg");
         let error = util.getQueryVariable("error");
         let success = util.getQueryVariable("success");
         let newUrl = window.location.origin + '/login';
         window.history.pushState({}, null, newUrl);
-        if(msg) msg = decodeURI(msg)
-        if(error){
+        if (msg) msg = decodeURI(msg)
+        if (error) {
             Notification.error({
                 title: msg ? msg : "Invalid Url",
                 description: <div style={{ width: 220 }} rows={3} />,
                 placement: "topEnd",
             });
         }
-        else if(success){
+        else if (success) {
             Notification.success({
                 title: "Password Updated Successfully",
                 description: <div style={{ width: 220 }} rows={3} />,
@@ -151,19 +151,19 @@ function Login(props) {
                                 fontWeight: "bold",
                                 lineHeight: "1.2",
                                 marginBottom: "100px",
+                                textAlign: 'center'
                             }}
                         >
-                            Welcome To
+                            Welcome to
                             <br />
                             <span
                                 style={{
-                                    color: "#2D56B3",
-                                    marginRight: "10px",
+                                    color: "#2D56B3"
                                 }}
                             >
-                                Sprint
+                                Run
                             </span>
-                            <span style={{ color: "#515B60" }}>Compass</span>
+                            <span style={{ color: "#515B60" }}>time</span>
                         </div>
                         {
                             state.login &&
@@ -194,19 +194,17 @@ function Login(props) {
                         }
                         <div
                             style={{
-                                textAlign: "center",
                                 color: "blue",
                                 textDecoration: "underline",
                                 fontSize: "15px",
                                 cursor: "pointer",
                                 marginTop: 20,
-                                marginLeft: "30%",
-                                width: "29%",
+                                textAlign: 'center'
                             }}
                             onClick={() => setState({ show: true })}
                         >
                             Forgot Password?
-						</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -233,10 +231,10 @@ function Login(props) {
                         onClick={() => resetPassword()}
                     >
                         Reset Password
-					</Button>
+                    </Button>
                     <Button onClick={() => setState({ show: false, resetEmail: "" })} appearance="subtle">
                         Cancel
-					</Button>
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </div>
