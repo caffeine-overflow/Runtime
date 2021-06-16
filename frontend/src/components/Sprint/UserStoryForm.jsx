@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { InputNumber, Button, Form, InputPicker, Schema, FormGroup, ControlLabel, FormControl } from 'rsuite';
-import  util  from '../../utility/utils';
+import util from '../../utility/utils';
+import Editor from "../utilitycomponents/Editor";
 
 export default function UserStoryForm(props) {
 
@@ -13,24 +14,19 @@ export default function UserStoryForm(props) {
 
     let createUserStory = async (status) => {
         if (status) {
-    
-        let message = "User Story Has Been Created";
-        let body = {
-            'title': title,
-            'description': description,
-            'assigned_to': selectedCollaborator,
-            'estimated_time': `${estimatedHours},${estimatedMinutes}`,
-            'sprint_id': selectedSprint === -1 ? null : selectedSprint,
-            'project_id': props.project_id
-        };
-            await util.POST_DATA('api/userstories', body,message);
-                //clear the fields
-                setselectedCollaborator(null);
-                setestimatedHours(1);
-                setestimatedMinutes(0);
-                settitle("");
-                setdescription("");
-                setselectedSprint(null);
+
+            let message = "User Story Has Been Created";
+            let body = {
+                'title': title,
+                'description': description,
+                'assigned_to': selectedCollaborator,
+                'estimated_time': `${estimatedHours},${estimatedMinutes}`,
+                'sprint_id': selectedSprint === -1 ? null : selectedSprint,
+                'project_id': props.project_id
+            };
+            await util.POST_DATA('api/userstories', body, message);
+            //*go to homescreen
+            props.refresh();
         }
     }
 
@@ -59,37 +55,37 @@ export default function UserStoryForm(props) {
                 value={title}
                 onChange={(value) => settitle(value)}
             />
-            <TextField
-                name="description"
-                label="Description"
+            <Editor
+                setText={(value) => setdescription(value)}
                 value={description}
-                onChange={(value) => setdescription(value)}
-            />
-            <label className="rs-control-label">Assign To </label>
-            <InputPicker
-                data={props.collaborators.map(c => {
-                    return { "label": `${c.firstname} ${c.lastname}`, "value": c._id }
-                })}
-                placeholder="Assign To"
-                style={{ width: 400 }}
-                value={selectedCollaborator}
-                onChange={(value) => setselectedCollaborator(value)}
             />
 
-            <label
-                style={{ margin: "25px 0 5px" }}
-                className="rs-control-label"
-            >
-                Select a Destination
-            </label>
-            <InputPicker
-                data={getDestinationDropDownVal()}
-                placeholder="Destination"
-                style={{ width: 400 }}
-                value={selectedSprint}
-                onChange={(value) => setselectedSprint(value)}
-            />
-
+            <div style={{ display: 'flex', marginTop: '20px' }}>
+                <div>
+                    <label className="rs-control-label">Assign To </label>
+                    <InputPicker
+                        data={props.collaborators.map(c => {
+                            return { "label": `${c.firstname} ${c.lastname}`, "value": c._id }
+                        })}
+                        placeholder="Assign To"
+                        style={{ width: 200 }}
+                        value={selectedCollaborator}
+                        onChange={(value) => setselectedCollaborator(value)}
+                    />
+                </div>
+                <div>
+                    <label className="rs-control-label">
+                        Select a Destination
+                    </label>
+                    <InputPicker
+                        data={getDestinationDropDownVal()}
+                        placeholder="Destination"
+                        style={{ width: 200 }}
+                        value={selectedSprint}
+                        onChange={(value) => setselectedSprint(value)}
+                    />
+                </div>
+            </div>
             <label
                 style={{ margin: "25px 0 5px" }}
                 className="rs-control-label" >
@@ -97,7 +93,7 @@ export default function UserStoryForm(props) {
             </label>
             <div style={{ display: 'flex', marginBottom: 30 }}>
                 <InputNumber
-                    style={{ width: 250, marginRight: 10 }}
+                    style={{ width: 200, marginRight: 23 }}
                     postfix="Hour(s)"
                     min={0}
                     max={50}
@@ -106,7 +102,7 @@ export default function UserStoryForm(props) {
                 />
                 <InputNumber
                     postfix="Minute(s)"
-                    style={{ width: 250 }}
+                    style={{ width: 200 }}
                     min={0}
                     max={59}
                     value={estimatedMinutes}
@@ -129,8 +125,7 @@ const { StringType } = Schema.Types;
 
 //data validation for create user story
 const loginModel = Schema.Model({
-    title: StringType().isRequired('Title is required.'),
-    description: StringType().isRequired('Description is required.')
+    title: StringType().isRequired('Title is required.')
 });
 
 function TextField(props) {

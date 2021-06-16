@@ -86,7 +86,7 @@ function ProjectBoard() {
     };
 
     const getAllUsers = async (project_id) => {
-        let response = await utils.FETCH_DATA(`api/projects/members/${project_id}`);		
+        let response = await utils.FETCH_DATA(`api/projects/members/${project_id}`);
         setcollaborators(response.data.membersIn);
         setMembersNotIn(response.data.membersNotIn);
     }
@@ -286,6 +286,7 @@ function ProjectBoard() {
                                                     project_id={url.split('/')[2]}
                                                     acitveSprint={acitveSprint}
                                                     collaborators={collaborators}
+                                                    refresh={() => navbarToggleHandler(setHomeToggle)}
                                                 />
                                             </FlexboxGrid.Item>
                                         </FlexboxGrid>
