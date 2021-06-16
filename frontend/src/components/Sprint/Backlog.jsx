@@ -9,18 +9,21 @@ import utils from "../../utility/utils"
 export default function Backlog(props) {
 
     const [backlogs, setbacklogs] = useState([]);
+    const [loading, setloading] = useState(false);
 
     const getBacklogs = async () => {
+        setloading(true);
         const response = await utils.FETCH_DATA(`api/userstories/backlogs/${props.project_id}`);
         let data = await response.data;
         setbacklogs(data.userstories);
+        setloading(false);
     }
 
     const moveToActiveSprint = async (userstory) => {
         let body = {};
         body._id = userstory._id;
         body.sprint_id = props.acitveSprint._id;
-        let message ='User Story Has Been Moved to the Active Sprint';
+        let message = 'User Story Has Been Moved to the Active Sprint';
         let _body = body;
         const response = await utils.UPDATE_DATA(`api/userstories`, _body, message);
         //if updated
@@ -36,7 +39,7 @@ export default function Backlog(props) {
     return (
         <div>
             {
-                backlogs.length === 0 ?
+                !loading && backlogs.length === 0 ?
                     <NotFound
                         image={NoBacklog}
                         msg="So empty!"
@@ -70,7 +73,7 @@ export default function Backlog(props) {
                                                         onClick={() => moveToActiveSprint(b)}
                                                     >
                                                         Move To Active Sprint
-                                                </Button>
+                                                    </Button>
                                                 </div>
                                             </FlexboxGrid.Item>
                                         </FlexboxGrid>
