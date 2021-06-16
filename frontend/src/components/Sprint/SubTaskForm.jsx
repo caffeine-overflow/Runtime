@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { InputNumber, Button, Form, InputPicker, Schema, FormGroup, ControlLabel, FormControl } from 'rsuite';
+import { InputNumber, Button, Form, InputPicker, Schema, FormGroup, ControlLabel, FormControl } from 'rsuite'
+import Editor from "../utilitycomponents/Editor";
 import utils from "../../utility/utils";
 
 export default function SubTaskForm(props) {
@@ -12,7 +13,7 @@ export default function SubTaskForm(props) {
 
     let createUserStory = async (status) => {
         if (status) {
-      
+
             let body = {
                 'title': title,
                 'description': description,
@@ -25,7 +26,7 @@ export default function SubTaskForm(props) {
 
             let message = 'Subtask Has Been Created';
 
-            const response = await utils.POST_DATA('api/userstories',body,message);
+            const response = await utils.POST_DATA('api/userstories', body, message);
 
             if (response.status === 200) {
                 //clear the fields
@@ -53,11 +54,9 @@ export default function SubTaskForm(props) {
                 value={title}
                 onChange={(value) => settitle(value)}
             />
-            <TextField
-                name="description"
-                label="Description"
+            <Editor
+                setText={(value) => setdescription(value)}
                 value={description}
-                onChange={(value) => setdescription(value)}
             />
             <label className="rs-control-label">Assign To </label>
             <InputPicker
@@ -99,7 +98,7 @@ export default function SubTaskForm(props) {
                 disabled={title === "" || description === ""}
             >
                 Submit
-        </Button>
+            </Button>
         </Form>
     )
 }
@@ -108,8 +107,7 @@ const { StringType } = Schema.Types;
 
 //data validation for create user story
 const loginModel = Schema.Model({
-    title: StringType().isRequired('Title is required.'),
-    description: StringType().isRequired('Description is required.')
+    title: StringType().isRequired('Title is required.')
 });
 
 function TextField(props) {
