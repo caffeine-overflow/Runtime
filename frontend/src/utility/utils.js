@@ -1,7 +1,6 @@
 import { Notification } from 'rsuite';
 
-//const ADDRESS = 'http://localhost:5000/';
-const ADDRESS = '/';
+const ADDRESS = process.env.REACT_APP_SERVER;
 
 const FETCH_DATA = async (api, message) => {
     let token = sessionStorage.getItem('sprintCompassToken');
