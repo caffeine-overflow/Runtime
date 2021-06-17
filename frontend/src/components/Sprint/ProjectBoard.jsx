@@ -110,7 +110,7 @@ function ProjectBoard() {
                             expanded={expand}
                             defaultOpenKeys={['3', '4']}
                             appearance="inverse"
-                            style={{ background: '#134069', minHeight: 'calc(100vh - 97px)', height: '100%' }}
+                            style={{ background: '#134069', minHeight: 'calc(100vh - 94px)', height: '100%' }}
                         >
                             <Sidenav.Body>
                                 <Nav>
@@ -224,7 +224,7 @@ function ProjectBoard() {
                                 createSprintToggle &&
                                 <div>
                                     <div className="show-grid">
-                                        <FlexboxGrid style={{ background: '#f5f5f5', height: 'calc(100vh - 97px)' }}>
+                                        <FlexboxGrid style={{ background: '#f5f5f5', height: 'calc(100vh - 94px)' }}>
                                             <FlexboxGrid.Item
                                                 style={{ margin: 'auto' }}
                                                 colspan={8}
@@ -256,7 +256,7 @@ function ProjectBoard() {
                                 createUserStoryToggle &&
                                 <div>
                                     <div className="show-grid">
-                                        <FlexboxGrid style={{ background: '#f5f5f5', height: 'calc(100vh - 97px)' }}>
+                                        <FlexboxGrid style={{ background: '#f5f5f5', height: 'calc(100vh - 94px)' }}>
                                             <FlexboxGrid.Item
                                                 style={{ margin: 'auto' }}
                                                 colspan={12}

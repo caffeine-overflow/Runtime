@@ -16,6 +16,7 @@ import {
 } from 'react-router-dom'
 import Profile from "./components/Profile";
 import adminPage from "./components/Admin/adminPage";
+import CollaborateHome from "./components/collaborate/collaborateHome";
 
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         <PrivateRoute exact path="/project/:id" component={ProjectBoard} />
         <PrivateRoute path="/profile" component={Profile} />
         <PrivateRoute path="/admin" component={adminPage} />
+        <PrivateRoute path="/collaborate" component={CollaborateHome} />
         <AuthRenewRoute path="/auth" component={AuthRenewPage} />
       </Switch>
     </Router>

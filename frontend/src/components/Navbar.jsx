@@ -20,8 +20,8 @@ const CustomNav = ({ active, onSelect, ...props }) => {
                 />
             </Nav.Item>
             <Nav.Item className="navHeader" eventKey="projects">Projects</Nav.Item>
+            <Nav.Item className="navHeader" eventKey="collaborate">Collaborate</Nav.Item>
             <Nav.Item className="navHeader" eventKey="solutions">Solutions</Nav.Item>
-            <Nav.Item className="navHeader" eventKey="products">Products</Nav.Item>
             {(sessionStorage.getItem('sprintCompassUserRole') === "owner" || sessionStorage.getItem('sprintCompassUserRole') === "admin") && (
                 <Nav.Item className="navHeader" eventKey="admin">
                     Administrator
@@ -54,6 +54,7 @@ class Navbar extends React.Component {
 
     handleSelect(activeKey) {
         if (activeKey === "projects") window.open(window.location.origin + '/projects', '_self');
+        else if (activeKey === "collaborate") window.open(window.location.origin + '/collaborate', '_self');
         else if (activeKey === "admin") window.open(window.location.origin + '/admin', '_self');
     }
 
@@ -61,6 +62,9 @@ class Navbar extends React.Component {
         let route = window.location.pathname.split('/');
         if (route[1] === 'projects' || route[1] === 'project') {
             this.setState({ active: 'projects' });
+        }
+        else if (route[1] === 'collaborate') {
+            this.setState({ active: 'collaborate' });
         }
         else if (route[1] === 'admin') {
             this.setState({ active: 'admin' });
