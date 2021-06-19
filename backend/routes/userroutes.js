@@ -8,6 +8,7 @@ const { sendEmail } = require('../utils/email');
 const { welcomeEmail } = require("../utils/email_templates/welcome");
 const errorHandler = require('../utils/errorhandler');
 const { removeUserFromOrganization, changeRole } = require("../github/gitUtils");
+const { ChatGroup } = require("../models/chatGroup.js");
 
 router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 	try {
@@ -241,11 +242,22 @@ router.post("/create", authroutes.authAdmin, async (req, res, next) => {
 			role: "member"
 		});
 
-		newUser.save(function (err) {
+		newUser.save(async function (err) {
 			if (err) {
 				next(errorHandler(err, req, 500));
 			}
 			else {
+				//*create chatgroups for the user
+				let users = await User.find();
+				for (let i = 0; i < users.length; i++) {
+					if (newUser._id === users[i]._id) continue;
+					const chatGroup = await new ChatGroup({
+						users: [newUser._id, users[i]._id],
+						last_msg_timestamp: '1970/1/1 00:00:00'
+					}).save();
+				}
+
+				//send email
 				let htmlTemplate = welcomeEmail(`${firstname} ${lastname}`, email, password);
 				sendEmail(htmlTemplate, email, "Welcome").catch(console.error);
 				return res.status(200).send({ msg: "Account Created" });
