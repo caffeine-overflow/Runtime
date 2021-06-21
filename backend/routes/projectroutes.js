@@ -12,7 +12,7 @@ router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 		let allRepoAccess = await getAllRepo(req.user.git_token, req.user.client_id.organization);
 		allRepoAccess = allRepoAccess.data.map((repo) => repo.full_name.split("/")[1]);
 
-		let projects = await Project.find({repo: { $in: allRepoAccess }}).populate("project_lead");
+		let projects = await Project.find({client_id: req.user.client_id, repo: { $in: allRepoAccess }}).populate("project_lead");
 		return res.status(200).send({ projects });
 	} catch (err) {
 		next(errorHandler(err, req, 500));
