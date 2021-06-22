@@ -110,10 +110,11 @@ const deleteAllRepo = async (token, organization) => {
         org: organization
     });
     allRepos.data.forEach(async (repo) => {
-        await octo.request('DELETE /repos/{owner}/{repo}', {
-            owner: organization,
-            repo: repo.name
-        })
+        if(repo.name != 'Demo_Project')
+            await octo.request('DELETE /repos/{owner}/{repo}', {
+                owner: organization,
+                repo: repo.name
+            })
     })
 }
 
