@@ -104,6 +104,19 @@ const getAllRepo = async (token, organization) => {
     });
 }
 
+const deleteAllRepo = async (token, organization) => {
+    let octo = octokit(token);
+    let allRepos =  await octo.request('GET /orgs/{org}/repos', {
+        org: organization
+    });
+    allRepos.data.forEach(async (repo) => {
+        await octo.request('DELETE /repos/{owner}/{repo}', {
+            owner: organization,
+            repo: repo.name
+        })
+    })
+}
+
 const removeUserFromOrganization = async (token, organization, username) => {
     let octo = octokit(token);
     try {
@@ -235,5 +248,5 @@ module.exports = {
     getOrganizationsByUser, sendOrganizationInvite, getUser, getAllBranches, createBranch, addComment,
     checkOrganizationMembership, hasActiveInvitation, createRepo, getRepo, removeUserFromOrganization,
     getBranchComments, getBranchCommits, getAllRepo, changeRole, removeMember, getAllMembers, addMember,
-    getPullRequestsByBranch
+    getPullRequestsByBranch, deleteAllRepo
 };

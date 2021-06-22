@@ -8,6 +8,7 @@ const path = require('path');
 let server = http.createServer(app);
 const socketIO = require('socket.io');
 let io = socketIO(server);
+const demoroutes = require('./routes/demoroutes');
 const userroutes = require('./routes/userroutes');
 const collaborateroutes = require('./routes/collaborateroutes');
 const authroutes = require('./routes/authroutes');
@@ -35,6 +36,7 @@ app.use(function (req, res, next) {
 
 //declare routes
 app.use('/auth', authroutes.router);
+app.use('/demo', demoroutes);
 app.use('/gitauth', gitauthroutes);
 app.use('/api/git', gitRoutes);
 app.use('/api/users', userroutes);

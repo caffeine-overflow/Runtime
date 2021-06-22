@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
+import Demo from './components/Demo';
 import ResetPassword from './components/ResetPassword';
 import 'rsuite/dist/styles/rsuite-default.css';
 import PrivateRoute from './components/PrivateRoute';
@@ -24,6 +25,7 @@ export default function App() {
     <Router>
       <Switch>
         <Route path="/login" render={() => <Login />} />
+        <Route path="/runtime_demo" render={() => <Demo />} />
         <Route path="/ResetPassword" render={() => <ResetPassword />} />
         <PrivateRoute path="/myprojects" component={aaa} />
         <PrivateRoute exact path="/projects" component={Projects} />
