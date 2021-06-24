@@ -17,6 +17,7 @@ const sprintroutes = require('./routes/sprintroutes');
 const userstoryroutes = require('./routes/userstoryroutes');
 const gitRoutes = require('./github/gitRoutes');
 const gitauthroutes = require('./github/authroutes');
+const { getChatHistory, sendMessage } = require("./sockets/socketcontroller");
 
 //middlewares
 app.use(express.json({ limit: '2mb' }));
@@ -48,7 +49,6 @@ app.use('/api/userstories', userstoryroutes);
 //entry for the website
 app.use(express.static(path.join(__dirname, "website")));
 app.get("/home", (request, response) => {
-    console.log(request.url)
     response.sendFile(path.join(__dirname, "website/index.html"));
 });
 
@@ -59,7 +59,15 @@ app.get("/*", (request, response) => {
 });
 
 //sockets
-io.on('connection', (socket) => console.log('new connection established'));
+io.on('connection', (socket) => {
+    socket.on('getChatHistory', (chatGroup) => {
+        getChatHistory(socket, chatGroup);
+    });
+
+    socket.on('sendMessage', (message) => {
+        sendMessage(socket, message, io);
+    });
+});
 
 //mongo db connection
 mongoose.connect(db_connection, { useNewUrlParser: true, useUnifiedTopology: true });

@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import io from "socket.io-client";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { Input, Icon, IconButton, ButtonToolbar } from 'rsuite';
 import chatSvg from '../../assets/chat.svg';
+const CURRENT_USER = sessionStorage.getItem('sprintCompassUser');
+
 function CollaborateSection2(props) {
-    const [msg, setMsg] = useState("");
+    const [message, setmessage] = useState("");
 
-    useEffect(() => {
-        serverConnect();
-    }, []);
-
-    const serverConnect = () => {
-        try {
-            const socket = io.connect(process.env.REACT_APP_SOCKET, {
-                forceNew: true,
-                transports: ["websocket"],
-            });
-            socket.on("connect", () =>
-                console.log(`Is this client is connected? - ${socket.connected}`)
-            );
-        } catch (err) {
-            setMsg("client connection failed");
-        }
+    let fetchMoreData = () => {
+        // setTimeout(() => {
+        //     setitems(items.concat(Array.from({ length: 20 })))
+        // }, 1500);
     };
+
+    let sendMessage = () => {
+        props.socket.emit("sendMessage", {
+            "author": CURRENT_USER,
+            "group_id": props.selectedChatGroup._id,
+            "content": message
+        });
+        setmessage("");
+    }
+
     return (
         <>
             {
@@ -37,32 +37,42 @@ function CollaborateSection2(props) {
                     </> :
                     <>
                         <section className="chat__section">
-                            <section className="chat__area">
-                                <MessageComponent
-                                    content="Hello Dan"
-                                    isAuthor={true}
-                                />
-                                <MessageComponent
-                                    content="Hello there, How are you?"
-                                    isAuthor={false}
-                                />
-                                <MessageComponent
-                                    content="Not bad, what are you up to?"
-                                    isAuthor={true}
-                                />
-                                <MessageComponent
-                                    content="Just watching footbal. How about you?"
-                                    isAuthor={false}
-                                />
-                                <MessageComponent
-                                    content="Doing home work, so boring"
-                                    isAuthor={true}
-                                />
-
+                            <section
+                                className="scrollable"
+                                id="scrollableDiv"
+                                style={{
+                                    height: '87%',
+                                    overflow: 'auto',
+                                    display: 'flex',
+                                    flexDirection: 'column-reverse'
+                                }}
+                            >
+                                {/*Put the scroll bar always on the bottom*/}
+                                <InfiniteScroll
+                                    dataLength={props.chatHistory.length}
+                                    next={fetchMoreData}
+                                    style={{ display: 'flex', flexDirection: 'column-reverse' }} //To put endMessage and loader to the top.
+                                    inverse={true}
+                                    hasMore={false}
+                                    loader={<h5>Loading...</h5>}
+                                    scrollableTarget="scrollableDiv"
+                                >
+                                    {props.chatHistory.map((ch, i) => (
+                                        <MessageComponent
+                                            key={i}
+                                            message={ch}
+                                        />
+                                    ))}
+                                </InfiniteScroll>
                             </section>
                             <section className="chat__send">
                                 <Input
                                     placeholder="Enter your message here"
+                                    value={message}
+                                    onChange={(val, e) => {
+                                        setmessage(val)
+                                    }}
+                                    onPressEnter={() => sendMessage()}
                                     style={{ width: '80%', height: '45px', border: '1px solid #d4d4d4' }}
                                 />
                                 <ButtonToolbar>
@@ -75,6 +85,7 @@ function CollaborateSection2(props) {
                                             />
                                         }
                                         placement="right"
+                                        onClick={() => sendMessage()}
                                     >
                                         Send
                                     </IconButton>
@@ -89,7 +100,9 @@ function CollaborateSection2(props) {
 
 export default CollaborateSection2;
 
-function MessageComponent({ content, isAuthor }) {
+function MessageComponent({ message }) {
+    let { author, content } = message;
+    let isAuthor = author._id === CURRENT_USER;
     return (
         <section
             className="msg__component"
@@ -97,7 +110,7 @@ function MessageComponent({ content, isAuthor }) {
         >
             <div>
                 <img
-                    src="https://avatars.githubusercontent.com/u/38032299?v=4"
+                    src={author.git_avatar}
                     alt="profilepic"
                 />
             </div>
@@ -113,4 +126,3 @@ function MessageComponent({ content, isAuthor }) {
         </section>
     )
 }
-

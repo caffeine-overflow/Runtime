@@ -88,9 +88,6 @@
 .chat__section__empty > div > img {
   width: 90%;
 }
-.chat__area {
-  height: 85%;
-}
 .chat__send {
   padding: 10px 20px;
   height: 10%;

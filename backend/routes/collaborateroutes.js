@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { ChatGroup } = require("../models/chatGroup.js");
-const { User } = require("../models/user.js");
 const authroutes = require("./authroutes");
 const errorHandler = require('../utils/errorhandler');
 

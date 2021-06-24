@@ -248,9 +248,12 @@ router.post("/create", authroutes.authAdmin, async (req, res, next) => {
 			}
 			else {
 				//*create chatgroups for the user
-				let users = await User.find();
+				let users = await User.find({ client_id: newUser.client_id });
+
 				for (let i = 0; i < users.length; i++) {
-					if (newUser._id === users[i]._id) continue;
+					if (JSON.stringify(newUser._id) === JSON.stringify(users[i]._id)) {
+						continue;
+					}
 					const chatGroup = await new ChatGroup({
 						users: [newUser._id, users[i]._id],
 						last_msg_timestamp: '1970/1/1 00:00:00'
