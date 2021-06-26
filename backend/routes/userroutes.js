@@ -256,6 +256,7 @@ router.post("/create", authroutes.authAdmin, async (req, res, next) => {
 					}
 					const chatGroup = await new ChatGroup({
 						users: [newUser._id, users[i]._id],
+						seen_by: [newUser._id, users[i]._id],
 						last_msg_timestamp: '1970/1/1 00:00:00'
 					}).save();
 				}

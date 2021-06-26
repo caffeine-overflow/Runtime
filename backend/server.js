@@ -17,7 +17,7 @@ const sprintroutes = require('./routes/sprintroutes');
 const userstoryroutes = require('./routes/userstoryroutes');
 const gitRoutes = require('./github/gitRoutes');
 const gitauthroutes = require('./github/authroutes');
-const { getChatHistory, sendMessage } = require("./sockets/socketcontroller");
+const { getChatHistory, sendMessage, onMessageSeen, getChatGroups } = require("./sockets/socketcontroller");
 
 //middlewares
 app.use(express.json({ limit: '2mb' }));
@@ -60,12 +60,21 @@ app.get("/*", (request, response) => {
 
 //sockets
 io.on('connection', (socket) => {
-    socket.on('getChatHistory', (chatGroup) => {
-        getChatHistory(socket, chatGroup);
+
+    socket.on('getChatGroups', (user_id) => {
+        getChatGroups(socket, user_id);
+    });
+
+    socket.on('getChatHistory', (data) => {
+        getChatHistory(socket, data);
     });
 
     socket.on('sendMessage', (message) => {
         sendMessage(socket, message, io);
+    });
+
+    socket.on('msg_seen', ({ chatGroup, user_id }) => {
+        onMessageSeen(socket, chatGroup, user_id);
     });
 });
 
