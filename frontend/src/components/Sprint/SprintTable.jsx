@@ -149,6 +149,27 @@ function Sprint(props) {
 
     const updateUserStory = async () => {
         let body = {};
+        let est = {hours: estimatedHours, minutes: estimatedMinutes}
+        let time = {hours: timeSpentHours, minutes: timeSpentMinuts}
+        /*Checks if new estimate time is less than the original*/
+        if (parseInt(estimatedHours) <= parseInt(selectedUserStory.estimated_time.split(',')[0])) {
+            setestimatedHours(selectedUserStory.estimated_time.split(',')[0])
+            est.hours = selectedUserStory.estimated_time.split(',')[0]
+            if (parseInt(estimatedMinutes) <= parseInt(selectedUserStory.estimated_time.split(',')[1])) {
+                setestimatedMinutes(selectedUserStory.estimated_time.split(',')[1])
+                est.minutes = selectedUserStory.estimated_time.split(',')[1]
+            }
+        }
+
+        /*Checks if new time spent is less than the original*/
+        if (parseInt(timeSpentHours) <= parseInt(selectedUserStory.time_spent.split(',')[0])) {
+            settimeSpentHours(selectedUserStory.time_spent.split(',')[0])
+            time.hours = selectedUserStory.time_spent.split(',')[0]
+            if (parseInt(timeSpentMinuts) <= parseInt(selectedUserStory.time_spent.split(',')[1])) {
+                settimeSpentMinuts(selectedUserStory.time_spent.split(',')[1])
+                time.minutes = selectedUserStory.time_spent.split(',')[1]
+            }
+        }
 
         /*checking what has changed*/
 
@@ -168,18 +189,18 @@ function Sprint(props) {
         }
 
         //checking if estimated time has changed
-        if (estimatedHours !== selectedUserStory.estimated_time.split(',')[0] ||
-            estimatedMinutes !== selectedUserStory.estimated_time.split(',')[1]
+        if (est.hours !== selectedUserStory.estimated_time.split(',')[0] ||
+            est.minutes !== selectedUserStory.estimated_time.split(',')[1]
         ) {
-            body['estimated_time'] = `${estimatedHours},${estimatedMinutes}`;
+            body['estimated_time'] = `${est.hours},${est.minutes}`;
         }
 
         //checking if timespent has changed
-        if (timeSpentHours !== selectedUserStory.time_spent?.split(',')[0] ||
-            timeSpentMinuts !== selectedUserStory.time_spent?.split(',')[1]
+        if (time.hours !== selectedUserStory.time_spent?.split(',')[0] ||
+            time.minutes !== selectedUserStory.time_spent?.split(',')[1]
         ) {
-            if (timeSpentHours !== "0" || timeSpentMinuts !== "0") {
-                body['time_spent'] = `${timeSpentHours},${timeSpentMinuts}`;
+            if (time.hours !== "0" || time.minutes !== "0") {
+                body['time_spent'] = `${time.hours},${time.minutes}`;
             }
         }
 
@@ -254,6 +275,7 @@ function Sprint(props) {
     useEffect(() => {
         getUserStories();
         getGitBranches();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -460,7 +482,7 @@ function Sprint(props) {
                                             <InputNumber
                                                 style={{ width: 150, marginRight: 10 }}
                                                 postfix="Hour(s)"
-                                                min={0}
+                                                min={parseInt(selectedUserStory.estimated_time?.split(',')[0])}
                                                 max={50}
                                                 value={estimatedHours ?? 0}
                                                 onChange={(val) => setestimatedHours(val)}
@@ -468,7 +490,7 @@ function Sprint(props) {
                                             <InputNumber
                                                 postfix="Minute(s)"
                                                 style={{ width: 150 }}
-                                                min={0}
+                                                min={parseInt(estimatedHours) <= parseInt(selectedUserStory.estimated_time?.split(',')[0]) ? parseInt(selectedUserStory.estimated_time?.split(',')[1]) : 0}
                                                 max={59}
                                                 value={estimatedMinutes ?? 0}
                                                 onChange={(val) => setestimatedMinutes(val)}
@@ -480,7 +502,7 @@ function Sprint(props) {
                                             <InputNumber
                                                 style={{ width: 150, marginRight: 10 }}
                                                 postfix="Hour(s)"
-                                                min={0}
+                                                min={parseInt(selectedUserStory.time_spent?.split(',')[0])}
                                                 max={50}
                                                 value={timeSpentHours ?? 0}
                                                 onChange={(val) => settimeSpentHours(val)}
@@ -488,7 +510,7 @@ function Sprint(props) {
                                             <InputNumber
                                                 postfix="Minute(s)"
                                                 style={{ width: 150 }}
-                                                min={0}
+                                                min={parseInt(timeSpentHours) <= parseInt(selectedUserStory.time_spent?.split(',')[0]) ? parseInt(selectedUserStory.time_spent?.split(',')[1]) : 0}
                                                 max={59}
                                                 value={timeSpentMinuts ?? 0}
                                                 onChange={(val) => settimeSpentMinuts(val)}
