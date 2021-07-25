@@ -162,12 +162,12 @@ function Sprint(props) {
         }
 
         /*Checks if new time spent is less than the original*/
-        if (parseInt(timeSpentHours) <= parseInt(selectedUserStory.time_spent.split(',')[0])) {
-            settimeSpentHours(selectedUserStory.time_spent.split(',')[0])
-            time.hours = selectedUserStory.time_spent.split(',')[0]
-            if (parseInt(timeSpentMinuts) <= parseInt(selectedUserStory.time_spent.split(',')[1])) {
-                settimeSpentMinuts(selectedUserStory.time_spent.split(',')[1])
-                time.minutes = selectedUserStory.time_spent.split(',')[1]
+        if (parseInt(timeSpentHours) <= parseInt(selectedUserStory.time_spent?.split(',')[0])) {
+            settimeSpentHours(selectedUserStory.time_spent?.split(',')[0])
+            time.hours = selectedUserStory.time_spent?.split(',')[0]
+            if (parseInt(timeSpentMinuts) <= parseInt(selectedUserStory.time_spent?.split(',')[1])) {
+                settimeSpentMinuts(selectedUserStory.time_spent?.split(',')[1])
+                time.minutes = selectedUserStory.time_spent?.split(',')[1]
             }
         }
 

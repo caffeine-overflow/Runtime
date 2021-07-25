@@ -20,7 +20,6 @@ export default function Editor(props) {
                 onChange={onChange}
                 toolbarConfig={toolbarConfig}
                 editorStyle={{ height: '95%' }}
-                autoFocus={true}
             />
         </div>
     )
