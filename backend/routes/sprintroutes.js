@@ -36,16 +36,17 @@ router.post("/", authroutes.authenticateToken, async (req, res,next) => {
 		if (current_sprint) {
 			current_sprint.is_done = true;
 			current_sprint.end_date = new Date().toLocaleString();
-
-			body.user_stories.forEach(async (task_detail) => {
-				let userstory = await UserStory.findById(task_detail.id);
+			//used old school for loop because, the map or foreach was behaving weird as async
+			for (const i in body.user_stories) {
+				task_detail = body.user_stories[i]
+				let userstory = await UserStory.findById(task_detail._id);
 				for (const property in task_detail) {
 					if (property == "_id") continue;
 					let new_value = task_detail[property];
 					let old_value = userstory[property];
 					if (property == "moveto_backlog") {
-						new_value = task_detail["moveto_backlog"] ? null : sprint.name;
-						old_value = current_sprint.name;
+						new_value = task_detail["moveto_backlog"] ? null : `${sprint._id},${sprint.name}`;
+						old_value = `${current_sprint._id},${current_sprint.name}`
 					}
 					const userStoryHistory = await new UserStoryHistory({
 						sprint_id: current_sprint._id,
@@ -64,9 +65,10 @@ router.post("/", authroutes.authenticateToken, async (req, res,next) => {
 				if (task_detail["moveto_backlog"]) {
 					userstory.state = "To Do";
 				}
-				userstory.save();
-			});
-			current_sprint.save();
+				await userstory.save()
+				history = []
+			};
+			await current_sprint.save();
 		}
 		sprint
 			.save()

@@ -82,7 +82,7 @@ export default function SprintForm(props) {
         let user_stories = [];
         userStoriesDone.forEach(u => {
             user_stories.push({
-                'id': u.id,
+                '_id': u.id,
                 'estimated_time': `${u.hours},${u.mins}`,
                 'moveto_backlog': u.moveto_backlog
             });

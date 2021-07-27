@@ -214,6 +214,7 @@ function Sprint(props) {
         }
 
         body['_id'] = selectedUserStory._id;
+        body['current_sprint'] = props.sprint._id;
         let message = 'User Story Has Been Updated';
         let _body = body;
 
@@ -254,7 +255,7 @@ function Sprint(props) {
                 returnContent = `Moved task to backlog.`
 
             else if (history.attribute === "sprint_id")
-                returnContent = `Moved task to sprint ${history.new_value}`
+                returnContent = `Moved task to sprint ${history.new_value.slice(history.new_value.indexOf(',') + 1)}`
 
             let user = props.collaborators.find(element => element._id === history.updated_by);
 

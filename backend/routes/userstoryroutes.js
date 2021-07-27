@@ -147,7 +147,7 @@ router.put(
             let userstory = await UserStory.findOne({ _id: body._id }).populate("sprint_id");
 
             for (const property in body) {
-                if (property == '_id') continue;
+                if (property === '_id' || property === 'current_sprint') continue;
                 let new_value = body[property];
                 let old_value = null;
                 if (property == "sprint_id") {
@@ -156,10 +156,10 @@ router.put(
                 }
                 else if (property == "moveto_backlog") {
                     new_value = null;
-                    old_value = userstory.sprint_id.name;
+                    old_value = userstory.sprint_id._id;
                 }
                 const userStoryHistory = await new UserStoryHistory({
-                    sprint_id: !userstory.sprint_id ? null : userstory.sprint_id._id,
+                    sprint_id: body['current_sprint'],
                     attribute: property,
                     old_value: old_value ? old_value : userstory[property],
                     new_value: new_value,
