@@ -4,6 +4,7 @@ import { Button, FlexboxGrid, PanelGroup, Panel } from 'rsuite';
 import NotFound from "../NotFound";
 import NoBacklog from "../../assets/nobacklog.svg";
 import utils from "../../utility/utils"
+import Editor from "../utilitycomponents/Editor";
 
 
 export default function Backlog(props) {
@@ -58,11 +59,10 @@ export default function Backlog(props) {
                                                     >
                                                         {b.title}
                                                     </div>
-                                                    <div
-                                                        style={{ padding: '20px', background: '#f5f5f5', height: '250px', overflowY: 'auto' }}
-                                                    >
-                                                        {b.description}
-                                                    </div>
+                                                    <Editor
+                                                        disabled={true}
+                                                        value={b.description}
+                                                    />
                                                 </div>
                                             </FlexboxGrid.Item>
                                             <FlexboxGrid.Item colspan={12} style={{ height: '300px' }}>

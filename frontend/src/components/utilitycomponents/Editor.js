@@ -19,7 +19,8 @@ export default function Editor(props) {
                 value={value}
                 onChange={onChange}
                 toolbarConfig={toolbarConfig}
-                editorStyle={{ height: '95%' }}
+                disabled={props.disabled}
+				editorStyle={{ height: props.disabled ? "100%" : "95%", marginTop: props.disabled ? "-10%" : "" }}
             />
         </div>
     )
