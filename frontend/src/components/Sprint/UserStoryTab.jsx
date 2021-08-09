@@ -280,8 +280,9 @@ function UserStoryTab(props) {
                 >
                     <Timeline endless className="custom-timeline" >
                         {
-                            props.history.map(h => {
+                            props.history.map((h,i) => {
                                 return <Timeline.Item
+                                    key = {i}
                                     dot={
                                         <Icon
                                             icon="check"
