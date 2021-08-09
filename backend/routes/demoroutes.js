@@ -69,7 +69,7 @@ let fillDefault = async (user) => {
         name: 'Demo Sprint',
         description: 'This is a Demo Sprint for Trial. You can create a new Sprint by clicking on "Create New Sprint" or view the sprint by clicking on "Active Sprint" on the left side of the screen',
         is_done: false,
-        created_by: user.id,
+        created_by: user._id,
         project_id: project._id,
     }).save();
     
@@ -77,7 +77,7 @@ let fillDefault = async (user) => {
         sprint_id: sprint._id,
         attribute: "user_story",
         new_value: "created",
-        updated_by: user.id,
+        updated_by: user._id,
         timestamp: new Date().toLocaleString(),
     }).save();
 
@@ -86,7 +86,7 @@ let fillDefault = async (user) => {
         title: 'Demo User Story',
         description: 'This is a Trial User Story. You can create a new user Story by clicking on "Create User Story" on the left side of the screen',
         created_at: new Date().toLocaleString(),
-        created_by: user.id,
+        created_by: user._id,
         assigned_to: null,
         estimated_time: '5,0',
         time_spent: null,
