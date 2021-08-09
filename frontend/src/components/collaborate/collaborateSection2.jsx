@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Input, Icon, IconButton, ButtonToolbar } from 'rsuite';
 import chatSvg from '../../assets/chat.svg';

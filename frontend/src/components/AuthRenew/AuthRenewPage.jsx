@@ -138,6 +138,7 @@ export default function AuthRenewPage(props) {
         if (step === 3 && user?.role === 'owner' && organizations.length === 0) {
             getOrganizations();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [step, user]);
 
     useEffect(() => {

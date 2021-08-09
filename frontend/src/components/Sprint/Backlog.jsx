@@ -35,6 +35,7 @@ export default function Backlog(props) {
 
     useEffect(() => {
         getBacklogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

@@ -15,6 +15,7 @@ export default function SprintForm(props) {
     useEffect(() => {
         if (!!props.acitveSprint)
             getUserStoriesDone();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getUserStoriesDone = async () => {

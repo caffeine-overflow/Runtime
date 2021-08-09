@@ -24,6 +24,7 @@ export default function Profile(props) {
 
     const [currentPassord, setcurrentPassord] = useState("");
     const [newpassword, setnewpassword] = useState("");
+    // eslint-disable-next-line no-unused-vars
     const [confirmPassword, setconfirmPassword] = useState("");
 
     const resizeFile = (file) =>

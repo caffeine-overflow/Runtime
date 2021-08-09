@@ -28,6 +28,7 @@ function CollaborateHome() {
 
         //*get the chat history of a chat group
         selectedChatGroup && socket.emit("getChatHistory", { "chatGroup": selectedChatGroup._id, 'user_id': CURRENT_USER });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChatGroup]);
 
     useEffect(() => {

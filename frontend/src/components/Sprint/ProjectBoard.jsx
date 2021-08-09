@@ -40,6 +40,7 @@ function ProjectBoard() {
     const [collaborators, setcollaborators] = useState([]);
     const [membersNotIn, setMembersNotIn] = useState([]);
     const [project, setproject] = useState(null);
+    // eslint-disable-next-line no-unused-vars
     const [sprints, setsprints] = useState([]);
 
     const [homeToggle, setHomeToggle] = useState(true);
@@ -94,6 +95,7 @@ function ProjectBoard() {
     useEffect(() => {
         getSprints();
         getProjectById();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

@@ -29,6 +29,7 @@ function SprintHome(props) {
 
 	useEffect(() => {
 		getRepo();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

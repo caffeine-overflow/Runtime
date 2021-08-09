@@ -6,6 +6,7 @@ export default function Editor(props) {
 
     useEffect(() => {
         setvalue(RichTextEditor.createValueFromString(props.value, 'html'))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onChange = (value) => {
