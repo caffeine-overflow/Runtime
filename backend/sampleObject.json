@@ -1,0 +1,30 @@
+{
+    "sprint_report": {
+        "_id": 123456789,
+        "start_date": "----/--/--",
+        "end_date": "----/--/--",
+        "total_logged_hours": "10,5",
+        "total_estimated_hours": "10,5",
+        "completed_userstories": [
+            "UserStoryObjects"
+        ],
+        "Incomplete_UserStories": [],
+        "User_Hours": [
+            {
+                "Name": "user_name",
+                "Avatar": "useravatar",
+                "total_hours_worked": "3,30",
+                "total_user_stories_worked": 2
+            },
+            {}
+        ]
+    },
+    "project_report": {
+        "Start_Date": "----/--/--",
+        "sprints": [],
+        "backlogs": [],
+        "user_hours": [],
+        "total_logged_hours": "10,5",
+        "total_estimated_hours": "10,5"
+    }
+}
