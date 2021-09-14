@@ -2,10 +2,13 @@ const express = require("express");
 const router = express.Router();
 const { Project } = require("../models/project.js");
 const { User } = require("../models/user.js");
+const { Sprint } = require("../models/sprint.js");
+const { UserStory } = require("../models/userstory.js");
 const authroutes = require("./authroutes");
 const mongoose = require("mongoose");
 const { createRepo, getAllRepo, addMember, removeMember, getAllMembers } = require("../github/gitUtils");
 const errorHandler = require('../utils/errorhandler');
+const sprint = require("../models/sprint.js");
 
 router.get("/", authroutes.authenticateToken, async (req, res, next) => {
 	try {
@@ -29,6 +32,53 @@ router.get("/members/:project_id", authroutes.authenticateToken, async (req, res
 		membersIn.forEach(user => user.password = undefined)
 		membersNotIn.forEach(user => user.password = undefined)
 		return res.status(200).send({ membersIn, membersNotIn });
+	} catch (err) {
+		next(errorHandler(err, req, 500));
+	}
+});
+
+router.get("/report/:project_id", authroutes.authenticateToken, async (req, res, next) => {
+	try {
+		let project = await Project.findById(req.params.project_id).populate("project_lead");
+		let owner = await User.findOne({ client_id: req.user.client_id._id, role: 'owner' });
+		let members = await getAllMembers(owner.git_token, req.user.client_id.organization, project.repo);
+		let membersIn = await User.find({ client_id: req.user.client_id._id, git_username: { $in: members } });
+		let sprints = await Sprint.find({ project_id: req.params.project_id }).populate("created_by");
+		let userStories = await UserStory.find({ project_id: req.params.project_id }).populate("created_by");
+		let backlogs = userStories.filter(userstory => userstory.sprint_id === null)
+		project._doc.doneStories = userStories.filter(userstory => userstory.state === "Done").length
+		project._doc.testingStories = userStories.filter(userstory => userstory.state === "Testing").length
+		project._doc.inProgressStories = userStories.filter(userstory => userstory.state === "In Progress").length
+		project._doc.toDoStories = userStories.filter(userstory => userstory.state === "To Do").length
+		project._doc.unassignedStories = userStories.filter(userstory => userstory.assigned_to === null).length
+		sprints.forEach(sprint => sprint._doc.userStories = userStories.filter(userstory => userstory.sprint_id?.equals(sprint._id)))
+	
+		let timeSpent = { minutes: 0, hours: 0 }
+		let timeEstimate = {minutes: 0, hours: 0}
+		for (i in userStories) {
+			let te = userStories[i].estimated_time.split(',')
+			timeEstimate.hours += parseInt(te[0])
+			timeEstimate.minutes += parseInt(te[1])
+			if (userStories[i].time_spent) {
+				let ts = userStories[i].time_spent.split(',')
+				timeSpent.hours += parseInt(ts[0])
+				timeSpent.minutes += parseInt(ts[1])
+			}
+		}
+
+
+		timeSpent.hours += timeSpent.minutes / 60
+		timeSpent.minutes = timeSpent.minutes % 60
+		timeEstimate.hours += timeSpent.minutes / 60
+		timeEstimate.minutes = timeSpent.minutes % 60
+
+		membersIn.forEach(user => user.password = undefined)
+		project._doc.members = membersIn
+		project._doc.sprints = sprints;
+		project._doc.backlogs = backlogs;
+		project._doc.total_estimated_time = timeEstimate;
+		project._doc.total_logged_time = timeSpent;
+		return res.status(200).send({ project });
 	} catch (err) {
 		next(errorHandler(err, req, 500));
 	}
