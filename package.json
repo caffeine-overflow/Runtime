@@ -6,8 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "npm install && cd backend && node server.js",
-    "react": "cd ../frontend && npm start",
-    "dev": "concurrently \"nodemon server.js\" \"npm run react\" "
+    "react": "cd ./frontend && npm start",
+    "node": "cd ./backend && nodemon server.js",
+    "dev": "concurrently \"npm run node\" \"npm run react\" "
   },
   "author": "Danish Davis, Pabin Gyawali",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "mongodb": "^3.6.4",
     "mongoose": "^5.11.15",
     "nodemailer": "^6.6.0",
+    "socket.io": "^2.3.0",
     "superagent": "^6.1.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5",
