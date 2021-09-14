@@ -28,7 +28,7 @@ function CollaborateHome() {
 
         //*get the chat history of a chat group
         selectedChatGroup && socket.emit("getChatHistory", { "chatGroup": selectedChatGroup._id, 'user_id': CURRENT_USER });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChatGroup]);
 
     useEffect(() => {
@@ -101,9 +101,15 @@ function CollaborateHome() {
                         socket={socket}
                     />
                 </section>
-                <section className='ch__3'>
-                    <CollaborateSection3 />
-                </section>
+                {
+                    selectedChatGroup &&
+                    <section className='ch__3'>
+                        <CollaborateSection3
+                            currentuser={currentuser}
+                            selectedChatGroup={selectedChatGroup}
+                        />
+                    </section>
+                }
             </section>
         </>
     )

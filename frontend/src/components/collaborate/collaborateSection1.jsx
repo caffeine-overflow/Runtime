@@ -2,7 +2,6 @@ import React from 'react';
 import ProfilePlaceHolder from '../../assets/profile.jpg';
 
 function CollaborateSection1(props) {
-
     return (
         <>
             <section className="ch__profile">

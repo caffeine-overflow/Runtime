@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import {
-    Icon, IconButton, Drawer, Button, Schema,
+    Icon, Drawer, Button, Schema,
     Form, FormControl, FormGroup, ControlLabel
 } from 'rsuite';
 import ImageUploader from 'react-images-upload';
@@ -58,26 +58,26 @@ export default function Profile(props) {
         if (status) {
             setloading(true);
             setopenDrawer(false);
-            let body = { [changeAttribute.toLowerCase()]: user[changeAttribute.toLowerCase()]}
+            let body = { [changeAttribute.toLowerCase()]: user[changeAttribute.toLowerCase()] }
             let message = `${changeAttribute} Has Been Updated`;
-            await util.UPDATE_DATA(`api/users`, body,message);
+            await util.UPDATE_DATA(`api/users`, body, message);
             setChangeAttribute(null);
             getUserData(id);
             setloading(false);
             setvalidImage(false);
         }
     }
-    
+
     const changePassword = async (status) => {
         if (status) {
 
-        let message = `Password Has Been Updated`;
-        let body ={
-                    old_password: currentPassord,
-                    new_password: newpassword
-                }
-            await util.UPDATE_DATA(`api/users/change_password`, body,message);
-             
+            let message = `Password Has Been Updated`;
+            let body = {
+                old_password: currentPassord,
+                new_password: newpassword
+            }
+            await util.UPDATE_DATA(`api/users/change_password`, body, message);
+
             setopenDrawer(false);
             setChangeAttribute(null);
             getUserData(id);
@@ -176,7 +176,7 @@ export default function Profile(props) {
                                                 }}
                                             >
                                                 change
-                                         </span>
+                                            </span>
                                         }
                                     </div>
                                 </div>
@@ -226,23 +226,6 @@ export default function Profile(props) {
                                     Change Password
                                 </div>
                             )}
-                            <IconButton
-                                style={{
-                                    width: '250px',
-                                    margin: '30px 0',
-                                    background: '#134069',
-                                    color: '#f5f5f5',
-                                }}
-                                icon={
-                                    <Icon
-                                        style={{ background: '#486b8c', color: '#f5f5f5' }}
-                                        icon='send'
-                                    />
-                                }
-                                placement='left'
-                            >
-                                Send Message
-                            </IconButton>
                         </section>
                     </section>
 

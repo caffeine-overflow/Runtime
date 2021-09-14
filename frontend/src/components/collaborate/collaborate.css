@@ -12,11 +12,10 @@
   width: 360px;
 }
 .ch__2 {
-  width: 850px;
+  flex: 1 1 auto;
 }
 .ch__3 {
-  flex: 1 1 auto;
-  background: indigo;
+  width: 360px;
 }
 
 /* section1 */
@@ -86,7 +85,10 @@
   width: 100%;
 }
 .chat__section__empty > div > img {
-  width: 90%;
+  width: 70%;
+  max-width: 800px;
+  display: block;
+  margin: auto;
 }
 .chat__send {
   padding: 10px 20px;
