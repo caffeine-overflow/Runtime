@@ -111,7 +111,7 @@ router.post("/", authroutes.authenticateToken, async (req, res, next) => {
             identifier: identifier,
             title: body.title,
             description: body.description,
-            created_at: new Date().toLocaleString(),
+            created_at: `${new Date().toLocaleDateString('en-CA')} ${new Date().toLocaleTimeString('en-CA')}`,
             created_by: req.user.id,
             assigned_to: body.assigned_to,
             estimated_time: body.estimated_time,

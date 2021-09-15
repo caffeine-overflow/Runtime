@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
-import { Button, FlexboxGrid, PanelGroup, Panel } from 'rsuite';
+import { Table, IconButton, Icon } from 'rsuite';
 import NotFound from "../NotFound";
 import NoBacklog from "../../assets/nobacklog.svg";
 import utils from "../../utility/utils"
@@ -11,6 +11,27 @@ export default function Backlog(props) {
 
     const [backlogs, setbacklogs] = useState([]);
     const [loading, setloading] = useState(false);
+
+    const [expandedRowKeys, setexpandedRowKeys] = useState([]);
+
+    const handleExpanded = (rowData, dataKey) => {
+        let open = false;
+        const nextExpandedRowKeys = [];
+
+        expandedRowKeys.forEach(key => {
+            if (key === rowData[rowKey]) {
+                open = true;
+            } else {
+                nextExpandedRowKeys.push(key);
+            }
+        });
+
+        if (!open) {
+            nextExpandedRowKeys.push(rowData[rowKey]);
+        }
+
+        setexpandedRowKeys(nextExpandedRowKeys);
+    }
 
     const getBacklogs = async () => {
         setloading(true);
@@ -35,7 +56,7 @@ export default function Backlog(props) {
 
     useEffect(() => {
         getBacklogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
@@ -47,43 +68,107 @@ export default function Backlog(props) {
                         msg="So empty!"
                     />
                     :
-                    <div style={{ margin: '50px auto', width: '80%' }}>
-                        <PanelGroup accordion defaultActiveKey={null} bordered>
-                            {
-                                backlogs.map((b, i) => {
-                                    return <Panel key={i} header={b.title} eventKey={i + 1}>
-                                        <FlexboxGrid style={{ minHeight: '300px' }}>
-                                            <FlexboxGrid.Item colspan={12}>
-                                                <div>
-                                                    <div
-                                                        style={{ fontSize: '20px', fontWeight: 'bold', margin: '10px 0' }}
-                                                    >
-                                                        {b.title}
-                                                    </div>
-                                                    <Editor
-                                                        disabled={true}
-                                                        value={b.description}
-                                                    />
-                                                </div>
-                                            </FlexboxGrid.Item>
-                                            <FlexboxGrid.Item colspan={12} style={{ height: '300px' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                                                    <Button
-                                                        style={{ padding: '20px', color: '#f5f5f5', background: '#134069' }}
-                                                        disabled={!!!props.acitveSprint}
-                                                        onClick={() => moveToActiveSprint(b)}
-                                                    >
-                                                        Move To Active Sprint
-                                                    </Button>
-                                                </div>
-                                            </FlexboxGrid.Item>
-                                        </FlexboxGrid>
-                                    </Panel>
-                                })
-                            }
-                        </PanelGroup>
+                    <div style={{ margin: '50px' }}>
+                        <Table
+                            height={700}
+                            rowHeight={60}
+                            data={backlogs}
+                            rowKey={rowKey}
+                            expandedRowKeys={expandedRowKeys}
+                            rowExpandedHeight={400}
+                            renderRowExpanded={rowData => {
+                                return (
+                                    <Editor
+                                        disabled={true}
+                                        value={rowData.description}
+                                    />
+                                );
+                            }}
+                        >
+                            <Table.Column width={100} align="center">
+                                <Table.HeaderCell style={styles.header}>#</Table.HeaderCell>
+                                <ExpandCell
+                                    dataKey="id"
+                                    expandedRowKeys={expandedRowKeys}
+                                    onChange={handleExpanded}
+                                />
+                            </Table.Column>
+
+                            <Table.Column width={200}>
+                                <Table.HeaderCell style={styles.header}>Identifier</Table.HeaderCell>
+                                <Table.Cell dataKey="identifier" />
+                            </Table.Column>
+
+                            <Table.Column width={400}>
+                                <Table.HeaderCell style={styles.header}>Title</Table.HeaderCell>
+                                <Table.Cell dataKey="title" />
+                            </Table.Column>
+
+                            <Table.Column width={200}>
+                                <Table.HeaderCell style={styles.header}>Created On</Table.HeaderCell>
+                                <Table.Cell dataKey="created_at" />
+                            </Table.Column>
+
+                            <Table.Column width={250}>
+                                <Table.HeaderCell style={styles.header}>Created By</Table.HeaderCell>
+                                <Table.Cell>
+                                    {rowData => `${rowData.created_by.firstname} ${rowData.created_by.lastname}`}
+                                </Table.Cell>
+                            </Table.Column>
+
+                            <Table.Column width={200} fixed="right">
+                                <Table.HeaderCell style={styles.header}>Action</Table.HeaderCell>
+                                <Table.Cell>
+                                    {rowData => {
+                                        return (
+                                            <p
+                                                style={{ color: '#134069', textDecoration: 'underline', cursor: 'pointer' }}
+                                                onClick={() => {
+                                                    if (!!!props.acitveSprint) return;
+                                                    moveToActiveSprint(rowData);
+                                                }}
+                                            >
+                                                Move To Active Sprint
+                                            </p>
+                                        );
+                                    }}
+                                </Table.Cell>
+                            </Table.Column>
+
+                        </Table>
                     </div>
             }
         </div>
     )
 }
+
+const rowKey = 'identifier';
+const ExpandCell = ({ rowData, dataKey, expandedRowKeys, onChange, ...props }) => (
+    <Table.Cell {...props}>
+        <IconButton
+            size="lg"
+            appearance="link"
+            onClick={() => {
+                onChange(rowData);
+            }}
+            icon={
+                <Icon
+                    icon={
+                        expandedRowKeys.some(key => key === rowData[rowKey])
+                            ? 'minus-square-o'
+                            : 'plus-square-o'
+                    }
+                />
+            }
+        />
+    </Table.Cell>
+);
+
+const styles = {
+    header: {
+        color: 'black',
+    },
+    cell: {
+        color: 'black'
+    },
+};

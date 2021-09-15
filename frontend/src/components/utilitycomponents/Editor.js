@@ -6,7 +6,7 @@ export default function Editor(props) {
 
     useEffect(() => {
         setvalue(RichTextEditor.createValueFromString(props.value, 'html'))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onChange = (value) => {
@@ -21,7 +21,7 @@ export default function Editor(props) {
                 onChange={onChange}
                 toolbarConfig={toolbarConfig}
                 disabled={props.disabled}
-				editorStyle={{ height: props.disabled ? "100%" : "95%", marginTop: props.disabled ? "-10%" : "" }}
+                editorStyle={{ marginTop: props.disabled ? "-2%" : "" }}
             />
         </div>
     )
