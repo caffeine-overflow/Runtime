@@ -11,7 +11,7 @@ import CreateTicket from "../../assets/createTicket.svg";
 import SprintImg from "../../assets/sprint.svg";
 import NoActiveSprint from "../../assets/noactivesprint.svg";
 import Backlog from "./Backlog";
-import SprintHistory from "./SprintHistory";
+import ProjectOverview from "./ProjectOverview";
 import UserStoryForm from "./UserStoryForm";
 import SprintForm from "./SprintForm";
 import NotFound from "../NotFound";
@@ -48,7 +48,7 @@ function ProjectBoard() {
     const [createSprintToggle, setcreateSprintToggle] = useState(false);
     const [createUserStoryToggle, setcreateUserStoryToggle] = useState(false);
     const [viewBacklogToggle, setviewBacklogToggle] = useState(false);
-    const [sprintHistoryToggle, setsprintHistoryToggle] = useState(false);
+    const [projectOverviewToggle, setprojectOverviewToggle] = useState(false);
 
     const [expand, setexpand] = useState(true);
     const [acitveSprint, setActiveSprint] = useState(null);
@@ -82,7 +82,7 @@ function ProjectBoard() {
         setcreateUserStoryToggle(false);
         setcreateSprintToggle(false);
         setviewBacklogToggle(false);
-        setsprintHistoryToggle(false);
+        setprojectOverviewToggle(false);
         setHomeToggle(false);
 
         toggleFunction(true);
@@ -97,7 +97,7 @@ function ProjectBoard() {
     useEffect(() => {
         getSprints();
         getProjectById();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -171,22 +171,34 @@ function ProjectBoard() {
                                     <Dropdown
                                         eventKey="4"
                                         trigger="hover"
-                                        title="Advanced"
-                                        icon={<Icon icon="gear-circle" />}
+                                        title="Data Analytics"
+                                        icon={<Icon icon="charts" />}
                                         placement="rightStart"
                                     >
                                         <Dropdown.Item
                                             eventKey="4-1"
-                                            active={sprintHistoryToggle}
-                                            onClick={() => navbarToggleHandler(setsprintHistoryToggle)}
-                                            icon={<Icon icon="history" />}
+                                            active={projectOverviewToggle}
+                                            onClick={() => navbarToggleHandler(setprojectOverviewToggle)}
+                                            icon={<Icon icon="dashboard" />}
                                         >
-                                            Sprint History
+                                            Project Overview
                                         </Dropdown.Item>
-                                        <Dropdown.Item eventKey="4-2">Websites</Dropdown.Item>
-                                        <Dropdown.Item eventKey="4-3">Channels</Dropdown.Item>
-                                        <Dropdown.Item eventKey="4-4">Tags</Dropdown.Item>
-                                        <Dropdown.Item eventKey="4-5">Versions</Dropdown.Item>
+                                        <Dropdown.Item
+                                            eventKey="4-2"
+                                            // active={projectOverviewToggle}
+                                            // onClick={() => navbarToggleHandler(setprojectOverviewToggle)}
+                                            icon={<Icon icon="pie-chart" />}
+                                        >
+                                            Sprint Overview
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                            eventKey="4-2"
+                                            // active={projectOverviewToggle}
+                                            // onClick={() => navbarToggleHandler(setprojectOverviewToggle)}
+                                            icon={<Icon icon="file-pdf-o" />}
+                                        >
+                                            Reports
+                                        </Dropdown.Item>
                                     </Dropdown>
                                 </Nav>
                             </Sidenav.Body>
@@ -302,8 +314,8 @@ function ProjectBoard() {
                                 <Backlog project_id={url.split('/')[2]} acitveSprint={acitveSprint} />
                             }
                             {
-                                sprintHistoryToggle &&
-                                <SprintHistory />
+                                projectOverviewToggle &&
+                                <ProjectOverview />
                             }
                         </Content>
                     </Container>

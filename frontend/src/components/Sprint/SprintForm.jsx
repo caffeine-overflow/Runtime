@@ -15,7 +15,7 @@ export default function SprintForm(props) {
     useEffect(() => {
         if (!!props.acitveSprint)
             getUserStoriesDone();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getUserStoriesDone = async () => {
@@ -92,21 +92,21 @@ export default function SprintForm(props) {
         if (props.acitveSprint) {
             await generateReport();
         }
-        
-        let message = "Sprint Created Successfully";
-        let body = { 
-                    'name': title,
-                    'description': description,
-                    'project_id': props.project_id,
-                    'sprint_id': props.acitveSprint ? props.acitveSprint._id : null,
-                     user_stories
-                    };
 
-        const response = await utils.POST_DATA('api/sprints',body ,message);
+        let message = "Sprint Created Successfully";
+        let body = {
+            'name': title,
+            'description': description,
+            'project_id': props.project_id,
+            'sprint_id': props.acitveSprint ? props.acitveSprint._id : null,
+            user_stories
+        };
+
+        const response = await utils.POST_DATA('api/sprints', body, message);
         if (response.status === 200) {
             props.refresh();
         }
-       
+
     }
     return (
         <div>
