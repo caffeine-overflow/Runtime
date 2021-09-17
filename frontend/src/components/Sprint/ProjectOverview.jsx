@@ -1,4 +1,6 @@
-import React from 'react'
+import React from 'react';
+import ProjectOverviewBarChart from './ProjectOverviewBarChart';
+import TimeEstimationChart from './TimeEstimationChart';
 import './projectoverview.css';
 
 export default function ProjectOverview() {
@@ -27,10 +29,20 @@ export default function ProjectOverview() {
                             <div className="card__count">25</div>
                         </div>
                     </div>
+                    <div className="barchart__container">
+                        <ProjectOverviewBarChart />
+                    </div>
                 </div>
             </section>
             <section className="project__overview__section2">
-
+                <div className="estimation__chart">
+                    <div className="section2__header">Time Forecast</div>
+                    <TimeEstimationChart />
+                </div>
+                <div className="backlog__count__area">
+                    <div className="section2__header">Backlogs</div>
+                    <TimeEstimationChart />
+                </div>
             </section>
         </section>
     )

@@ -10,29 +10,23 @@
 
 .project__overview__section2 {
   flex: 1;
-  background: royalblue;
+  border-left: 1px solid #e6e6e6;
 }
 
 .po__banner {
   height: 25vh;
   width: 100%;
-  background: rgb(43, 76, 129);
-  background: radial-gradient(
-    circle,
-    rgba(43, 76, 129, 1) 45%,
-    rgba(31, 51, 83, 1) 100%
-  );
+  background: #e6e6e6;
 }
 
 .po__banner__header {
   padding: 50px;
   font-size: 23px;
   font-weight: 600;
-  color: #f5f5f5;
 }
 
 .po__overview__graph__section {
-  height: 60vh;
+  height: 57vh;
 }
 
 .po__graph__cards__container {
@@ -42,11 +36,28 @@
 }
 
 .po__graph__cards__container > div {
+  color: #f5f5f5;
   height: 150px;
   width: 20%;
-  background: #e7e9eb;
   text-align: center;
   border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
+}
+
+.po__graph__cards__container > div:first-child {
+  background: #ffa600;
+}
+
+.po__graph__cards__container > div:nth-child(2) {
+  background: #ff6361;
+}
+
+.po__graph__cards__container > div:nth-child(3) {
+  background: #bc5090;
+}
+
+.po__graph__cards__container > div:nth-child(4) {
+  background: #58508d;
 }
 
 .card__header {
@@ -56,5 +67,33 @@
 
 .card__count {
   font-size: 30px;
+  font-weight: 600;
+}
+
+.barchart__container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.backlog__count__area,
+.estimation__chart {
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.backlog__count__area {
+  background: #e6e6e6;
+}
+
+.section2__header {
+  margin-top: 20px;
+  margin-left: 10%;
+  width: 100%;
+  font-size: 18px;
   font-weight: 600;
 }
