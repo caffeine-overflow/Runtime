@@ -1,11 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { PieChart, Pie, Sector } from "recharts";
 
-const data = [
-    { name: "Spent", value: 400 },
-    { name: "Estimated", value: 300 }
-];
-
 const renderActiveShape = (props) => {
     const RADIAN = Math.PI / 180;
     const {
@@ -79,7 +74,7 @@ const renderActiveShape = (props) => {
     );
 };
 
-export default function App() {
+export default function App(props) {
     const [activeIndex, setActiveIndex] = useState(0);
     const onPieEnter = useCallback(
         (_, index) => {
@@ -87,17 +82,16 @@ export default function App() {
         },
         [setActiveIndex]
     );
-
     return (
-        <PieChart width={300} height={320}>
+        <PieChart width={500} height={320}>
             <Pie
                 activeIndex={activeIndex}
                 activeShape={renderActiveShape}
-                data={data}
-                cx={150}
+                data={props.data}
+                cx={250}
                 cy={150}
-                innerRadius={80}
-                outerRadius={110}
+                innerRadius={60}
+                outerRadius={90}
                 fill="#5885a5"
                 dataKey="value"
                 onMouseEnter={onPieEnter}

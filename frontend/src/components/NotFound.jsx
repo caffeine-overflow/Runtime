@@ -11,7 +11,7 @@ export default function NotFound(props) {
                         colspan={12}
                     >
                         <img
-                            style={{ width: '80%', display: 'block', margin: 'auto' }}
+                            style={{ width: '60%', display: 'block', margin: 'auto' }}
                             src={props.image}
                             alt=""
                         />
