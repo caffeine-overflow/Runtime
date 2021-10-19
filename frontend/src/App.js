@@ -22,21 +22,23 @@ import CollaborateHome from "./components/collaborate/collaborateHome";
 
 export default function App() {
   return (
-    <Router>
-      <Switch>
-        <Route path="/login" render={() => <Login />} />
-        <Route path="/runtime_demo" render={() => <Demo />} />
-        <Route path="/ResetPassword" render={() => <ResetPassword />} />
-        <PrivateRoute path="/myprojects" component={aaa} />
-        <PrivateRoute exact path="/projects" component={Projects} />
-        <PrivateRoute exact path="/project/:id" component={ProjectBoard} />
-        <PrivateRoute path="/profile" component={Profile} />
-        <PrivateRoute path="/admin" component={adminPage} />
-        <PrivateRoute path="/collaborate" component={CollaborateHome} />
-        <AuthRenewRoute path="/auth" component={AuthRenewPage} />
-      </Switch>
-    </Router>
-  )
+      <div style={{ minWidth: "1100px" }}>
+          <Router>
+              <Switch>
+                  <Route path="/login" render={() => <Login />} />
+                  <Route path="/runtime_demo" render={() => <Demo />} />
+                  <Route path="/ResetPassword" render={() => <ResetPassword />} />
+                  <PrivateRoute path="/myprojects" component={aaa} />
+                  <PrivateRoute exact path="/projects" component={Projects} />
+                  <PrivateRoute exact path="/project/:id" component={ProjectBoard} />
+                  <PrivateRoute path="/profile" component={Profile} />
+                  <PrivateRoute path="/admin" component={adminPage} />
+                  <PrivateRoute path="/collaborate" component={CollaborateHome} />
+                  <AuthRenewRoute path="/auth" component={AuthRenewPage} />
+              </Switch>
+          </Router>
+      </div>
+  );
 }
 
 let aaa = () => <div>rere</div>
