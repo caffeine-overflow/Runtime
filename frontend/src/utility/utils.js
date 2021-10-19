@@ -84,15 +84,15 @@ const showNotification = async (response, message) => {
     if (message !== "No Notification") {
         if (!response.ok) {
             Notification.error({
-                title: data.msg ?? 'Server error, Try again later',
-                description: <div style={{ width: 220 }} rows={3} />,
+                title: 'Error',
+                description: data.msg ?? 'Server error, Try again later',
                 placement: 'topEnd'
             });
         }
         else if (data.msg || (message && message.trim() !== "")) {
             Notification.success({
-                title: data.msg ?? message,
-                description: <div style={{ width: 220 }} rows={3} />,
+                title: 'Success',
+                description: data.msg ?? message,
                 placement: 'topEnd'
             })
         }
