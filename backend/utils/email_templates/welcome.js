@@ -100,7 +100,7 @@ const welcomeEmail = (name, email, password) => {
                                                         width="560" /><br><br>
                                                     <div class="mktEditable" id="main_text">
                                                         Hello ${name}, <br>
-                                                        You can login use the following credentials for your first login.
+                                                        You can use the following credentials for your first login.
                                                     </div><br>
                                                     <strong>Email:</strong> ${email}<br>
                                                     <strong> Password</strong>: ${password}<br><br>

@@ -43,6 +43,8 @@ export default CollaborateSection1;
 
 function UserItem({ user, chatGroup, selectedChatGroup, select, currentuserid }) {
 
+    if(!user) return <></>;
+
     //*logic to check if the user read the last message or not
     let unreadMsg = selectedChatGroup?._id !== chatGroup._id && !chatGroup.seen_by.find(u => u === currentuserid);
 

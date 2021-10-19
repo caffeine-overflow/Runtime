@@ -172,15 +172,15 @@ export default function AuthRenewPage(props) {
                         <div style={{ width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             {
                                 step === 0 &&
-                                <img style={{ maxWidth: '550px' }} src={PasswordRenewSvg} alt="passwordrenewimg" />
+                                <img style={{ maxWidth: '550px', width: '70%' }} src={PasswordRenewSvg} alt="passwordrenewimg" />
                             }
                             {
                                 step === 1 &&
-                                <img style={{ maxWidth: '550px' }} src={BioSvg} alt="profileimg" />
+                                <img style={{ maxWidth: '550px', width: '70%'}} src={BioSvg} alt="profileimg" />
                             }
                             {
                                 step === 2 &&
-                                <img style={{ maxWidth: '550px' }} src={Gitsvg} alt="gitimg" />
+                                <img style={{ maxWidth: '550px', width: '70%' }} src={Gitsvg} alt="gitimg" />
                             }
                             {
                                 step === 3 &&
