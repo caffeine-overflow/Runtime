@@ -36,7 +36,9 @@ function SprintHome(props) {
 		<>
 			<section style={{ display: "flex", height: "70vh" }}>
 				<section style={{ width: "50%", display: "flex", alignItems: "center" }}>
-					<img style={{ maxWidth: "700px", display: "block", margin: "auto" }} src={homeImg} alt="homeimg" />
+                    <div style={{ width: '100%' }}>
+                        <img style={{ maxWidth: "700px", display: "block", margin: "auto" }} src={homeImg} alt="homeimg" />
+                    </div>
 				</section>
 				{
 					(repo && props.membersIn && props.membersIn.length > 0) ?
