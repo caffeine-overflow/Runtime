@@ -24,6 +24,7 @@ li {
   justify-content: center;
   flex-wrap: wrap;
   height: 70vh;
+  position: relative;
 }
 
 .projectImageContainer,
@@ -167,4 +168,14 @@ li {
 
 .scrollable::-webkit-scrollbar-thumb {
   background-color: #8a8a8a;
+}
+
+.helper {
+  line-height: 1.3;
+  color: #2d2323;
+}
+
+.helper__text {
+  padding-top: 20px;
+  font-size: 17px;
 }

@@ -11,6 +11,7 @@ import {
 import '../App.css';
 import Navbar from './Navbar'
 import util from "../utility/utils";
+import Tour from 'reactour';
 
 const { StringType } = Schema.Types;
 
@@ -57,6 +58,7 @@ function Projects(props) {
     const [userProjects, setuserProjects] = useState([]);
     const [userRole, setUserRole] = useState([]);
     const [loading, setloading] = useState(false);
+    const [helpEnabled, setHelpEnabled] = useState(false);
 
     let getProjects = async () => {
         setloading(true);
@@ -90,6 +92,12 @@ function Projects(props) {
         <div>
             <Navbar />
             <section className="projectBannerContainer">
+                <Icon
+                    icon="help-o"
+                    size="2x"
+                    style={{ color: '#134069', position: 'absolute', right: 50, top: 20, cursor: 'pointer' }}
+                    onClick={() => setHelpEnabled(true)}
+                />
                 <div className="teamImageContainer">
                     <img
                         style={{ width: "80%", maxWidth: "600px" }}
@@ -138,7 +146,7 @@ function Projects(props) {
             }
             <div>
                 <div className="projectHomeHeader">Your Projects</div>
-                <List hover style={{ width: '80%', margin: 'auto' }}>
+                <List id="project__list" hover style={{ width: '80%', margin: 'auto' }}>
                     {userProjects.map((item, index) => (
                         <List.Item key={item._id} index={index}>
                             <FlexboxGrid>
@@ -225,7 +233,35 @@ function Projects(props) {
                     </div>
                 </Drawer.Body>
             </Drawer>
+            <Tour
+                steps={steps}
+                isOpen={helpEnabled}
+                rounded={5}
+                accentColor="#134069"
+                className="helper"
+                onRequestClose={() => setHelpEnabled(false)}
+            />
         </div>
     )
 }
+
+const steps = [
+    {
+        selector: '#project__link',
+        content: () => <div className="helper__text">You can access all your projects from here</div>
+    },
+    {
+        selector: '#collaborate__link',
+        content: () => <div className="helper__text">Collaborate with your teammates with a single click</div>
+    },
+    {
+        selector: '#account__dropdown',
+        content: () => <div className="helper__text">You can manage your account here</div>
+    },
+    {
+        selector: '#project__list',
+        content: () => <div className="helper__text">You can view all your projects here</div>,
+    }
+]
+
 export default withRouter(Projects);

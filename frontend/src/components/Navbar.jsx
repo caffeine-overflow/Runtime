@@ -14,13 +14,14 @@ const CustomNav = ({ active, onSelect, ...props }) => {
         <Nav {...props} activeKey={active} onSelect={onSelect}>
             <Nav.Item style={{ margin: '0 50px' }}>
                 <img
+                    id="logo__image"
                     style={{ marginTop: '10px' }}
                     src={Logo} alt="logo"
                     onClick={() => { window.open('/projects', '_self') }}
                 />
             </Nav.Item>
-            <Nav.Item className="navHeader" eventKey="projects">Projects</Nav.Item>
-            <Nav.Item className="navHeader" eventKey="collaborate">Collaborate</Nav.Item>
+            <Nav.Item className="navHeader" id="project__link" eventKey="projects">Projects</Nav.Item>
+            <Nav.Item className="navHeader" id="collaborate__link" eventKey="collaborate">Collaborate</Nav.Item>
             {(sessionStorage.getItem('sprintCompassUserRole') === "owner" || sessionStorage.getItem('sprintCompassUserRole') === "admin") && (
                 <Nav.Item className="navHeader" eventKey="admin">
                     Administrator
@@ -29,6 +30,7 @@ const CustomNav = ({ active, onSelect, ...props }) => {
             <Dropdown
                 style={{ float: 'right', marginRight: '30px' }}
                 className="navHeader"
+                id="account__dropdown"
                 title={sessionStorage.getItem('sprintCompassUserName')}>
                 <Dropdown.Item
                     onClick={() => window.open('/profile', '_self')}
