@@ -13,9 +13,10 @@ export default function SprintOverview(props) {
     let { url } = useRouteMatch();
 
     const getData = async () => {
-        const res = await utils.FETCH_DATA(`api/sprints/report/${props.currentSprint._id}`);
-        console.log(res.data)
-        setData(res.data);
+        if (props.currentSprint) {
+			const res = await utils.FETCH_DATA(`api/sprints/report/${props.currentSprint._id}`);
+			setData(res.data);
+		}
     }
 
     useEffect(() => {

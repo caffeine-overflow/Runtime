@@ -97,7 +97,7 @@ router.get("/report/:sprint_id", authroutes.authenticateToken, async (req, res, 
 		sprint._doc.inProgressStories = userStories.filter((userstory) => userstory.state === "In Progress").length;
 		sprint._doc.toDoStories = userStories.filter((userstory) => userstory.state === "To Do").length;
 		sprint._doc.unassignedStories = userStories.filter((userstory) => userstory.assigned_to === null).length;
-		let backlogs = await UserStory.find({ sprint_id: null }).populate("created_by");
+		let backlogs = await UserStory.find({ sprint_id: null, project_id: sprint.project_id }).populate("created_by");
 		let timeSpent = { minutes: 0, hours: 0 };
 		let timeEstimate = { minutes: 0, hours: 0 };
 		for (i in userStories) {
