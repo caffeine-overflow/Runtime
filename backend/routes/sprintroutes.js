@@ -83,8 +83,45 @@ router.post("/", authroutes.authenticateToken, async (req, res,next) => {
 	}
 });
 
-router.get("/generateReport", authroutes.authenticateToken, async (req, res) => {
-	//generate report here
-});
 
+router.get("/report/:sprint_id", authroutes.authenticateToken, async (req, res, next) => {
+	try {
+		let sprint = await Sprint.findById(req.params.sprint_id).populate("created_by");
+		let userStories = await UserStory.find({ sprint_id: sprint._id })
+			.populate("created_by")
+			.populate("parent_task")
+			.populate("assigned_to")
+			.populate({ path: "userstory_history", populate: "updated_by" });
+		sprint._doc.doneStories = userStories.filter((userstory) => userstory.state === "Done").length;
+		sprint._doc.testingStories = userStories.filter((userstory) => userstory.state === "Testing").length;
+		sprint._doc.inProgressStories = userStories.filter((userstory) => userstory.state === "In Progress").length;
+		sprint._doc.toDoStories = userStories.filter((userstory) => userstory.state === "To Do").length;
+		sprint._doc.unassignedStories = userStories.filter((userstory) => userstory.assigned_to === null).length;
+		let backlogs = await UserStory.find({ sprint_id: null }).populate("created_by");
+		let timeSpent = { minutes: 0, hours: 0 };
+		let timeEstimate = { minutes: 0, hours: 0 };
+		for (i in userStories) {
+			let te = userStories[i].estimated_time.split(",");
+			timeEstimate.hours += parseInt(te[0]);
+			timeEstimate.minutes += parseInt(te[1]);
+			if (userStories[i].time_spent) {
+				let ts = userStories[i].time_spent.split(",");
+				timeSpent.hours += parseInt(ts[0]);
+				timeSpent.minutes += parseInt(ts[1]);
+			}
+		}
+
+		timeSpent.hours += timeSpent.minutes / 60;
+		timeSpent.minutes = timeSpent.minutes % 60;
+		timeEstimate.hours += timeSpent.minutes / 60;
+		timeEstimate.minutes = timeSpent.minutes % 60;
+
+		sprint._doc.backlogs = backlogs;
+		sprint._doc.total_estimated_time = timeEstimate;
+		sprint._doc.total_logged_time = timeSpent;
+		return res.status(200).send({ sprint });
+	} catch (err) {
+		next(errorHandler(err, req, 500));
+	}
+});
 module.exports = router;

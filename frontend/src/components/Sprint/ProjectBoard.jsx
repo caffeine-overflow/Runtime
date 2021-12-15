@@ -12,6 +12,7 @@ import SprintImg from "../../assets/sprint.svg";
 import NoActiveSprint from "../../assets/noactivesprint.svg";
 import Backlog from "./Backlog";
 import ProjectOverview from "./ProjectOverview";
+import SprintOverview from "./SprintOverview";
 import UserStoryForm from "./UserStoryForm";
 import SprintForm from "./SprintForm";
 import NotFound from "../NotFound";
@@ -49,6 +50,7 @@ function ProjectBoard() {
     const [createUserStoryToggle, setcreateUserStoryToggle] = useState(false);
     const [viewBacklogToggle, setviewBacklogToggle] = useState(false);
     const [projectOverviewToggle, setprojectOverviewToggle] = useState(false);
+    const [sprintOverviewToggle, setsprintOverviewToggle] = useState(false);
 
     const [expand, setexpand] = useState(true);
     const [acitveSprint, setActiveSprint] = useState(null);
@@ -81,6 +83,7 @@ function ProjectBoard() {
         setcreateSprintToggle(false);
         setviewBacklogToggle(false);
         setprojectOverviewToggle(false);
+        setsprintOverviewToggle(false);
         setHomeToggle(false);
 
         toggleFunction(true);
@@ -183,8 +186,8 @@ function ProjectBoard() {
                                         </Dropdown.Item>
                                         <Dropdown.Item
                                             eventKey="4-2"
-                                            // active={projectOverviewToggle}
-                                            // onClick={() => navbarToggleHandler(setprojectOverviewToggle)}
+                                            active={sprintOverviewToggle}
+                                            onClick={() => navbarToggleHandler(setsprintOverviewToggle)}
                                             icon={<Icon icon="pie-chart" />}
                                         >
                                             Sprint Overview
@@ -314,6 +317,10 @@ function ProjectBoard() {
                             {
                                 projectOverviewToggle &&
                                 <ProjectOverview />
+                            }
+                                                        {
+                                sprintOverviewToggle &&
+                                <SprintOverview currentSprint={ acitveSprint }/>
                             }
                         </Content>
                     </Container>

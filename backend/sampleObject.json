@@ -28,3 +28,201 @@
         "total_estimated_hours": "10,5"
     }
 }
+
+
+
+
+{
+    "project": {
+        "members": [
+            {
+                "_id": "6095f2f8781286297c4b6d97",
+                "firstname": "Prabin",
+                "lastname": "Gyawali",
+                "email": "pragyawali16@gmail.com",
+                "first_login": false,
+                "role": "owner",
+                "__v": 0,
+                "disabled": false,
+                "location": "Calgary, Alberta",
+                "phone": "2269275572",
+                "position": "Developer",
+                "git_avatar": "https://avatars.githubusercontent.com/u/48300328?v=4",
+                "git_id": 48300328,
+                "git_token": "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",
+                "git_username": "Prabin16",
+                "client_id": "60aad28fcd4f3c5678d5496f"
+            }
+        ],
+        "_id": "611bd164eabd8d00211125b3",
+        "project_lead": "6095f2f8781286297c4b6d97",
+        "created_at": "8/17/2021, 3:10:28 PM",
+        "name": "My Energy App",
+        "repo": "My-Energy-App",
+        "description": "dasdfsa",
+        "is_done": false,
+        "client_id": "60aad28fcd4f3c5678d5496f",
+        "__v": 0,
+        "sprints": [
+            {
+                "_id": "611bd186eabd8d00211125b4",
+                "created_at": "8/17/2021, 3:11:02 PM",
+                "start_date": "8/17/2021, 3:11:02 PM",
+                "end_date": "2021-09-10, 3:53:03 p.m.",
+                "name": "TMP-2601 -> development",
+                "description": "dasdfsa",
+                "is_done": true,
+                "created_by": {
+                    "_id": "6095f2f8781286297c4b6d97",
+                    "firstname": "Prabin",
+                    "lastname": "Gyawali",
+                    "email": "pragyawali16@gmail.com",
+                    "password": "$2b$10$oQuiv9zowKdjqO/HSnlZdeiWqrb72tVBOoGqP0T9PWDCa4bFTQNyu",
+                    "first_login": false,
+                    "role": "owner",
+                    "__v": 0,
+                    "disabled": false,
+                    "location": "Calgary, Alberta",
+                    "phone": "2269275572",
+                    "position": "Developer",
+                    "git_avatar": "https://avatars.githubusercontent.com/u/48300328?v=4",
+                    "git_id": 48300328,
+                    "git_token": "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",
+                    "git_username": "Prabin16",
+                    "client_id": "60aad28fcd4f3c5678d5496f"
+                },
+                "project_id": "611bd164eabd8d00211125b3",
+                "__v": 0,
+                "userStories": []
+            },
+            {
+                "_id": "613bd3bf59c8a458f06a4a8c",
+                "created_at": "2021-09-10, 3:53:03 p.m.",
+                "start_date": "2021-09-10, 3:53:03 p.m.",
+                "end_date": null,
+                "name": "New Sprint",
+                "description": "This is a dot net project",
+                "is_done": false,
+                "created_by": {
+                    "_id": "6095f2f8781286297c4b6d97",
+                    "firstname": "Prabin",
+                    "lastname": "Gyawali",
+                    "email": "pragyawali16@gmail.com",
+                    "password": "$2b$10$oQuiv9zowKdjqO/HSnlZdeiWqrb72tVBOoGqP0T9PWDCa4bFTQNyu",
+                    "first_login": false,
+                    "role": "owner",
+                    "__v": 0,
+                    "disabled": false,
+                    "location": "Calgary, Alberta",
+                    "phone": "2269275572",
+                    "position": "Developer",
+                    "git_avatar": "https://avatars.githubusercontent.com/u/48300328?v=4",
+                    "git_id": 48300328,
+                    "git_token": "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",
+                    "git_username": "Prabin16",
+                    "client_id": "60aad28fcd4f3c5678d5496f"
+                },
+                "project_id": "611bd164eabd8d00211125b3",
+                "__v": 0,
+                "userStories": [
+                    {
+                        "history": [
+                            "611bd1a2eabd8d00211125b5",
+                            "611bd1a6eabd8d00211125b7",
+                            "611bd1d2eabd8d00211125b8",
+                            "613505f085d30441703df6ed",
+                            "6135062885d30441703df6ee",
+                            "61393840e08f320021c3a1f5",
+                            "61393845e08f320021c3a1f6",
+                            "613bcf24887004611ca3bd49",
+                            "613bd135fd757c62489797c9",
+                            "613bd33d260b05471c95df03",
+                            "61412a500495f30ec407351a"
+                        ],
+                        "_id": "611bd1a2eabd8d00211125b6",
+                        "identifier": "MEA-0",
+                        "title": "Test",
+                        "description": "<p><strong>RANDOM</strong>&nbsp;</p>",
+                        "created_at": "8/17/2021, 3:11:30 PM",
+                        "created_by": {
+                            "_id": "6095f2f8781286297c4b6d97",
+                            "firstname": "Prabin",
+                            "lastname": "Gyawali",
+                            "email": "pragyawali16@gmail.com",
+                            "password": "$2b$10$oQuiv9zowKdjqO/HSnlZdeiWqrb72tVBOoGqP0T9PWDCa4bFTQNyu",
+                            "first_login": false,
+                            "role": "owner",
+                            "__v": 0,
+                            "disabled": false,
+                            "location": "Calgary, Alberta",
+                            "phone": "2269275572",
+                            "position": "Developer",
+                            "git_avatar": "https://avatars.githubusercontent.com/u/48300328?v=4",
+                            "git_id": 48300328,
+                            "git_token": "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",
+                            "git_username": "Prabin16",
+                            "client_id": "60aad28fcd4f3c5678d5496f"
+                        },
+                        "assigned_to": "6095f2f8781286297c4b6d97",
+                        "estimated_time": "2,0",
+                        "time_spent": null,
+                        "state": "To Do",
+                        "sprint_id": "613bd3bf59c8a458f06a4a8c",
+                        "project_id": "611bd164eabd8d00211125b3",
+                        "__v": 10,
+                        "git_branch": "MEA-0",
+                        "git_branch_sha": "34cc0b123dafe7a782cddc58e09398e81ae2b164"
+                    },
+                    {
+                        "history": [
+                            "613bcfe5887004611ca3bd4a",
+                            "613bd137fd757c62489797ca",
+                            "613bd3bf59c8a458f06a4a8d",
+                            "613bd3bf59c8a458f06a4a8e"
+                        ],
+                        "_id": "613bcfe5887004611ca3bd4b",
+                        "identifier": "MEA-1",
+                        "title": "Trial Story 2",
+                        "description": "<p>Random content</p>",
+                        "created_at": "2021-09-10, 3:36:37 p.m.",
+                        "created_by": {
+                            "_id": "6095f2f8781286297c4b6d97",
+                            "firstname": "Prabin",
+                            "lastname": "Gyawali",
+                            "email": "pragyawali16@gmail.com",
+                            "password": "$2b$10$oQuiv9zowKdjqO/HSnlZdeiWqrb72tVBOoGqP0T9PWDCa4bFTQNyu",
+                            "first_login": false,
+                            "role": "owner",
+                            "__v": 0,
+                            "disabled": false,
+                            "location": "Calgary, Alberta",
+                            "phone": "2269275572",
+                            "position": "Developer",
+                            "git_avatar": "https://avatars.githubusercontent.com/u/48300328?v=4",
+                            "git_id": 48300328,
+                            "git_token": "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",
+                            "git_username": "Prabin16",
+                            "client_id": "60aad28fcd4f3c5678d5496f"
+                        },
+                        "assigned_to": "6095f2f8781286297c4b6d97",
+                        "estimated_time": "3,0",
+                        "time_spent": null,
+                        "state": "To Do",
+                        "sprint_id": "613bd3bf59c8a458f06a4a8c",
+                        "project_id": "611bd164eabd8d00211125b3",
+                        "__v": 2
+                    }
+                ]
+            }
+        ],
+        "backlogs": [],
+        "total_estimated_time": {
+            "minutes": 0,
+            "hours": 5
+        },
+        "total_logged_time": {
+            "minutes": 0,
+            "hours": 0
+        }
+    }
+}
